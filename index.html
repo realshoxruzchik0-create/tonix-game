@@ -8,19 +8,27 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
 body { background: linear-gradient(180deg, #ffffff 0%, #e0eafc 100%); color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-.container { flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
+.container { flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
 .page { display: none; width: 100%; flex-direction: column; align-items: center; }
 .page.active { display: flex; }
 
-.card { background: rgba(255,255,255,0.7); border-radius: 25px; padding: 25px; margin-bottom: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-.val { font-size: 32px; font-weight: bold; color: #007bff; margin: 10px 0; }
+.card { background: rgba(255,255,255,0.7); border-radius: 25px; padding: 25px; margin-bottom: 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+.val { font-size: 38px; font-weight: bold; color: #007bff; text-shadow: 0 0 10px rgba(0,123,255,0.3); }
 
-/* Wallet elementlari */
+.btn { 
+    width: 200px; height: 200px; border-radius: 50%; border: 4px solid #fff; 
+    background: radial-gradient(circle, #00d2ff 0%, #007bff 100%); 
+    display: flex; align-items: center; justify-content: center; cursor: pointer; 
+    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.4); 
+    transition: transform 0.08s;
+}
+.btn:active { transform: scale(0.93); }
+
+.icon { width: 150px; height: 150px; border-radius: 50%; background-size: cover; background-position: center; }
+
 .w-card { background: #fff; border-radius: 20px; padding: 20px; width: 100%; max-width: 400px; border: 1px solid #e0e0e0; margin-bottom: 15px; }
-.inp { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ccc; background: #f9f9f9; margin-top: 5px; }
-.sub { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-
-.btn { width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, #00d2ff 0%, #007bff 100%); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,123,255,0.3); }
+.inp { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ccc; background: #f9f9f9; margin-top: 5px; margin-bottom: 10px; }
+.sub { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
 nav { display: flex; justify-content: space-around; background: rgba(255,255,255,0.95); padding: 15px 0; border-top: 1px solid #ddd; }
 .nav { color: #888; font-size: 12px; font-weight: bold; cursor: pointer; }
@@ -32,11 +40,11 @@ nav { display: flex; justify-content: space-around; background: rgba(255,255,255
 <div class="container">
     <div id="home" class="page active">
         <div class="card">
-            <div style="font-size: 13px; color: #666;">TONIX Balans</div>
-            <div id="balance" class="val">285 TONIX</div>
+            <div style="font-size: 13px; color: #666; margin-bottom: 5px;">TONIX Balans</div>
+            <div id="balance" class="val">0 TONIX</div>
         </div>
         <button class="btn" onclick="tapCoin()">
-            <div style="width: 120px; height: 120px; border-radius: 50%; background-image: url('https://img.freepik.com/free-vector/cute-hamster-holding-gold-coin-cartoon-vector-icon-illustration-animal-finance-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-3686.jpg'); background-size: cover;"></div>
+            <div class="icon" style="background-image: url('https://img.freepik.com/free-vector/cute-hamster-holding-gold-coin-cartoon-vector-icon-illustration-animal-finance-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-3686.jpg');"></div>
         </button>
     </div>
 
@@ -47,7 +55,14 @@ nav { display: flex; justify-content: space-around; background: rgba(255,255,255
             <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Egasi: Xolboyeva S.</p>
             <input type="number" class="inp" placeholder="Summani kiriting (so'm)">
             <input type="file" class="inp" accept="image/*">
-            <button class="sub" onclick="alert('Yuborildi!')">To'lovni tasdiqlash</button>
+            <button class="sub" onclick="alert('So\'rovingiz yuborildi!')">To'lovni tasdiqlash</button>
+        </div>
+    </div>
+
+    <div id="friends" class="page">
+        <div class="card">
+            <h3>👥 Do'stlar</h3>
+            <p style="font-size: 13px; color: #666; margin-top: 10px;">Har bir do'st uchun +10 TONIX oling!</p>
         </div>
     </div>
 </div>
@@ -59,11 +74,17 @@ nav { display: flex; justify-content: space-around; background: rgba(255,255,255
 </nav>
 
 <script>
-let score = 285;
+// Balancni xotiradan o'qish (agar oldin yig'ilgan bo'lsa)
+let score = localStorage.getItem('tonix_score') ? parseInt(localStorage.getItem('tonix_score')) : 285;
+document.getElementById('balance').innerText = score + " TONIX";
+
 function tapCoin() {
     score += 1;
     document.getElementById('balance').innerText = score + " TONIX";
+    // Tangani telefon xotirasida saqlab qolish
+    localStorage.setItem('tonix_score', score);
 }
+
 function go(id, el) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
