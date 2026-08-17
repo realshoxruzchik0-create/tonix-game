@@ -1,96 +1,86 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tonix Game</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
-body { background: linear-gradient(180deg, #ffffff 0%, #e0eafc 100%); color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
-.container { flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
-.page { display: none; width: 100%; flex-direction: column; align-items: center; }
-.page.active { display: flex; }
-
-.card { background: rgba(255,255,255,0.7); border-radius: 25px; padding: 25px; margin-bottom: 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-.val { font-size: 38px; font-weight: bold; color: #007bff; text-shadow: 0 0 10px rgba(0,123,255,0.3); }
-
-.btn { 
-    width: 200px; height: 200px; border-radius: 50%; border: 4px solid #fff; 
-    background: radial-gradient(circle, #00d2ff 0%, #007bff 100%); 
-    display: flex; align-items: center; justify-content: center; cursor: pointer; 
-    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.4); 
-    transition: transform 0.08s;
-}
-.btn:active { transform: scale(0.93); }
-
-.icon { width: 150px; height: 150px; border-radius: 50%; background-size: cover; background-position: center; }
-
-.w-card { background: #fff; border-radius: 20px; padding: 20px; width: 100%; max-width: 400px; border: 1px solid #e0e0e0; margin-bottom: 15px; }
-.inp { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ccc; background: #f9f9f9; margin-top: 5px; margin-bottom: 10px; }
-.sub { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
-
-nav { display: flex; justify-content: space-around; background: rgba(255,255,255,0.95); padding: 15px 0; border-top: 1px solid #ddd; }
-.nav { color: #888; font-size: 12px; font-weight: bold; cursor: pointer; }
-.nav.active { color: #007bff; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallets - Shaxsiy Hamyon</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #0f172a);
+            color: var(--tg-theme-text-color, #ffffff);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        .balance {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #38bdf8;
+        }
+        .btn {
+            background-color: var(--tg-theme-button-color, #38bdf8);
+            color: var(--tg-theme-button-text-color, #0f172a);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:active {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="home" class="page active">
+    <div class="container">
         <div class="card">
-            <div style="font-size: 13px; color: #666; margin-bottom: 5px;">TONIX Balans</div>
-            <div id="balance" class="val">0 TONIX</div>
+            <h3>💳 Mening Hamyonim</h3>
+            <div class="balance" id="balanceText">150,000 so'm</div>
+            <p style="opacity: 0.6; font-size: 14px;">Asosiy balans</p>
         </div>
-        <button class="btn" onclick="tapCoin()">
-            <div class="icon" style="background-image: url('https://img.freepik.com/free-vector/cute-hamster-holding-gold-coin-cartoon-vector-icon-illustration-animal-finance-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-3686.jpg');"></div>
-        </button>
+
+        <button class="btn" onclick="addMoney()">📥 Hisobni To'ldirish</button>
+        <button class="btn" style="background-color: #34d399;" onclick="transferMoney()">💸 Pul O'tkazish</button>
     </div>
 
-    <div id="wallet" class="page">
-        <div class="w-card">
-            <h3 style="margin-bottom: 10px;">💳 Hisobni To'ldirish</h3>
-            <p style="font-size: 13px; color: #666;">Karta: 9860 6067 5865 7385</p>
-            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Egasi: Xolboyeva S.</p>
-            <input type="number" class="inp" placeholder="Summani kiriting (so'm)">
-            <input type="file" class="inp" accept="image/*">
-            <button class="sub" onclick="alert('So\'rovingiz yuborildi!')">To'lovni tasdiqlash</button>
-        </div>
-    </div>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-    <div id="friends" class="page">
-        <div class="card">
-            <h3>👥 Do'stlar</h3>
-            <p style="font-size: 13px; color: #666; margin-top: 10px;">Har bir do'st uchun +10 TONIX oling!</p>
-        </div>
-    </div>
-</div>
+        let currentBalance = 150000;
 
-<nav>
-    <div class="nav active" onclick="go('home', this)">🏠 Home</div>
-    <div class="nav" onclick="go('wallet', this)">👛 Wallet</div>
-    <div class="nav" onclick="go('friends', this)">👥 Friends</div>
-</nav>
+        function addMoney() {
+            currentBalance += 50000;
+            document.getElementById('balanceText').innerText = currentBalance.toLocaleString() + " so'm";
+            tg.showAlert("Hisobingizga 50,000 so'm qo'shildi!");
+        }
 
-<script>
-// Balancni xotiradan o'qish (agar oldin yig'ilgan bo'lsa)
-let score = localStorage.getItem('tonix_score') ? parseInt(localStorage.getItem('tonix_score')) : 285;
-document.getElementById('balance').innerText = score + " TONIX";
-
-function tapCoin() {
-    score += 1;
-    document.getElementById('balance').innerText = score + " TONIX";
-    // Tangani telefon xotirasida saqlab qolish
-    localStorage.setItem('tonix_score', score);
-}
-
-function go(id, el) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
-    el.classList.add('active');
-}
-</script>
+        function transferMoney() {
+            tg.showAlert("Pul o'tkazish bo'limi ochilmoqda...");
+        }
+    </script>
 </body>
 </html>
