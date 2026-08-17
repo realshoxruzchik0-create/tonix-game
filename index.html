@@ -3,17 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tonix</title>
+<title>Tonix Game</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
 body { background: #111821; color: #fff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 .container { flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
 .page { display: none; width: 100%; flex-direction: column; align-items: center; }
 .page.active { display: flex; }
-.card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 20px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-.val { font-size: 32px; font-weight: bold; color: #58a6ff; }
-.btn { width: 180px; height: 180px; border-radius: 50%; border: none; background: radial-gradient(circle, #4da3ff, #007bff); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 25px rgba(0,123,255,0.4); }
-.icon { width: 140px; height: 140px; border-radius: 50%; background-size: cover; background-position: center; }
+.card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 25px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+.val { font-size: 34px; font-weight: bold; color: #00d2ff; text-shadow: 0 0 10px rgba(0,210,255,0.5); }
+
+/* Juda yorug' va porlab turuvchi ko'k tugma */
+.btn { 
+    width: 200px; 
+    height: 200px; 
+    border-radius: 50%; 
+    border: 3px solid rgba(255, 255, 255, 0.4); 
+    background: radial-gradient(circle, #00d2ff 0%, #007bff 100%); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    box-shadow: 0 0 40px rgba(0, 210, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.6); 
+    transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn:active { 
+    transform: scale(0.93); 
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5); 
+}
+
+.icon { width: 150px; height: 150px; border-radius: 50%; background-size: cover; background-position: center; }
 .w-card { background: rgba(255,255,255,0.07); border-radius: 15px; padding: 15px; width: 100%; max-width: 350px; text-align: center; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.15); }
 .num { font-size: 19px; font-weight: bold; color: #ffb74d; margin: 6px 0; }
 .group { width: 100%; max-width: 350px; margin-bottom: 10px; text-align: left; }
@@ -27,16 +46,18 @@ nav { display: flex; justify-content: space-around; background: #161b22; padding
 </style>
 </head>
 <body>
+
 <div class="container">
     <div id="home" class="page active">
         <div class="card">
-            <div style="font-size: 12px; color: #a8b3c2;">TONIX Balans</div>
+            <div style="font-size: 12px; color: #a8b3c2; margin-bottom: 4px;">TONIX Balans</div>
             <div id="balance" class="val">149 TONIX</div>
         </div>
         <button class="btn" onclick="tapCoin()">
             <div class="icon" style="background-image: url('https://img.freepik.com/free-vector/cute-hamster-holding-gold-coin-cartoon-vector-icon-illustration-animal-finance-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-3686.jpg');"></div>
         </button>
     </div>
+
     <div id="wallet" class="page">
         <h3 style="margin-bottom: 12px; font-size: 16px;">💳 Hisobni To'ldirish</h3>
         <div class="w-card">
@@ -45,34 +66,46 @@ nav { display: flex; justify-content: space-around; background: #161b22; padding
             <div style="font-size: 13px; color: #a8b3c2;">Egasi: Xolboyeva.S</div>
         </div>
         <div class="group">
-            <label>Miqdor (so'm):</label>
+            <label>To'lov miqdori (so'm):</label>
             <input type="number" class="inp" placeholder="Min: 1 000 | Max: 300 000">
         </div>
         <div class="group">
             <label>Chek skrinshoti:</label>
             <input type="file" class="inp" accept="image/*" style="padding: 5px;">
         </div>
-        <button class="sub" onclick="alert('Yuborildi!')">Yuborish</button>
-        <div class="txt">Min: 1 000 so'm, Max: 300 000 so'm.<br>Javobi 10 minutda keladi.</div>
+        <button class="sub" onclick="alert('So\'rovingiz yuborildi!')">Yuborish</button>
+        <div class="txt">⚠️ Minimal 1 000 so'm, maksimal 300 000 so'm.<br>⏱ Javobi 10 minutda keladi.</div>
     </div>
-    <div id="friends" class="page"><h3>Do'stlar</h3></div>
-    <div id="missions" class="page"><h3>Topshiriqlar</h3></div>
+
+    <div id="friends" class="page">
+        <h3 style="color: #a8b3c2;">👥 Do'stlar sahifasi</h3>
+    </div>
+
+    <div id="missions" class="page">
+        <h3 style="color: #a8b3c2;">🎯 Topshiriqlar</h3>
+    </div>
 </div>
+
 <nav>
-    <div class="nav active" onclick="go('home',this)">Home</div>
-    <div class="nav" onclick="go('wallet',this)">Wallet</div>
-    <div class="nav" onclick="go('friends',this)">Friends</div>
-    <div class="nav" onclick="go('missions',this)">Missions</div>
+    <div class="nav active" onclick="go('home', this)">🏠 Home</div>
+    <div class="nav" onclick="go('wallet', this)">👛 Wallet</div>
+    <div class="nav" onclick="go('friends', this)">👥 Friends</div>
+    <div class="nav" onclick="go('missions', this)">🎯 Missions</div>
 </nav>
+
 <script>
-let score=149;
-function tapCoin(){score+=1;document.getElementById('balance').innerText=score+" TONIX";}
-function go(id,el){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+let score = 149;
+function tapCoin() {
+    score += 1;
+    document.getElementById('balance').innerText = score + " TONIX";
+}
+function go(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
 }
 </script>
+
 </body>
 </html>
