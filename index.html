@@ -2,18 +2,276 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>TONIX Clicker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TONIX App</title>
     <style>
-        body { background: #0f172a; color: white; text-align: center; padding-top: 100px; font-family: sans-serif; }
-        .circle { width: 200px; height: 200px; background: #38bdf8; border-radius: 50%; margin: 20px auto; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+        body {
+            background-color: #f2f2f7;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            max-width: 480px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .header {
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .balance-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .balance-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .coin-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .gram-bg { background: linear-gradient(135deg, #007aff, #5856d6); color: white; }
+        .tonix-bg { background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; }
+        
+        .balance-text h4 {
+            font-size: 14px;
+            color: #8e8e93;
+            font-weight: 500;
+        }
+        .balance-text h2 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+        .balance-text span {
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        .wallet-btn {
+            background: #7c3aed;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 16px;
+        }
+        
+        .fan-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .fan-container:active {
+            transform: scale(0.95);
+        }
+        .fan-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00c6ff 0%, #004e92 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 114, 255, 0.3);
+            border: 4px solid #fff;
+        }
+        .fan-inner {
+            font-size: 60px;
+        }
+
+        .mining-info {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .speed-info {
+            font-size: 13px;
+            color: #8e8e93;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            max-width: 360px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 14px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .btn-claim { background: #7c3aed; }
+        .btn-boost { background: #7c3aed; }
+
+        .nav-bar {
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 20px 0;
+            border-top: 1px solid #e5e5ea;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #8e8e93;
+            font-size: 11px;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: #7c3aed;
+        }
+        .nav-icon {
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Tangalar: <span id="score">0</span></h1>
-    <div class="circle" onclick="add()">BOSING</div>
+
+    <div class="header">
+        <div class="balance-card">
+            <div class="balance-info">
+                <div class="coin-icon gram-bg">💎</div>
+                <div class="balance-text">
+                    <h4>Balance</h4>
+                    <h2><span id="gram-balance">0.9724</span> GRAM</h2>
+                    <span>(~$1.30)</span>
+                </div>
+            </div>
+            <button class="wallet-btn" onclick="alert('Wallet bo\'limi')">👛</button>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-info">
+                <div class="coin-icon tonix-bg">🌀</div>
+                <div class="balance-text">
+                    <h4>Balance</h4>
+                    <h2><span id="tonix-balance">700</span> TONIX</h2>
+                </div>
+            </div>
+            <button class="wallet-btn" onclick="alert('Wallet bo\'limi')">👛</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="fan-container" onclick="clickFan()">
+            <div class="fan-img">
+                <div class="fan-inner">🌀</div>
+            </div>
+        </div>
+
+        <div class="mining-info"><span id="gram-counter">0.0050487496</span> GRAM</div>
+        <div class="speed-info">ℹ️ 6 GH/s ⚡</div>
+
+        <div class="action-buttons">
+            <button class="btn btn-claim" onclick="claimCoins()">💰 Claim</button>
+            <button class="btn btn-boost" onclick="boostSpeed()">🚀 Boost</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <button class="nav-item" onclick="switchTab(this)">
+            <span class="nav-icon">👛</span>
+            <span>Wallet</span>
+        </button>
+        <button class="nav-item" onclick="switchTab(this)">
+            <span class="nav-icon">👥</span>
+            <span>Friends</span>
+        </button>
+        <button class="nav-item active" onclick="switchTab(this)">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="switchTab(this)">
+            <span class="nav-icon">🎯</span>
+            <span>Missions</span>
+        </button>
+        <button class="nav-item" onclick="switchTab(this)">
+            <span class="nav-icon">⚙️</span>
+            <span>More</span>
+        </button>
+    </div>
+
     <script>
-        let s = 0;
-        function add() { s++; document.getElementById("score").innerText = s; }
+        let gramCount = 0.0050487496;
+        let tonixCount = 700;
+        let mainBalance = 0.9724;
+
+        function clickFan() {
+            gramCount += 0.0001;
+            mainBalance += 0.0001;
+            document.getElementById('gram-counter').innerText = gramCount.toFixed(10);
+            document.getElementById('gram-balance').innerText = mainBalance.toFixed(4);
+        }
+
+        function claimCoins() {
+            alert("Muvaffaqiyatli olindi!");
+        }
+
+        function boostSpeed() {
+            alert("Tezlik oshirildi! (Boost)");
+        }
+
+        function switchTab(element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
     </script>
 </body>
 </html>
