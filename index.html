@@ -3,273 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TONIX App</title>
+    <title>Tonix Game</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             user-select: none;
         }
+
         body {
-            background-color: #f2f2f7;
-            color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             height: 100vh;
-            max-width: 480px;
-            margin: 0 auto;
             overflow: hidden;
         }
-        .header {
-            padding: 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .balance-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .balance-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .coin-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .gram-bg { background: linear-gradient(135deg, #007aff, #5856d6); color: white; }
-        .tonix-bg { background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; }
-        
-        .balance-text h4 {
-            font-size: 14px;
-            color: #8e8e93;
-            font-weight: 500;
-        }
-        .balance-text h2 {
-            font-size: 17px;
-            font-weight: 700;
-        }
-        .balance-text span {
-            font-size: 12px;
-            color: #8e8e93;
-        }
-        .wallet-btn {
-            background: #7c3aed;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .main-content {
+
+        /* Sahifalar konteyneri */
+        .page-container {
             flex: 1;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
             text-align: center;
-            padding: 0 16px;
         }
-        
-        .fan-container {
-            position: relative;
-            width: 240px;
-            height: 240px;
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Home Sahifasi Dizayni */
+        .balance-card {
+            background: #161b22;
+            border-radius: 16px;
+            padding: 15px 25px;
             margin-bottom: 20px;
-            cursor: pointer;
-            transition: transform 0.1s ease;
+            width: 80%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #30363d;
         }
-        .fan-container:active {
+
+        .balance-title {
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .balance-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #58a6ff;
+            margin-top: 5px;
+        }
+
+        .clicker-btn {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #1f6beb 0%, #0d419d 100%);
+            border: 4px solid #388bfd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(31, 107, 235, 0.5);
+            transition: transform 0.1s;
+            margin: 20px 0;
+        }
+
+        .clicker-btn:active {
             transform: scale(0.95);
         }
-        .fan-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, #00c6ff 0%, #004e92 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(0, 114, 255, 0.3);
-            border: 4px solid #fff;
-        }
-        .fan-inner {
-            font-size: 60px;
-        }
 
-        .mining-info {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-        .speed-info {
-            font-size: 13px;
-            color: #8e8e93;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            justify-content: center;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            width: 100%;
-            max-width: 360px;
-        }
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 14px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        .btn-claim { background: #7c3aed; }
-        .btn-boost { background: #7c3aed; }
-
-        .nav-bar {
-            background: #fff;
+        /* Pastki menyu */
+        nav {
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 20px 0;
-            border-top: 1px solid #e5e5ea;
+            background-color: #161b22;
+            padding: 12px 0;
+            border-top: 1px solid #30363d;
         }
+
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            color: #8e8e93;
-            font-size: 11px;
+            color: #8b949e;
             text-decoration: none;
-            background: none;
-            border: none;
+            font-size: 12px;
             cursor: pointer;
+            transition: color 0.2s;
+            width: 20%;
         }
-        .nav-item.active {
-            color: #7c3aed;
-        }
-        .nav-icon {
+
+        .nav-item .icon {
             font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+
+        /* Qo'shimcha sahifalar dizayni */
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            width: 90%;
+            text-align: left;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="balance-card">
-            <div class="balance-info">
-                <div class="coin-icon gram-bg">💎</div>
-                <div class="balance-text">
-                    <h4>Balance</h4>
-                    <h2><span id="gram-balance">0.9724</span> GRAM</h2>
-                    <span>(~$1.30)</span>
-                </div>
+    <!-- SAHIFALAR -->
+    <div class="page-container">
+        
+        <!-- HOME SAHIFASI -->
+        <div id="home" class="page active">
+            <div class="balance-card">
+                <div class="balance-title">TONIX Balans</div>
+                <div id="balance" class="balance-value">0 TONIX</div>
             </div>
-            <button class="wallet-btn" onclick="alert('Wallet bo\'limi')">👛</button>
+
+            <div class="clicker-btn" onclick="tapCoin()">
+                🌀
+            </div>
+            <p style="color: #8b949e; font-size: 14px;">Tugmani bosing va TONIX ishlang!</p>
         </div>
 
-        <div class="balance-card">
-            <div class="balance-info">
-                <div class="coin-icon tonix-bg">🌀</div>
-                <div class="balance-text">
-                    <h4>Balance</h4>
-                    <h2><span id="tonix-balance">700</span> TONIX</h2>
-                </div>
+        <!-- WALLET SAHIFASI -->
+        <div id="wallet" class="page">
+            <h2>👛 Hamyon</h2>
+            <div class="card" style="margin-top: 20px;">
+                <p><b>Ulangan hamyon:</b> Yo'q</p>
+                <p style="color: #8b949e; margin-top: 5px;">Tez orada TON Wallet ulash imkoniyati qo'shiladi.</p>
             </div>
-            <button class="wallet-btn" onclick="alert('Wallet bo\'limi')">👛</button>
         </div>
+
+        <!-- FRIENDS SAHIFASI -->
+        <div id="friends" class="page">
+            <h2>👥 Do'stlar</h2>
+            <div class="card" style="margin-top: 20px;">
+                <p>Do'stlaringizni taklif qiling va har bir do'stingiz uchun bonus oling!</p>
+            </div>
+        </div>
+
+        <!-- MISSIONS SAHIFASI -->
+        <div id="missions" class="page">
+            <h2>🎯 Topshiriqlar</h2>
+            <div class="card" style="margin-top: 20px;">
+                <p><b>1. Telegram kanalga a'zo bo'lish</b></p>
+                <p style="color: #58a6ff;">+100 TONIX</p>
+            </div>
+        </div>
+
     </div>
 
-    <div class="main-content">
-        <div class="fan-container" onclick="clickFan()">
-            <div class="fan-img">
-                <div class="fan-inner">🌀</div>
-            </div>
-        </div>
-
-        <div class="mining-info"><span id="gram-counter">0.0050487496</span> GRAM</div>
-        <div class="speed-info">ℹ️ 6 GH/s ⚡</div>
-
-        <div class="action-buttons">
-            <button class="btn btn-claim" onclick="claimCoins()">💰 Claim</button>
-            <button class="btn btn-boost" onclick="boostSpeed()">🚀 Boost</button>
-        </div>
-    </div>
-
-    <div class="nav-bar">
-        <button class="nav-item" onclick="switchTab(this)">
-            <span class="nav-icon">👛</span>
-            <span>Wallet</span>
-        </button>
-        <button class="nav-item" onclick="switchTab(this)">
-            <span class="nav-icon">👥</span>
-            <span>Friends</span>
-        </button>
-        <button class="nav-item active" onclick="switchTab(this)">
-            <span class="nav-icon">🏠</span>
+    <!-- PASTKI MENYU -->
+    <nav>
+        <div class="nav-item active" onclick="switchPage('home', this)">
+            <span class="icon">🏠</span>
             <span>Home</span>
-        </button>
-        <button class="nav-item" onclick="switchTab(this)">
-            <span class="nav-icon">🎯</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('wallet', this)">
+            <span class="icon">👛</span>
+            <span>Wallet</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('friends', this)">
+            <span class="icon">👥</span>
+            <span>Friends</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('missions', this)">
+            <span class="icon">🎯</span>
             <span>Missions</span>
-        </button>
-        <button class="nav-item" onclick="switchTab(this)">
-            <span class="nav-icon">⚙️</span>
-            <span>More</span>
-        </button>
-    </div>
+        </div>
+    </nav>
 
+    <!-- JAVASCRIPT KODI -->
     <script>
-        let gramCount = 0.0050487496;
-        let tonixCount = 700;
-        let mainBalance = 0.9724;
+        let score = 0;
 
-        function clickFan() {
-            gramCount += 0.0001;
-            mainBalance += 0.0001;
-            document.getElementById('gram-counter').innerText = gramCount.toFixed(10);
-            document.getElementById('gram-balance').innerText = mainBalance.toFixed(4);
+        function tapCoin() {
+            score += 1;
+            document.getElementById('balance').innerText = score + " TONIX";
         }
 
-        function claimCoins() {
-            alert("Muvaffaqiyatli olindi!");
-        }
+        function switchPage(pageId, element) {
+            // Hamma sahifalarni yashirish
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
 
-        function boostSpeed() {
-            alert("Tezlik oshirildi! (Boost)");
-        }
+            // Tanlangan sahifani ko'rsatish
+            document.getElementById(pageId).classList.add('active');
 
-        function switchTab(element) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            // Menyudagi faol tugmani o'zgartirish
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
             element.classList.add('active');
         }
     </script>
