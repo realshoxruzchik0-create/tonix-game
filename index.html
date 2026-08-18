@@ -2,381 +2,58 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hamster Tap Game</title>
+    <title>Hamster TON Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        /* Navigatsiya menyusi */
-        .nav-tabs {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 8px;
-            margin-bottom: 20px;
-        }
-        .nav-btn {
-            background: none;
-            border: none;
-            color: #aaa;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        .nav-btn.active {
-            background: #f39c12;
-            color: #fff;
-        }
-        /* Sahifalar */
-        .page {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        .page.active {
-            display: flex;
-        }
-        /* O'yin sahifasi */
-        .score-board {
-            font-size: 32px;
-            font-weight: bold;
-            margin: 15px 0;
-            color: #f39c12;
-        }
-        .hamster-container {
-            margin: 25px 0;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s;
-            position: relative;
-            padding: 15px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .hamster-container:active {
-            transform: scale(0.92);
-        }
-        /* Tanga ramkasi (Silver dan Rainbow'gacha o'zgaradi) */
-        .coin-border {
-            width: 230px;
-            height: 230px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            transition: 0.5s;
-        }
-        .hamster-img {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #fff;
-        }
-        /* Yechib olish sahifasi */
-        .withdraw-box, .ai-box, .proofs-box {
-            background: rgba(255, 255, 255, 0.05);
-            width: 100%;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 10px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-        }
-        .action-btn {
-            background: #f39c12;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .action-btn:active {
-            opacity: 0.8;
-        }
-        /* AI sahifasi */
-        .chat-history {
-            width: 100%;
-            height: 200px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 8px;
-            padding: 10px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            font-size: 13px;
-            text-align: left;
-        }
-        .chat-msg {
-            margin-bottom: 8px;
-        }
-        .chat-msg.user {
-            color: #3498db;
-        }
-        .chat-msg.ai {
-            color: #2ecc71;
-        }
-        /* Isbotlar sahifasi */
-        .proof-item {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-size: 13px;
-            border-left: 3px solid #2ecc71;
-        }
-        /* Qo'llab-quvvatlovchi */
-        .footer-sponsor {
-            margin-top: auto;
-            font-size: 12px;
-            color: #888;
-            padding: 15px 0;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            width: 100%;
-        }
-        .footer-sponsor span {
-            color: #f39c12;
-            font-weight: bold;
-        }
+        body { background: #0f0f1a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .score-board { font-size: 40px; font-weight: bold; color: #00d2ff; margin: 20px 0; }
+        .coin-border { width: 220px; height: 220px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.5s; cursor: pointer; border: 8px solid #fff; box-shadow: 0 0 40px rgba(255,255,255,0.2); }
+        .hamster-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; }
+        .info-panel { background: #1e1e2f; padding: 15px; border-radius: 12px; margin-top: 20px; width: 100%; max-width: 400px; font-size: 13px; }
+        .action-btn { background: #f39c12; border: none; padding: 15px; width: 100%; color: white; border-radius: 10px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Yuqori menyu (Teginilmadi) -->
-        <div class="nav-tabs">
-            <button class="nav-btn active" onclick="switchPage('game')">O'yin</button>
-            <button class="nav-btn" onclick="switchPage('withdraw')">Yechish</button>
-            <button class="nav-btn" onclick="switchPage('ai')">Maxsus AI</button>
-            <button class="nav-btn" onclick="switchPage('proofs')">Isbotlar</button>
-        </div>
+    <div class="score-board"><span id="score">0.00000</span> TON</div>
 
-        <!-- 1. O'YIN SAHIFASI -->
-        <div id="game-page" class="page active">
-            <div class="score-board">🪙 <span id="score">0</span></div>
-            <div class="hamster-container" onclick="tapHamster(event)">
-                <!-- Katta tilla/silver tanga va ichida hamster -->
-                <div class="coin-border" id="coinBorder" style="background: silver; border: 5px solid #e0e0e0;">
-                    <img src="https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=400&auto=format&fit=crop&q=80" alt="Hamster" class="hamster-img" id="hamster">
-                </div>
-            </div>
-            <p style="color: #888; font-size: 14px;" id="level-info">Daraja: Silver Tanga (1000 tagacha)</p>
-        </div>
-
-        <!-- 2. YECHIB OLISH SAHIFASI -->
-        <div id="withdraw-page" class="page">
-            <h3>TON Yechib Olish</h3>
-            <div class="withdraw-box">
-                <p style="font-size: 13px; color: #ccc; margin-bottom: 10px;">Min: 5 TON | Maks: 100 TON</p>
-                <input type="text" id="ton-address" placeholder="TON hamyon manzilingiz...">
-                <input type="number" id="ton-amount" placeholder="Miqdori (5 - 100 TON)">
-                <button class="action-btn" onclick="requestWithdraw()">Yechib olish</button>
-                <p id="withdraw-status" style="font-size: 13px; margin-top: 10px; color: #f39c12;"></p>
-            </div>
-        </div>
-
-        <!-- 3. MAXSUS AI SAHIFASI -->
-        <div id="ai-page" class="page">
-            <h3>Maxsus AI Yordamchi</h3>
-            <div class="ai-box">
-                <div class="chat-history" id="chat-history">
-                    <div class="chat-msg ai">Salom Shoxruz! Men kuchaytirilgan maxsus AI yordamchingizman. O'yin qoidalari, tangalar darajasi yoki TON yechish haqida istalgan savolingizni bering!</div>
-                </div>
-                <input type="text" id="ai-input" placeholder="Savolingizni yozing...">
-                <button class="action-btn" onclick="askAI()">Yuborish</button>
-            </div>
-        </div>
-
-        <!-- 4. ISBOTLAR SAHIFASI -->
-        <div id="proofs-page" class="page">
-            <h3>To'lov Isbotlari</h3>
-            <div class="proofs-box" style="max-height: 280px; overflow-y: auto;">
-                <div class="proof-item">
-                    <b>@shoxruz_user</b> - <b>15 TON</b> yechib oldi ✅<br><span style="font-size:11px; color:#aaa;">Status: Tranzaksiya muvaffaqiyatli yakunlandi</span>
-                </div>
-                <div class="proof-item">
-                    <b>@bekzod_77</b> - <b>50 TON</b> yechib oldi ✅<br><span style="font-size:11px; color:#aaa;">Status: Hamyoniga tushdi</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Qo'llab-quvvatlovchi -->
-        <div class="footer-sponsor">
-            Qo'llab-quvvatlovchisi: <span>@Shoxruz_Support</span>
-        </div>
+    <div class="coin-border" id="coinBorder" onclick="tap()">
+        <img src="https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=400&auto=format&fit=crop&q=80" class="hamster-img">
     </div>
 
+    <div class="info-panel">
+        <b>Ranglar qo'llanmasi:</b><br>
+        • 0+ : Silver | 1k+ : Oltin | 1.5k+ : Suyuq Yaltiroq | 2k+ : Yorug' Oq<br>
+        • <b>Mega Mukofot:</b> 1,000,000 (10 TON) yig'sangiz, Rang-barang rang beriladi + 5 TON bonus!
+    </div>
+
+    <button class="action-btn" onclick="alert('So\'rov yuborildi!')">TON Yechib Olish</button>
+
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        let score = parseFloat(localStorage.getItem('hamster_score') || 0);
+        updateUI();
 
-        let score = localStorage.getItem('hamster_score') ? parseInt(localStorage.getItem('hamster_score')) : 0;
-        document.getElementById('score').innerText = score;
-        updateCoinStyle(score);
+        function tap() {
+            score += 0.00001; 
+            localStorage.setItem('hamster_score', score.toFixed(5));
+            updateUI();
+        }
 
-        function switchPage(pageName) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        function updateUI() {
+            document.getElementById('score').innerText = score.toFixed(5);
+            let b = document.getElementById('coinBorder');
             
-            if(pageName === 'game') {
-                document.getElementById('game-page').classList.add('active');
-                event.target.classList.add('active');
-            } else if(pageName === 'withdraw') {
-                document.getElementById('withdraw-page').classList.add('active');
-                event.target.classList.add('active');
-            } else if(pageName === 'ai') {
-                document.getElementById('ai-page').classList.add('active');
-                event.target.classList.add('active');
-            } else if(pageName === 'proofs') {
-                document.getElementById('proofs-page').classList.add('active');
-                event.target.classList.add('active');
-            }
-        }
-
-        // Tanga ranglarini ballga qarab o'zgartirish funksiyasi
-        function updateCoinStyle(currentScore) {
-            let border = document.getElementById('coinBorder');
-            let info = document.getElementById('level-info');
-
-            if (currentScore >= 1000000) {
-                // 1 Million - Rang-barang (Rainbow / Neon)
-                border.style.background = 'linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8)';
-                border.style.border = '5px solid #ffffff';
-                info.innerText = "Daraja: 🌈 Rang-barang Mega Tanga (1M+)";
-                info.style.color = "#00ffd5";
-            } else if (currentScore >= 1000) {
-                // 1000 tadan oshsa - Oltin (Gold) ranglar va uning bosqichlari
-                let level = Math.floor(currentScore / 1000);
-                border.style.background = 'linear-gradient(135deg, #f1c40f, #d35400)';
-                border.style.border = '5px solid #f39c12';
-                info.innerText = `Daraja: Oltin Tanga Darajasi (${level}k+)`;
-                info.style.color = "#f39c12";
+            if (score >= 10.0) { // 1 mln ball 10 TON ga teng deb olindi
+                b.style.background = 'linear-gradient(45deg, red, yellow, green, blue)';
+            } else if (score >= 0.02000) { // 2k
+                b.style.background = '#ffffff';
+            } else if (score >= 0.01500) { // 1.5k
+                b.style.background = '#00d2ff';
+            } else if (score >= 0.01000) { // 1k
+                b.style.background = '#ffd700';
             } else {
-                // 0 dan 1000 gacha - Silver (Kumush)
-                border.style.background = 'linear-gradient(135deg, #bdc3c7, #2c3e50)';
-                border.style.border = '5px solid #ecf0f1';
-                info.innerText = "Daraja: Silver Tanga (1000 tagacha)";
-                info.style.color = "#aaa";
+                b.style.background = '#bdc3c7'; // Silver
             }
-        }
-
-        function tapHamster(e) {
-            score += 1;
-            document.getElementById('score').innerText = score;
-            localStorage.setItem('hamster_score', score);
-            updateCoinStyle(score);
-
-            let clickEffect = document.createElement('div');
-            clickEffect.innerText = "+1";
-            clickEffect.style.position = 'absolute';
-            clickEffect.style.left = (e.clientX - 10) + 'px';
-            clickEffect.style.top = (e.clientY - 30) + 'px';
-            clickEffect.style.color = '#2ecc71';
-            clickEffect.style.fontWeight = 'bold';
-            clickEffect.style.fontSize = '20px';
-            clickEffect.style.pointerEvents = 'none';
-            clickEffect.style.transition = '1s';
-            document.body.appendChild(clickEffect);
-
-            setTimeout(() => {
-                clickEffect.style.transform = 'translateY(-50px)';
-                clickEffect.style.opacity = '0';
-            }, 10);
-            setTimeout(() => clickEffect.remove(), 1000);
-        }
-
-        function requestWithdraw() {
-            let address = document.getElementById('ton-address').value.trim();
-            let amount = parseFloat(document.getElementById('ton-amount').value);
-            let status = document.getElementById('withdraw-status');
-
-            if(!address) {
-                status.style.color = '#e74c3c';
-                status.innerText = "Iltimos, TON manzilingizni kiriting!";
-                return;
-            }
-            if(isNaN(amount) || amount < 5 || amount > 100) {
-                status.style.color = '#e74c3c';
-                status.innerText = "Xatolik: Minimal 5 TON, Maksimal 100 TON yechish mumkin!";
-                return;
-            }
-
-            status.style.color = '#2ecc71';
-            status.innerText = "So'rovingiz qabul qilindi! 24 soat ichida hamyoningizga tashlab beriladi.";
-            document.getElementById('ton-address').value = '';
-            document.getElementById('ton-amount').value = '';
-        }
-
-        // Kuchaytirilgan Maxsus AI
-        function askAI() {
-            let inputField = document.getElementById('ai-input');
-            let query = inputField.value.trim();
-            if(!query) return;
-
-            let chatHistory = document.getElementById('chat-history');
-            chatHistory.innerHTML += `<div class="chat-msg user"><b>Siz:</b> ${query}</div>`;
-            inputField.value = '';
-
-            let aiReply = "Tushunmadim, lekin bu ajoyib o'yin! Tangalarni bosib yig'ib boring.";
-            let lowerQ = query.toLowerCase();
-
-            if(lowerQ.includes('qanday') || lowerQ.includes('pul') || lowerQ.includes('ishlash') || lowerQ.includes('tanga')) {
-                aiReply = "Hamster ustiga bosib har safar +1 ball olasiz. Har 1000 ta tanga yig'ganingizda tangangiz rangi o'zgarib boradi. 1 millionga yetsa rang-barang mega tangaga aylanadi!";
-            } else if(lowerQ.includes('minimal') || lowerQ.includes('maksimal') || lowerQ.includes('yechish')) {
-                aiReply = "TON yechib olish uchun minimal miqdor 5 TON, maksimal miqdor esa 100 TON qilib belgilangan.";
-            } else if(lowerQ.includes('homiy') || lowerQ.includes('quvvat') || lowerQ.includes('kanal') || lowerQ.includes('shoxruz')) {
-                aiReply = "Ushbu loyihaning rasmiy qo'llab-quvvatlovchisi va homiysi — @Shoxruz_Support!";
-            } else if(lowerQ.includes('saqlanadimi') || lowerQ.includes('chiqib')) {
-                aiReply = "Ha, albatta! Botdan chiqib qayta kirsangiz ham yig'gan ballaringiz localStorage orqali avtomatik saqlanib qoladi.";
-            }
-
-            setTimeout(() => {
-                chatHistory.innerHTML += `<div class="chat-msg ai"><b>Maxsus AI:</b> ${aiReply}</div>`;
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-            }, 400);
         }
     </script>
 </body>
