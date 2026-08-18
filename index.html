@@ -3,54 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aviator 1xBet Style</title>
+    <title>1xBet - Rasmiy Sayt</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #0b0e14; color: #ffffff; display: flex; flex-direction: column; align-items: center; padding: 10px; }
-        .header { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #151922; border-radius: 10px; margin-bottom: 10px; border: 1px solid #222a36; }
-        .logo { color: #ff3333; font-weight: 900; font-size: 22px; font-style: italic; letter-spacing: 1px; }
-        .balance { background: #1e2532; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: #00ffcc; font-weight: bold; }
+        body { background-color: #0f131a; color: #ffffff; display: flex; flex-direction: column; align-items: center; padding-bottom: 70px; }
         
-        .game-container { width: 100%; max-width: 400px; height: 230px; background: #111620; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; border: 1px solid #222a36; margin-bottom: 10px; }
-        
+        /* 1xBet Header */
+        .header { width: 100%; max-width: 480px; background: #1b212d; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 2px solid #14805e; }
+        .logo { color: #14805e; font-weight: 900; font-size: 24px; font-style: italic; letter-spacing: 1px; }
+        .user-panel { display: flex; align-items: center; gap: 10px; }
+        .balance-box { background: #11151d; padding: 5px 10px; border-radius: 6px; color: #00ffcc; font-weight: bold; font-size: 13px; border: 1px solid #283347; }
+        .deposit-btn { background: #14805e; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+
+        /* Navigatsiya Menyu (Sport, Casino, Aviator) */
+        .sub-nav { width: 100%; max-width: 480px; display: flex; background: #161c27; overflow-x: auto; border-bottom: 1px solid #242f42; }
+        .nav-item { padding: 12px 18px; color: #8a99ad; font-size: 14px; font-weight: bold; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; }
+        .nav-item.active { color: #14805e; border-bottom: 2px solid #14805e; }
+
+        /* Asosiy Kontent Panellari */
+        .content-section { width: 100%; max-width: 480px; padding: 15px; display: none; }
+        .content-section.active { display: block; }
+
+        /* Aviator O'yini Stili */
+        .game-container { width: 100%; height: 220px; background: #11151d; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; border: 1px solid #242f42; margin-bottom: 15px; }
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        
         .center-info { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
-        .multiplier { font-size: 46px; font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-        .status-text { font-size: 13px; color: #8a99ad; margin-top: 4px; font-weight: 500; }
+        .multiplier { font-size: 42px; font-weight: 900; }
+        .status-text { font-size: 13px; color: #8a99ad; margin-top: 4px; }
         
-        .bet-box { width: 100%; max-width: 400px; background: #151922; padding: 14px; border-radius: 12px; border: 1px solid #222a36; }
-        .bet-input-group { display: flex; align-items: center; background: #0b0e14; border-radius: 8px; padding: 8px 12px; border: 1px solid #2c3545; margin-bottom: 10px; }
+        .bet-box { background: #161c27; padding: 15px; border-radius: 12px; border: 1px solid #242f42; }
+        .bet-input-group { display: flex; align-items: center; background: #0f131a; border-radius: 8px; padding: 8px 12px; border: 1px solid #283347; margin-bottom: 10px; }
         .bet-input-group input { background: transparent; border: none; color: #fff; font-size: 18px; width: 100%; outline: none; text-align: center; font-weight: bold; }
         
-        .action-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.1s; }
-        .btn-bet { background-color: #28a745; color: white; }
-        .btn-bet:active { background-color: #218838; }
+        .action-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-bet { background-color: #14805e; color: white; }
         .btn-cashout { background-color: #ff9900; color: white; display: none; }
-        .btn-cashout:active { background-color: #e08500; }
+
+        /* Sport va Boshqa bo'limlar ko'rinishi */
+        .match-card { background: #161c27; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #242f42; display: flex; justify-content: space-between; align-items: center; }
+        .team-name { font-size: 14px; font-weight: bold; }
+        .odds-btn { background: #242f42; color: #00ffcc; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        /* Profil / Kassa modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: #1b212d; width: 90%; max-width: 380px; padding: 20px; border-radius: 12px; border: 1px solid #283347; }
+        .modal-content h3 { margin-bottom: 15px; color: #14805e; }
+        .modal-content input { width: 100%; padding: 10px; background: #0f131a; border: 1px solid #283347; border-radius: 6px; color: white; margin-bottom: 12px; font-size: 15px; outline: none; }
+        .modal-btn { width: 100%; padding: 12px; background: #14805e; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        /* Pastki Asosiy Menyu (Footer Navigation) */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: #161c27; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #242f42; z-index: 50; }
+        .b-nav-item { display: flex; flex-direction: column; align-items: center; color: #8a99ad; font-size: 11px; cursor: pointer; }
+        .b-nav-item.active { color: #14805e; }
+        .b-nav-item span { font-size: 18px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <div class="header">
-        <div class="logo">AVIA<span style="color:white">TOR</span></div>
-        <div class="balance" id="balanceDisplay">1,000,000 UZS</div>
-    </div>
-
-    <div class="game-container">
-        <canvas id="gameCanvas" width="400" height="230"></canvas>
-        <div class="center-info">
-            <div class="multiplier" id="multiplierDisplay">1.00x</div>
-            <div class="status-text" id="statusText">Oʻyin boshlanishini kuting...</div>
+        <div class="logo">1xBet</div>
+        <div class="user-panel">
+            <div class="balance-box" id="balanceDisplay">1,000,000 UZS</div>
+            <button class="deposit-btn" onclick="openWithdrawModal()">Pul Yechish</button>
         </div>
     </div>
 
-    <div class="bet-box">
-        <div class="bet-input-group">
-            <input type="number" id="betAmount" value="1000" min="1000" max="1000000">
+    <!-- Sub Nav (Bo'limlar) -->
+    <div class="sub-nav">
+        <div class="nav-item active" onclick="switchTab('sport', event)">⚽ Sport (Live)</div>
+        <div class="nav-item" onclick="switchTab('aviator', event)">🚀 Aviator</div>
+        <div class="nav-item" onclick="switchTab('casino', event)">🎰 Casino</div>
+        <div class="nav-item" onclick="switchTab('history', event)">📋 Tarix</div>
+    </div>
+
+    <!-- SPORT BO'LIMI -->
+    <div id="sport" class="content-section active">
+        <h3 style="margin-bottom: 10px; color: #8a99ad; font-size: 14px;">Futzol va Futbol o'yinlari</h3>
+        <div class="match-card">
+            <div>
+                <div class="team-name">Real Madrid vs Barcelona</div>
+                <div style="font-size: 11px; color: #8a99ad;">Jonli efir • 74-daqiqada</div>
+            </div>
+            <button class="odds-btn" onclick="alert('Stavka qabul qilindi!')">1.85</button>
         </div>
-        <button class="action-btn btn-bet" id="betBtn" onclick="placeBet()">Stavka qo'yish</button>
-        <button class="action-btn btn-cashout" id="cashOutBtn" onclick="cashOut()">CASH OUT <span id="cashOutAmount">0</span> UZS</button>
+        <div class="match-card">
+            <div>
+                <div class="team-name">Manchester City vs Arsenal</div>
+                <div style="font-size: 11px; color: #8a99ad;">Boshlanish vaqti: 22:00</div>
+            </div>
+            <button class="odds-btn" onclick="alert('Stavka qabul qilindi!')">2.10</button>
+        </div>
+    </div>
+
+    <!-- AVIATOR BO'LIMI -->
+    <div id="aviator" class="content-section">
+        <div class="game-container">
+            <canvas id="gameCanvas" width="400" height="220"></canvas>
+            <div class="center-info">
+                <div class="multiplier" id="multiplierDisplay">1.00x</div>
+                <div class="status-text" id="statusText">Oʻyin boshlanishini kuting...</div>
+            </div>
+        </div>
+
+        <div class="bet-box">
+            <div class="bet-input-group">
+                <input type="number" id="betAmount" value="1000" min="1000" max="1000000">
+            </div>
+            <button class="action-btn btn-bet" id="betBtn" onclick="placeBet()">Stavka qo'yish</button>
+            <button class="action-btn btn-cashout" id="cashOutBtn" onclick="cashOut()">CASH OUT <span id="cashOutAmount">0</span> UZS</button>
+        </div>
+    </div>
+
+    <!-- CASINO BO'LIMI -->
+    <div id="casino" class="content-section">
+        <h3 style="color: #8a99ad; margin-bottom: 10px;">Mashhur Slotlar</h3>
+        <div class="match-card" style="justify-content: center; background: #1b212d; color: #14805e; font-weight: bold;">
+            🔥 Lucky Fruit Slot (Tez kunda)
+        </div>
+    </div>
+
+    <!-- TARIX BO'LIMI -->
+    <div id="history" class="content-section">
+        <h3 style="color: #8a99ad; margin-bottom: 10px;">O'yinlar tarixi</h3>
+        <div id="historyList" style="font-size: 13px; color: #8a99ad;">Hozircha stavkalar yo'q.</div>
+    </div>
+
+    <!-- Pul yechish Modali (Admin @Fordex_Spport ga xabar yuboradi) -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <h3>Pul Yechish Ariza</h3>
+            <p style="font-size: 12px; color: #8a99ad; margin-bottom: 10px;">Karta raqamingizni kiriting va ariza qoldiring. Admin tekshirib tashlab beradi.</p>
+            <input type="number" id="withdrawAmount" placeholder="Summa (UZS)" value="50000">
+            <input type="text" id="cardNumber" placeholder="Karta raqami (masalan: 8600 ...)">
+            <button class="modal-btn" onclick="sendWithdrawRequest()">Ariza yuborish</button>
+            <button onclick="closeWithdrawModal()" style="width:100%; background:transparent; border:none; color:#8a99ad; margin-top:10px; cursor:pointer;">Bekor qilish</button>
+        </div>
+    </div>
+
+    <!-- Pastki Asosiy Menyu -->
+    <div class="bottom-nav">
+        <div class="b-nav-item active" onclick="switchTab('sport', event)"><span>⚽</span>Sport</div>
+        <div class="b-nav-item" onclick="switchTab('aviator', event)"><span>🚀</span>Aviator</div>
+        <div class="b-nav-item" onclick="switchTab('casino', event)"><span>🎰</span>Casino</div>
+        <div class="b-nav-item" onclick="openWithdrawModal()"><span>💳</span>Kassa</div>
     </div>
 
     <script>
@@ -71,15 +167,43 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        function updateBalance() { 
-            balanceDisplay.innerText = balance.toLocaleString() + " UZS"; 
+        function updateBalance() { balanceDisplay.innerText = balance.toLocaleString() + " UZS"; }
+
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-nav .nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if(event && event.currentTarget.classList.contains('nav-item')) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        function openWithdrawModal() { document.getElementById('withdrawModal').style.display = 'flex'; }
+        function closeWithdrawModal() { document.getElementById('withdrawModal').style.display = 'none'; }
+
+        function sendWithdrawRequest() {
+            let amount = parseInt(document.getElementById('withdrawAmount').value);
+            let card = document.getElementById('cardNumber').value;
+            if(!card || amount < 1000) { alert("Ma'lumotlarni to'g'ri kiriting!"); return; }
+            if(amount > balance) { alert("Balansingizda yetarli mablag' yo'q!"); return; }
+
+            balance -= amount;
+            updateBalance();
+            closeWithdrawModal();
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                let tg = window.Telegram.WebApp;
+                let data = JSON.stringify({ action: "withdraw", amount: amount, card: card });
+                tg.sendData(data);
+            } else {
+                alert("Ariza yuborildi! @Fordex_Spport tez orada kartangizga o'tkazib beradi.");
+            }
         }
 
         function drawFlight(progress) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Orqa fondagi panjara chiziqlari
-            ctx.strokeStyle = '#1a2230';
+            ctx.strokeStyle = '#1e2838';
             ctx.lineWidth = 1;
             for (let i = 0; i < canvas.width; i += 40) {
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
@@ -87,33 +211,26 @@
             for (let j = 0; j < canvas.height; j += 40) {
                 ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
             }
-
             if (!isPlaying && currentMultiplier === 1.00) return;
 
-            let w = canvas.width;
-            let h = canvas.height;
+            let w = canvas.width, h = canvas.height;
             let currentX = Math.min(w - 40, 40 + (progress * 300));
             let currentY = Math.max(30, h - 30 - (progress * 150));
 
-            // Qizil uchish chizig'i
             ctx.beginPath();
             ctx.moveTo(0, h);
             ctx.quadraticCurveTo(currentX / 2, h - 10, currentX, currentY);
-            ctx.strokeStyle = '#ff3333';
+            ctx.strokeStyle = '#14805e';
             ctx.lineWidth = 4;
             ctx.stroke();
 
-            // Raketa belgisi
             ctx.font = "24px sans-serif";
             ctx.fillText("🚀", currentX - 12, currentY + 8);
         }
 
         function startGameCycle() {
             if (isPlaying) return;
-            
-            // Minimal qiymat 10.0x dan boshlanadi, maksimal 200.00x gacha
             crashPoint = parseFloat((10.00 + Math.random() * 190.00).toFixed(2));
-
             currentMultiplier = 1.00;
             isPlaying = true;
             statusText.innerText = "Raketa uchmoqda...";
@@ -123,7 +240,6 @@
             cashOutBtn.style.display = hasBet ? "block" : "none";
 
             let startTime = Date.now();
-
             gameInterval = setInterval(() => {
                 let elapsed = (Date.now() - startTime) / 1000;
                 currentMultiplier = parseFloat((1.00 + (elapsed * elapsed * 0.15)).toFixed(2));
@@ -131,24 +247,21 @@
                 if (currentMultiplier >= crashPoint) {
                     currentMultiplier = crashPoint;
                     clearInterval(gameInterval);
-                    endGame(false);
+                    endGame();
                 }
 
                 multiplierDisplay.innerText = currentMultiplier.toFixed(2) + "x";
                 drawFlight(elapsed);
 
                 if (hasBet) {
-                    let potentialWin = Math.floor(currentBet * currentMultiplier);
-                    document.getElementById('cashOutAmount').innerText = potentialWin.toLocaleString();
+                    document.getElementById('cashOutAmount').innerText = Math.floor(currentBet * currentMultiplier).toLocaleString();
                 }
             }, 40);
         }
 
         function placeBet() {
             let amount = parseInt(betInput.value);
-            if (amount < 1000 || amount > 1000000) { alert("Stavka 1,000 dan 1,000,000 gacha bo'lishi kerak!"); return; }
-            if (amount > balance) { alert("Balansingizda yetarli mablag' yo'q!"); return; }
-            
+            if (amount < 1000 || amount > balance) { alert("Xato summa!"); return; }
             balance -= amount;
             currentBet = amount;
             hasBet = true;
@@ -163,31 +276,24 @@
             balance += winAmount;
             hasBet = false;
             updateBalance();
-            
             statusText.innerText = `Yutib oldingiz: ${winAmount.toLocaleString()} UZS!`;
             statusText.style.color = "#00ffcc";
-            
             cashOutBtn.style.display = "none";
             betBtn.style.display = "block";
             betBtn.disabled = false;
             betBtn.innerText = "Stavka qo'yish";
         }
 
-        function endGame(isWon) {
+        function endGame() {
             isPlaying = false;
             multiplierDisplay.innerText = crashPoint.toFixed(2) + "x";
             multiplierDisplay.style.color = "#ff3333";
             statusText.innerText = "Uchib ketdi!";
-
-            if (hasBet) {
-                hasBet = false;
-            }
-
+            hasBet = false;
             betBtn.style.display = "block";
             betBtn.disabled = false;
             betBtn.innerText = "Stavka qo'yish";
             cashOutBtn.style.display = "none";
-
             setTimeout(() => {
                 statusText.innerText = "Yangi raund boshlanmoqda...";
                 setTimeout(startGameCycle, 2000);
