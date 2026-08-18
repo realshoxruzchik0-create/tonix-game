@@ -47,7 +47,7 @@
 
     <div class="bet-box">
         <div class="bet-input-group">
-            <input type="number" id="betAmount" value="1000" min="1000" max="500000">
+            <input type="number" id="betAmount" value="1000" min="1000" max="1000000">
         </div>
         <button class="action-btn btn-bet" id="betBtn" onclick="placeBet()">Stavka qo'yish</button>
         <button class="action-btn btn-cashout" id="cashOutBtn" onclick="cashOut()">CASH OUT <span id="cashOutAmount">0</span> UZS</button>
@@ -59,7 +59,7 @@
         let isPlaying = false;
         let hasBet = false;
         let currentBet = 0;
-        let crashPoint = 1.00;
+        let crashPoint = 10.00;
         let gameInterval = null;
 
         const balanceDisplay = document.getElementById('balanceDisplay');
@@ -103,7 +103,7 @@
             ctx.lineWidth = 4;
             ctx.stroke();
 
-            // Raketa / Samolyot belgisi
+            // Raketa belgisi
             ctx.font = "24px sans-serif";
             ctx.fillText("🚀", currentX - 12, currentY + 8);
         }
@@ -111,21 +111,12 @@
         function startGameCycle() {
             if (isPlaying) return;
             
-            // 1xbet uslubidagi ehtimolliklar: Ko'p hollarda 1.00x - 1.20x da qulab tushadi
-            let rand = Math.random();
-            if (rand < 0.55) {
-                crashPoint = parseFloat((1.00 + Math.random() * 0.20).toFixed(2)); // 55% ehtimol: 1.00x - 1.20x (Tez yutqazish)
-            } else if (rand < 0.85) {
-                crashPoint = parseFloat((1.21 + Math.random() * 2.00).toFixed(2)); // 30% ehtimol: 1.21x - 3.20x
-            } else if (rand < 0.97) {
-                crashPoint = parseFloat((3.21 + Math.random() * 15.00).toFixed(2)); // 12% ehtimol: 3.21x - 18.00x
-            } else {
-                crashPoint = parseFloat((18.01 + Math.random() * 182.00).toFixed(2)); // 3% ehtimol: Juda katta koeffitsient (200x gacha)
-            }
+            // Minimal qiymat 10.0x dan boshlanadi, maksimal 200.00x gacha
+            crashPoint = parseFloat((10.00 + Math.random() * 190.00).toFixed(2));
 
             currentMultiplier = 1.00;
             isPlaying = true;
-            statusText.innerText = "Samolyot uchmoqda...";
+            statusText.innerText = "Raketa uchmoqda...";
             multiplierDisplay.style.color = "#ffffff";
 
             betBtn.style.display = hasBet ? "none" : "block";
@@ -155,7 +146,7 @@
 
         function placeBet() {
             let amount = parseInt(betInput.value);
-            if (amount < 1000 || amount > 500000) { alert("Stavka 1,000 dan 500,000 gacha bo'lishi kerak!"); return; }
+            if (amount < 1000 || amount > 1000000) { alert("Stavka 1,000 dan 1,000,000 gacha bo'lishi kerak!"); return; }
             if (amount > balance) { alert("Balansingizda yetarli mablag' yo'q!"); return; }
             
             balance -= amount;
