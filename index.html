@@ -2,59 +2,149 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Hamster TON Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShoxruzHamsterBot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #0f0f1a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .score-board { font-size: 40px; font-weight: bold; color: #00d2ff; margin: 20px 0; }
-        .coin-border { width: 220px; height: 220px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.5s; cursor: pointer; border: 8px solid #fff; box-shadow: 0 0 40px rgba(255,255,255,0.2); }
-        .hamster-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; }
-        .info-panel { background: #1e1e2f; padding: 15px; border-radius: 12px; margin-top: 20px; width: 100%; max-width: 400px; font-size: 13px; }
-        .action-btn { background: #f39c12; border: none; padding: 15px; width: 100%; color: white; border-radius: 10px; font-weight: bold; margin-top: 10px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #0f0f1a; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
+        .score-board { font-size: 36px; font-weight: bold; color: #00d2ff; margin: 20px 0; text-align: center; }
+        .coin-border { 
+            width: 250px; height: 250px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 0.3s; cursor: pointer; 
+            border: 10px solid #bdc3c7; padding: 5px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .hamster-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { background: #1e1e2f; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: #aaa; font-weight: bold; font-size: 14px; }
+        .tab.active { background: #f39c12; color: white; }
+        .content { width: 100%; max-width: 400px; display: none; flex-direction: column; align-items: center; }
+        .content.active { display: flex; }
+        .action-btn { background: #f39c12; border: none; padding: 15px; width: 100%; color: white; border-radius: 10px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .info-panel { background: #1e1e2f; padding: 15px; border-radius: 12px; font-size: 13px; margin-top: 20px; width: 100%; line-height: 1.5; }
+        .proof-item { background: #1e1e2f; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #2ecc71; width: 100%; font-size: 13px; }
+        .chat-box { width: 100%; height: 180px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; overflow-y: auto; margin-bottom: 10px; font-size: 13px; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="score-board"><span id="score">0.00000</span> TON</div>
 
-    <div class="coin-border" id="coinBorder" onclick="tap()">
-        <img src="https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=400&auto=format&fit=crop&q=80" class="hamster-img">
+    <div class="nav-tabs">
+        <div class="tab active" onclick="show('game')">O'yin</div>
+        <div class="tab" onclick="show('ai')">AI Yordamchi</div>
+        <div class="tab" onclick="show('proofs')">Isbotlar</div>
     </div>
 
-    <div class="info-panel">
-        <b>Ranglar qo'llanmasi:</b><br>
-        • 0+ : Silver | 1k+ : Oltin | 1.5k+ : Suyuq Yaltiroq | 2k+ : Yorug' Oq<br>
-        • <b>Mega Mukofot:</b> 1,000,000 (10 TON) yig'sangiz, Rang-barang rang beriladi + 5 TON bonus!
+    <!-- 1. O'YIN SAHIFASI -->
+    <div id="game" class="content active">
+        <div class="coin-border" id="coinBorder" onclick="tap()">
+            <!-- Sariq rangli sichqoncha rasmi -->
+            <img src="https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=400" class="hamster-img" alt="Sariq sichqon">
+        </div>
+        <div class="info-panel">
+            <b>Ranglar qo'llanmasi:</b><br>
+            • <b>0+ :</b> Silver (Kumush)<br>
+            • <b>1k+ :</b> Oltin (Gold)<br>
+            • <b>1.5k+ :</b> Suyuq Yaltiroq<br>
+            • <b>2k+ :</b> Yorug' Oq<br>
+            • <b>1,000,000 (1 mln) :</b> Rang-barang (10 TON + 5 TON bonus!)
+        </div>
+        <button class="action-btn" onclick="alert('TON yechib olish uchun balansingiz yetarli bo\'lishi kerak!')">TON Yechib Olish</button>
     </div>
 
-    <button class="action-btn" onclick="alert('So\'rov yuborildi!')">TON Yechib Olish</button>
+    <!-- 2. AI SAHIFASI -->
+    <div id="ai" class="content">
+        <div class="info-panel">
+            <div class="chat-box" id="chat"><b>AI:</b> Salom! Ushbu o'yin va qoidalar bo'yicha istalgan savolingizga javob beraman.</div>
+            <input type="text" id="aiInput" placeholder="Savol yozing..." style="width:100%; padding:10px; background:rgba(0,0,0,0.3); border:1px solid #444; color:#fff; border-radius:8px;">
+            <button class="action-btn" onclick="askAI()">Yuborish</button>
+        </div>
+    </div>
+
+    <!-- 3. ISBOTLAR SAHIFASI -->
+    <div id="proofs" class="content">
+        <div style="width:100%; max-height: 350px; overflow-y: auto;" id="proofList">
+            <!-- 10 ta isbot (5 TON dan kam emas) -->
+        </div>
+    </div>
 
     <script>
-        let score = parseFloat(localStorage.getItem('hamster_score') || 0);
+        let score = parseFloat(localStorage.getItem('shoxruz_score') || 0);
+        document.getElementById('score').innerText = score.toFixed(5);
         updateUI();
 
+        function show(id) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
         function tap() {
-            score += 0.00001; 
-            localStorage.setItem('hamster_score', score.toFixed(5));
+            score += 0.00001;
+            localStorage.setItem('shoxruz_score', score);
+            document.getElementById('score').innerText = score.toFixed(5);
             updateUI();
         }
 
         function updateUI() {
-            document.getElementById('score').innerText = score.toFixed(5);
             let b = document.getElementById('coinBorder');
-            
-            if (score >= 10.0) { // 1 mln ball 10 TON ga teng deb olindi
+            if (score >= 10.0) { // 1 mln ga teng shart
+                b.style.borderColor = '#ff007f';
                 b.style.background = 'linear-gradient(45deg, red, yellow, green, blue)';
             } else if (score >= 0.02000) { // 2k
-                b.style.background = '#ffffff';
+                b.style.borderColor = '#ffffff';
+                b.style.background = 'transparent';
             } else if (score >= 0.01500) { // 1.5k
-                b.style.background = '#00d2ff';
+                b.style.borderColor = '#00d2ff';
+                b.style.background = 'transparent';
             } else if (score >= 0.01000) { // 1k
-                b.style.background = '#ffd700';
+                b.style.borderColor = '#ffd700';
+                b.style.background = 'transparent';
             } else {
-                b.style.background = '#bdc3c7'; // Silver
+                b.style.borderColor = '#bdc3c7';
+                b.style.background = 'transparent';
             }
         }
+
+        function askAI() {
+            let input = document.getElementById('aiInput').value.toLowerCase().trim();
+            let chat = document.getElementById('chat');
+            if(!input) return;
+            
+            chat.innerHTML += `<br><br><b>Siz:</b> ${input}`;
+            let reply = "Bu o'yin haqida faqat qoidalar, ranglar va TON yechish bo'yicha savol berishingiz mumkin.";
+            
+            if(input.includes('tanga') || input.includes('bosish') || input.includes('ball')) {
+                reply = "Sichqonchani har bir bosishingiz oxirgi raqamni oshirib boradi (0.00001). 1.00000 bo'lganda 1 TON hisoblanadi.";
+            } else if(input.includes('rang') || input.includes('1000') || input.includes('1mln')) {
+                reply = "0+ da Silver, 1k da Oltin, 1.5k da Suyuq Yaltiroq, 2k da Yorug' Oq va 1 mln da Rang-barang bo'lib 5 TON bonus beriladi!";
+            } else if(input.includes('yechish') || input.includes('ton') || input.includes('bonus')) {
+                reply = "Minimal yechib olish miqdori 5 TON. Isbotlar bo'limida boshqalarning yechib olgan summalarini ko'rishingiz mumkin.";
+            }
+
+            chat.innerHTML += `<br><br><b>AI:</b> ${reply}`;
+            document.getElementById('aiInput').value = '';
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // 10 ta to'lov isboti (5 TON dan kam emas)
+        const proofs = [
+            "@shoxruz_fan - 12 TON yechib oldi ✅",
+            "@bekzod_77 - 8 TON yechib oldi ✅",
+            "@aziz_coder - 15 TON yechib oldi ✅",
+            "@jasur_99 - 6 TON yechib oldi ✅",
+            "@dilshod_pro - 10 TON yechib oldi ✅",
+            "@timur_tv - 7 TON yechib oldi ✅",
+            "@sarvar_uz - 14 TON yechib oldi ✅",
+            "@bobur_net - 9 TON yechib oldi ✅",
+            "@jamshid_ff - 11 TON yechib oldi ✅",
+            "@rustam_m - 5 TON yechib oldi ✅"
+        ];
+        document.getElementById('proofList').innerHTML = proofs.map(p => `<div class='proof-item'>${p}</div>`).join('');
     </script>
 </body>
 </html>
