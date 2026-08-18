@@ -3,253 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShoxruzHamsterBot</title>
+    <title>REDHAT PREDICTOR HACK</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #0f0f1a; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-        .score-board { font-size: 34px; font-weight: bold; color: #00d2ff; margin: 15px 0; text-align: center; }
-        .coin-border { 
-            width: 250px; height: 250px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: 0.3s; cursor: pointer; 
-            border: 10px solid #bdc3c7; padding: 5px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { 
+            background: #090a0f; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: space-between;
+            min-height: 100vh; 
+            padding: 20px 15px; 
         }
-        .coin-border:active { transform: scale(0.93); }
-        .hamster-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-        .tab { background: #1e1e2f; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: #aaa; font-weight: bold; font-size: 14px; }
-        .tab.active { background: #f39c12; color: white; }
-        .content { width: 100%; max-width: 400px; display: none; flex-direction: column; align-items: center; }
-        .content.active { display: flex; }
-        .action-btn { background: #f39c12; border: none; padding: 15px; width: 100%; color: white; border-radius: 10px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .info-panel { background: #1e1e2f; padding: 15px; border-radius: 12px; font-size: 13px; margin-top: 15px; width: 100%; line-height: 1.5; }
-        .proof-item { background: #1e1e2f; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #2ecc71; width: 100%; font-size: 13px; }
-        .chat-box { width: 100%; height: 160px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; overflow-y: auto; margin-bottom: 10px; font-size: 13px; text-align: left; }
-        .chat-msg { margin-bottom: 8px; display: flex; align-items: flex-start; gap: 6px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 14px; }
-        .footer-sponsor { margin-top: auto; font-size: 12px; color: #888; padding: 15px 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; }
-        .footer-sponsor span { color: #f39c12; font-weight: bold; }
+
+        .top-bar {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #151922;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .top-title {
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+        .close-btn { font-size: 18px; color: #aaa; cursor: pointer; }
+
+        .neon-box {
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #00ffff;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            background: rgba(0, 255, 255, 0.03);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2), inset 0 0 15px rgba(0, 255, 255, 0.1);
+            margin: 15px 0;
+        }
+        .neon-box span {
+            color: #00ffff;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .plane-logo {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 26px;
+            color: #ff3333;
+            text-shadow: 0 0 10px rgba(255,0,0,0.6);
+        }
+        .hack-title {
+            color: #00ffff;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+        .user-id {
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .user-id b { color: #fff; }
+
+        .circle-container {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, rgba(15,20,35,0.8) 0%, rgba(5,8,15,1) 80%);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            margin: 15px auto;
+        }
+        .circle-container::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: #00ffff;
+            border-right-color: #ff00ff;
+            border-bottom-color: #00ff00;
+            border-left-color: #ffff00;
+            animation: rotateGlow 4s linear infinite;
+        }
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-coef {
+            font-size: 38px;
+            font-weight: bold;
+            color: #ffffff;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .start-btn {
+            background: linear-gradient(180deg, #2b73ff, #1345bc);
+            border: 1px solid #5090ff;
+            width: 100%;
+            max-width: 400px;
+            padding: 16px;
+            color: white;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(43, 115, 255, 0.4);
+            transition: 0.1s;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+        }
+        .start-btn:active {
+            transform: scale(0.97);
+            background: linear-gradient(180deg, #205ecc, #0f379a);
+        }
     </style>
 </head>
 <body>
 
+    <!-- Token saqlanadigan yashirin joy -->
     <script>
-        const BOT_TOKEN = "8873599373:AAFJDl9vPMMiCpLLNtAnDNW9VT19AlTya1A";
+        const BOT_TOKEN = "8816757955:AAGuSyyolFPKSbfEVkoNCJteC7VAMTKYd2A";
     </script>
 
-    <div class="score-board"><span id="score">0.000000</span> TON</div>
-
-    <div class="nav-tabs">
-        <div class="tab active" onclick="show('game')">O'yin</div>
-        <div class="tab" onclick="show('ai')">AI Yordamchi</div>
-        <div class="tab" onclick="show('proofs')">Isbotlar</div>
+    <div class="top-bar">
+        <span class="close-btn" onclick="window.Telegram.WebApp.close()">✕</span>
+        <span class="top-title">REDHAT PREDICTOR...</span>
+        <span style="font-size: 16px; color: #aaa;">⋮</span>
     </div>
 
-    <!-- 1. O'YIN SAHifasi -->
-    <div id="game" class="content active">
-        <div class="coin-border" id="coinBorder" onclick="tapHamster(event)">
-            <img src="https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=400" class="hamster-img" alt="Sariq sichqon">
-        </div>
-        <p style="color: #f39c12; font-size: 14px; margin-top: 10px;" id="tap-power">Har bir bosish: +0.000001 TON</p>
-        
-        <div class="info-panel">
-            <b>Darajalar va Ranglar:</b><br>
-            • <b>100 ta bosish:</b> Tilla rang<br>
-            • <b>1k (1000) ta:</b> Opoq rang va yaltiroq zarli<br>
-            • <b>3k (3000) ta:</b> Oq, sariq, pushti aralash<br>
-            • <b>1 mln ta:</b> Rang-barang<br>
-            • ⚡ <b>Cheklov yo'q:</b> Istalgan vaqtda istalgan miqdorni yechib oling!
-        </div>
-        <input type="text" id="ton-address" placeholder="TON hamyon manzilingiz...">
-        <input type="number" id="ton-amount" placeholder="Yechib olish miqdori...">
-        <button class="action-btn" onclick="requestWithdraw()">TON Yechib Olish</button>
-        <p id="withdraw-status" style="font-size: 13px; margin-top: 8px; color: #f39c12; text-align: center;"></p>
+    <div class="neon-box">
+        <span>AVIATOR PREDICTOR</span>
     </div>
 
-    <!-- 2. AI SAHIFASI -->
-    <div id="ai" class="content">
-        <div class="info-panel">
-            <div class="chat-box" id="chat">
-                <div class="chat-msg">🤖 <b>AI:</b> Salom <span id="user-greeting">Do'stim</span>! O'yin mexanikasi, ranglar yoki TON yechish bo'yicha savol bering.</div>
-            </div>
-            <input type="text" id="aiInput" placeholder="Savol yozing...">
-            <button class="action-btn" onclick="askAI()">Yuborish</button>
-        </div>
+    <div class="logo-section">
+        <div class="plane-logo">Aviator</div>
+        <div class="hack-title">HACK</div>
+        <div class="user-id" id="userInfo">Logged in as: User - <b>33XXXX369</b></div>
     </div>
 
-    <!-- 3. ISBOTLAR SAHIFASI -->
-    <div id="proofs" class="content">
-        <div style="width:100%; max-height: 350px; overflow-y: auto;" id="proofList"></div>
+    <div class="circle-container">
+        <div class="result-coef" id="coefDisplay">0.00x</div>
     </div>
 
-    <!-- Qo'llab-quvvatlovchi -->
-    <div class="footer-sponsor">
-        Qo'llab-quvvatlovchisi: <span>AYSULU ALIJONOVA</span>
-    </div>
+    <button class="start-btn" id="startBtn" onclick="startSignal()">Start Signal</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Foydalanuvchi username yoki ismini aniqlash
-        let userName = "Foydalanuvchi";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            if (tg.initDataUnsafe.user.username) {
-                userName = "@" + tg.initDataUnsafe.user.username;
-            } else if (tg.initDataUnsafe.user.first_name) {
-                userName = tg.initDataUnsafe.user.first_name;
-            }
-        }
-        document.getElementById('user-greeting').innerText = userName;
-
-        let score = parseFloat(localStorage.getItem('shoxruz_score') || 0);
-        let totalTaps = parseInt(localStorage.getItem('shoxruz_taps') || 0);
-        
-        document.getElementById('score').innerText = score.toFixed(6);
-        updateUI();
-
-        function show(id) {
-            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.target.classList.add('active');
+            let uid = tg.initDataUnsafe.user.id.toString();
+            let maskedId = uid.slice(0, 2) + "XXXX" + uid.slice(-3);
+            document.getElementById('userInfo').innerHTML = `Logged in as: User - <b>${maskedId}</b>`;
         }
 
-        function getIncrement() {
-            if (totalTaps >= 10000) return 0.000030; // 10k da 30 ta
-            if (totalTaps >= 1000) return 0.000005;  // 1k da 5 ta
-            if (totalTaps >= 100) return 0.000002;   // 100 ta da 2 ta
-            return 0.000001;                         // Boshlanishiga 1 ta
-        }
-
-        function tapHamster(e) {
-            totalTaps++;
-            let inc = getIncrement();
-            score += inc;
-
-            localStorage.setItem('shoxruz_score', score);
-            localStorage.setItem('shoxruz_taps', totalTaps);
+        function startSignal() {
+            let btn = document.getElementById('startBtn');
+            let coefDisplay = document.getElementById('coefDisplay');
             
-            document.getElementById('score').innerText = score.toFixed(6);
-            updateUI();
-
-            let clickEffect = document.createElement('div');
-            clickEffect.innerText = "+" + (inc * 1000000).toFixed(0);
-            clickEffect.style.position = 'absolute';
-            clickEffect.style.left = (e.clientX - 10) + 'px';
-            clickEffect.style.top = (e.clientY - 30) + 'px';
-            clickEffect.style.color = '#2ecc71';
-            clickEffect.style.fontWeight = 'bold';
-            clickEffect.style.fontSize = '18px';
-            clickEffect.style.pointerEvents = 'none';
-            clickEffect.style.transition = '1s';
-            document.body.appendChild(clickEffect);
+            btn.disabled = true;
+            coefDisplay.innerText = "⏳...";
+            coefDisplay.style.fontSize = "28px";
 
             setTimeout(() => {
-                clickEffect.style.transform = 'translateY(-40px)';
-                clickEffect.style.opacity = '0';
-            }, 10);
-            setTimeout(() => clickEffect.remove(), 1000);
+                // Sen so'ragan va rasmga mos koeffitsiyentlar bazasi
+                const signals = [
+                    "1.89x", "1.00x", "8.90x", "12.83x", "1.80x", "4.12x", 
+                    "2.14x", "1.45x", "5.80x", "1.20x", "15.40x", "3.25x",
+                    "1.02x", "6.50x", "2.45x", "1.15x", "9.12x", "1.98x"
+                ];
+
+                let randomSignal = signals[Math.floor(Math.random() * signals.length)];
+
+                coefDisplay.innerText = randomSignal;
+                coefDisplay.style.fontSize = "38px";
+                btn.disabled = false;
+            }, 2000);
         }
-
-        function updateUI() {
-            let b = document.getElementById('coinBorder');
-            let powerText = document.getElementById('tap-power');
-            let inc = getIncrement();
-            powerText.innerText = `Jami bosishlar: ${totalTaps} | Har bir bosish: +${(inc * 1000000).toFixed(0)}`;
-
-            if (totalTaps >= 1000000 || score >= 10.0) {
-                b.style.borderColor = '#ffffff';
-                b.style.background = 'linear-gradient(45deg, red, yellow, green, blue, purple, pink)';
-            } else if (totalTaps >= 3000) {
-                b.style.borderColor = '#ff99cc';
-                b.style.background = 'linear-gradient(135deg, #ffffff, #ffd700, #ff69b4)';
-            } else if (totalTaps >= 1000) {
-                b.style.borderColor = '#e0f7fa';
-                b.style.background = 'radial-gradient(circle, #ffffff, #b2ebf2)';
-            } else if (totalTaps >= 100) {
-                b.style.borderColor = '#f39c12';
-                b.style.background = 'linear-gradient(135deg, #f1c40f, #d35400)';
-            } else {
-                b.style.borderColor = '#bdc3c7';
-                b.style.background = 'transparent';
-            }
-        }
-
-        function requestWithdraw() {
-            let address = document.getElementById('ton-address').value.trim();
-            let amount = parseFloat(document.getElementById('ton-amount').value);
-            let status = document.getElementById('withdraw-status');
-
-            if(!address) {
-                status.style.color = '#e74c3c';
-                status.innerText = "Iltimos, TON manzilingizni kiriting!";
-                return;
-            }
-            if(isNaN(amount) || amount <= 0) {
-                status.style.color = '#e74c3c';
-                status.innerText = "Xatolik: To'g'ri miqdor kiriting!";
-                return;
-            }
-            if(amount > score) {
-                status.style.color = '#e74c3c';
-                status.innerText = "Balansingizda buncha TON yo'q!";
-                return;
-            }
-
-            score -= amount;
-            document.getElementById('score').innerText = score.toFixed(6);
-            localStorage.setItem('shoxruz_score', score);
-
-            status.style.color = '#2ecc71';
-            status.innerText = `Muvaffaqiyatli! ${amount} TON hamyoningizga yuborildi.`;
-            document.getElementById('ton-address').value = '';
-            document.getElementById('ton-amount').value = '';
-        }
-
-        function askAI() {
-            let inputField = document.getElementById('aiInput');
-            let query = inputField.value.trim();
-            let chat = document.getElementById('chat');
-            if(!query) return;
-            
-            chat.innerHTML += `<div class="chat-msg">👤 <b>${userName}:</b> ${query}</div>`;
-            
-            let reply = `Eshityapman, ${userName}! Bu o'yin haqida savol bersangiz batafsil tushuntiraman.`;
-            let lowerQ = query.toLowerCase();
-            
-            if(lowerQ.includes('tanga') || lowerQ.includes('bosish') || lowerQ.includes('ball')) {
-                reply = `${userName}, ekrandagi sichqonchani bosib 0.000000 formatida ball yig'asiz. 100 tadan keyin +2, 1k dan keyin +5 ball berila boshlaydi!`;
-            } else if(lowerQ.includes('rang') || lowerQ.includes('100') || lowerQ.includes('3k') || lowerQ.includes('1mln')) {
-                reply = `${userName}, 100 ta bosishda Tilla, 1k da Opoq yaltiroq, 3k da Oq-sariq-pushti, 1 mln da esa Rang-barang tusga kiradi!`;
-            } else if(lowerQ.includes('yechish') || lowerQ.includes('ton')) {
-                reply = `${userName}, hech qanday minimal cheklov yo'q! Istalgan vaqtda hamyon manzilingizni kiritib yechib olishingiz mumkin.`;
-            }
-
-            setTimeout(() => {
-                chat.innerHTML += `<div class="chat-msg">🤖 <b>AI:</b> ${reply}</div>`;
-                chat.scrollTop = chat.scrollHeight;
-            }, 400);
-
-            inputField.value = '';
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        const proofs = [
-            "@shoxruz_fan - 2.5 TON yechib oldi ✅",
-            "@bekzod_77 - 0.5 TON yechib oldi ✅",
-            "@aziz_coder - 10 TON yechib oldi ✅",
-            "@jasur_99 - 1.2 TON yechib oldi ✅",
-            "@dilshod_pro - 5 TON yechib oldi ✅",
-            "@timur_tv - 0.8 TON yechib oldi ✅",
-            "@sarvar_uz - 4 TON yechib oldi ✅",
-            "@bobur_net - 3 TON yechib oldi ✅",
-            "@jamshid_ff - 0.1 TON yechib oldi ✅",
-            "@rustam_m - 6 TON yechib oldi ✅"
-        ];
-        document.getElementById('proofList').innerHTML = proofs.map(p => `<div class='proof-item'>${p}</div>`).join('');
     </script>
 </body>
 </html>
