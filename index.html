@@ -3,551 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Wallet UI</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Aviator Web App</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { 
-            background: #0f0f13; 
-            color: #ffffff; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-            padding-bottom: 90px;
-        }
-
-        #bot-token-config { display: none; }
-
-        /* Top Bar */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 20px;
-            background: #0f0f13;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .close-btn { font-size: 20px; color: #fff; cursor: pointer; }
-        .wallet-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        .wallet-title span { color: #2481cc; font-size: 16px; }
-        .header-right { display: flex; align-items: center; gap: 20px; color: #fff; font-size: 20px; }
-
-        /* Pages Content */
-        .page { display: none; padding: 10px 16px; }
-        .page.active { display: block; }
-
-        /* DeFi Page */
-        .balance-card {
-            text-align: center;
-            padding: 15px 0;
-        }
-        .wallet-address {
-            font-size: 13px;
-            color: #8e8e93;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-        .total-balance {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .total-balance span { font-weight: 400; color: #8e8e93; font-size: 26px; }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .action-btn {
-            background: #1c1c24;
-            border: none;
-            border-radius: 16px;
-            padding: 14px 10px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .action-btn:active { background: #2c2c38; }
-        .action-icon {
-            width: 32px;
-            height: 32px;
-            background: #2b2b36;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        /* Banner */
-        .banner {
-            background: linear-gradient(135deg, #18233c 0%, #101726 100%);
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(36, 129, 204, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        .banner-title {
-            font-size: 15px;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 8px;
-        }
-        .banner-sub {
-            font-size: 13px;
-            color: #5ac8fa;
-            font-weight: 500;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #8e8e93;
-            margin-bottom: 12px;
-        }
-
-        /* Token List item */
-        .token-list {
-            background: #1c1c24;
-            border-radius: 20px;
-            padding: 4px 16px;
-            margin-bottom: 20px;
-        }
-        .token-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .token-item:last-child { border-bottom: none; }
-        .token-left { display: flex; align-items: center; gap: 12px; }
-        .token-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .token-info h4 { font-size: 15px; font-weight: 600; }
-        .token-info p { font-size: 13px; color: #8e8e93; margin-top: 2px; }
-        .token-right { text-align: right; }
-        .token-right h4 { font-size: 15px; font-weight: 600; }
-        .token-right p { font-size: 13px; color: #8e8e93; margin-top: 2px; }
-
-        /* Empty Activity / History */
-        .empty-activity {
-            text-align: center;
-            padding: 24px 0;
-            color: #8e8e93;
-            font-size: 14px;
-        }
-
-        /* Swap Page styling */
-        .swap-box {
-            background: #1c1c24;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-        .swap-label { font-size: 13px; color: #8e8e93; margin-bottom: 8px; }
-        .swap-input-row { display: flex; justify-content: space-between; align-items: center; }
-        .swap-val { font-size: 24px; font-weight: 600; }
-        .swap-currency-btn {
-            background: #2b2b36;
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-        .swap-divider {
-            display: flex;
-            justify-content: center;
-            margin: -6px 0;
-            position: relative;
-            z-index: 2;
-        }
-        .swap-icon-btn {
-            width: 36px;
-            height: 36px;
-            background: #2b2b36;
-            border: 4px solid #0f0f13;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-        }
-        
-        .stocks-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            background: #1c1c24;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-        .stock-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            text-align: center;
-        }
-        .stock-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            background: #2b2b36;
-        }
-        .stock-item h5 { font-size: 12px; font-weight: 600; }
-        .stock-item p { font-size: 11px; color: #ff3b30; }
-
-        /* Earn Cards */
-        .earn-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .earn-card {
-            background: #1c1c24;
-            border-radius: 20px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 130px;
-        }
-        .earn-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .earn-card-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .earn-card-val { font-size: 20px; font-weight: 700; }
-
-        /* Apps Grid */
-        .app-banner-card {
-            background: #1c1c24;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-        .app-banner-img {
-            width: 100%;
-            height: 140px;
-            background: linear-gradient(135deg, #1b362c, #0e1d17);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .app-banner-content { padding: 16px; }
-        .app-banner-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
-        .app-item-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #252530;
-            padding: 10px 14px;
-            border-radius: 14px;
-        }
-        .app-item-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
-        .app-open-btn {
-            background: #8774e1;
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        /* Bottom Navigation Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(22, 22, 28, 0.9);
-            backdrop-filter: blur(15px);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            padding: 8px 10px 20px 10px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            z-index: 1000;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: transparent;
-            border: none;
-            color: #8e8e93;
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            padding: 6px 0;
-            border-radius: 20px;
-            transition: 0.2s;
-        }
-        .nav-item.active {
-            color: #ffffff;
-            background: rgba(135, 116, 225, 0.15);
-        }
-        .nav-icon { font-size: 18px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #121212; color: #ffffff; display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        .header { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #1e1e1e; border-radius: 8px; margin-bottom: 10px; }
+        .logo { color: #ff3333; font-weight: bold; font-size: 20px; font-style: italic; }
+        .balance { background: #2a2a2a; padding: 5px 10px; border-radius: 6px; font-size: 14px; color: #00ffcc; }
+        .game-container { width: 100%; max-width: 400px; height: 220px; background: #1a1a1a; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #333; margin-bottom: 10px; }
+        .multiplier { font-size: 42px; font-weight: bold; }
+        .bet-box { width: 100%; max-width: 400px; background: #1e1e1e; padding: 12px; border-radius: 12px; border: 1.5px solid #333; }
+        .bet-input-group { display: flex; align-items: center; background: #121212; border-radius: 8px; padding: 10px; border: 1px solid #444; margin-bottom: 10px; }
+        .bet-input-group input { background: transparent; border: none; color: #fff; font-size: 18px; width: 100%; outline: none; text-align: center; }
+        .action-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-bet { background-color: #28a745; color: white; }
+        .btn-cashout { background-color: #ff9900; color: white; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="bot-token-config" data-token="8282612659:AAGvmT0PmHrSJvxbMhsCckj4TXiLeByhdoU"></div>
-
-    <!-- Header -->
     <div class="header">
-        <div class="header-left">
-            <span class="close-btn" onclick="window.Telegram.WebApp.close()">✕</span>
-            <div class="wallet-title">Hamyon <span>✔</span></div>
-        </div>
-        <div class="header-right">
-            <span>⌄</span>
-            <span>⋮</span>
-        </div>
+        <div class="logo">Aviator</div>
+        <div class="balance" id="balanceDisplay">1,000,000 UZS</div>
     </div>
 
-    <!-- 1. DEFI PAGE -->
-    <div id="page-defi" class="page active">
-        <div class="balance-card">
-            <div class="wallet-address">UQCN...3ryp <span>📋</span></div>
-            <div class="total-balance">0<span>,00 UZS</span></div>
-        </div>
-
-        <div class="action-buttons">
-            <button class="action-btn"><div class="action-icon">↗</div>O'tkazma</button>
-            <button class="action-btn"><div class="action-icon">+</div>To'ldirish</button>
-            <button class="action-btn"><div class="action-icon">↙</div>Yechib olish</button>
-        </div>
-
-        <div class="banner">
-            <div class="banner-title">GRAM Daromad darajasi oshdi ✨<br>12.82% APY</div>
-            <div class="banner-sub">Daromad olishni boshlang ></div>
-        </div>
-
-        <div class="section-title">Tokenlar</div>
-        <div class="token-list">
-            <div class="token-item">
-                <div class="token-left">
-                    <div class="token-icon" style="background: #0088cc; color:white;">💎</div>
-                    <div class="token-info">
-                        <h4>Gram (eski Toncoin)</h4>
-                        <p>0 GRAM</p>
-                    </div>
-                </div>
-                <div class="token-right">
-                    <h4>0,00 UZS</h4>
-                </div>
-            </div>
-            <div class="token-item">
-                <div class="token-left">
-                    <div class="token-icon" style="background: #26a17b; color:white;">₮</div>
-                    <div class="token-info">
-                        <h4>USDT</h4>
-                        <p>0 USDT</p>
-                    </div>
-                </div>
-                <div class="token-right">
-                    <h4>0,00 UZS</h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-title">Faoliyat</div>
-        <div class="token-list">
-            <div class="empty-activity">Hozircha o'tkazmalar yo'q</div>
-        </div>
+    <div class="game-container">
+        <div class="multiplier" id="multiplierDisplay">1.00x</div>
+        <div id="statusText">Oʻyin boshlanishini kuting...</div>
     </div>
 
-    <!-- 2. ALMASHTIRISH PAGE -->
-    <div id="page-swap" class="page">
-        <div class="swap-box">
-            <div class="swap-label">Almashtirasiz</div>
-            <div class="swap-input-row">
-                <div class="swap-val">0</div>
-                <button class="swap-currency-btn">💎 GRAM <span>⌄</span></button>
-            </div>
-            <div style="font-size: 12px; color: #8e8e93; margin-top: 8px;">0,00 UZS &nbsp;&nbsp;&nbsp; 0 GRAM &nbsp; <span style="color:#8774e1">Eng ko'p</span></div>
+    <div class="bet-box">
+        <div class="bet-input-group">
+            <input type="number" id="betAmount" value="1000" min="1000" max="500000">
         </div>
-
-        <div class="swap-divider">
-            <div class="swap-icon-btn">⇅</div>
-        </div>
-
-        <div class="swap-box" style="margin-top: 6px;">
-            <div class="swap-label">Qabul qilasiz</div>
-            <div class="swap-input-row">
-                <div class="swap-val">0</div>
-                <button class="swap-currency-btn">₮ USDT <span>⌄</span></button>
-            </div>
-            <div style="font-size: 12px; color: #8e8e93; margin-top: 8px;">0,00 UZS &nbsp;&nbsp;&nbsp; 0 USDT</div>
-        </div>
-
-        <div class="section-title" style="margin-top: 20px;">Aksiyalar va ETF'lar</div>
-        <div class="stocks-grid">
-            <div class="stock-item">
-                <div class="stock-icon" style="color: #ff3b30;">🚗</div>
-                <h5>TSLAx</h5>
-                <p>-2,22%</p>
-            </div>
-            <div class="stock-item">
-                <div class="stock-icon" style="color: #34c759;">💻</div>
-                <h5>NVDAx</h5>
-                <p>-2,91%</p>
-            </div>
-            <div class="stock-item">
-                <div class="stock-icon" style="color: #4285F4;">🌐</div>
-                <h5>GOOGLx</h5>
-                <p>-1,66%</p>
-            </div>
-            <div class="stock-item">
-                <div class="stock-icon" style="color: #0052FF;">🪙</div>
-                <h5>COINx</h5>
-                <p>-0,74%</p>
-            </div>
-        </div>
-
-        <div class="section-title">Asosiy tokenlar</div>
-        <div class="token-list">
-            <div class="token-item">
-                <div class="token-left">
-                    <div class="token-icon" style="background: #0088cc;">💎</div>
-                    <div class="token-info"><h4>GRAM</h4><p style="color:#ff3b30">-2,12%</p></div>
-                </div>
-            </div>
-            <div class="token-item">
-                <div class="token-left">
-                    <div class="token-icon" style="background: #f7931a;">₿</div>
-                    <div class="token-info"><h4>Bitcoin</h4><p style="color:#34c759">+0,93%</p></div>
-                </div>
-            </div>
-        </div>
+        <button class="action-btn btn-bet" id="betBtn" onclick="placeBet()">Stavka qo'yish</button>
+        <button class="action-btn btn-cashout" id="cashOutBtn" onclick="cashOut()">CASH OUT <span id="cashOutAmount">0</span> UZS</button>
     </div>
-
-    <!-- 3. DAROMAD PAGE -->
-    <div id="page-earn" class="page">
-        <div class="balance-card" style="text-align: left; padding: 10px 0 20px 0;">
-            <h2 style="font-size: 22px; font-weight: 700;">% Daromad</h2>
-            <p style="color: #8e8e93; font-size: 13px; margin-top: 4px;">Kripto saqlab turganingiz uchun mukofot.</p>
-        </div>
-
-        <div class="earn-grid">
-            <div class="earn-card">
-                <div class="earn-card-top">
-                    <div class="earn-card-icon" style="background: rgba(0,136,204,0.2); color:#0088cc;">💎</div>
-                </div>
-                <div>
-                    <div style="font-size: 13px; color: #8e8e93;">Gram (eski Toncoin)</div>
-                    <div class="earn-card-val" style="margin-top: 4px;">12.82%</div>
-                </div>
-            </div>
-            <div class="earn-card">
-                <div class="earn-card-top">
-                    <div class="earn-card-icon" style="background: rgba(247,147,26,0.2); color:#f7931a;">🪙</div>
-                </div>
-                <div>
-                    <div style="font-size: 13px; color: #8e8e93;">Oltin</div>
-                    <div class="earn-card-val" style="margin-top: 4px;">2.58%</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. ILOVALAR PAGE -->
-    <div id="page-apps" class="page">
-        <div class="app-banner-card">
-            <div class="app-banner-img">
-                <span style="font-size: 40px;">📈</span>
-            </div>
-            <div class="app-banner-content">
-                <h4>Bozorni o'rganing. Qaror qabul qiling</h4>
-                <div class="app-item-row">
-                    <div class="app-item-info"><span>📊</span> AlphaTap</div>
-                    <button class="app-open-btn">Ochish</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="app-banner-card">
-            <div class="app-banner-img" style="background: linear-gradient(135deg, #1b2846, #0e1424);">
-                <span style="font-size: 40px;">⚽</span>
-            </div>
-            <div class="app-banner-content">
-                <h4>TON'dagi USDT yordamida futbol natijalarini bashorat qiling</h4>
-                <div class="app-item-row">
-                    <div class="app-item-info"><span>⚽</span> Predict with Polymarket</div>
-                    <button class="app-open-btn">Ochish</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchPage('defi', this)">
-            <span class="nav-icon">💎</span>
-            DeFi
-        </button>
-        <button class="nav-item" onclick="switchPage('swap', this)">
-            <span class="nav-icon">⇅</span>
-            Almashtirish
-        </button>
-        <button class="nav-item" onclick="switchPage('earn', this)">
-            <span class="nav-icon">%</span>
-            Daromad
-        </button>
-        <button class="nav-item" onclick="switchPage('apps', this)">
-            <span class="nav-icon">☷</span>
-            Ilovalar
-        </button>
-    </nav>
 
     <script>
-        const BOT_TOKEN = document.getElementById('bot-token-config').getAttribute('data-token');
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        let balance = 1000000;
+        let currentMultiplier = 1.00;
+        let isPlaying = false;
+        let hasBet = false;
+        let currentBet = 0;
+        let crashPoint = 1.00;
 
-        function switchPage(pageName, btnElement) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageName).classList.add('active');
+        const balanceDisplay = document.getElementById('balanceDisplay');
+        const multiplierDisplay = document.getElementById('multiplierDisplay');
+        const betBtn = document.getElementById('betBtn');
+        const cashOutBtn = document.getElementById('cashOutBtn');
+        const betInput = document.getElementById('betAmount');
 
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+        function updateBalance() { balanceDisplay.innerText = balance.toLocaleString() + " UZS"; }
+
+        function startGameCycle() {
+            if (isPlaying) return;
+            let randomValue = Math.random();
+            if (randomValue < 0.3) crashPoint = parseFloat((1.01 + Math.random() * 0.5).toFixed(2));
+            else if (randomValue < 0.7) crashPoint = parseFloat((1.51 + Math.random() * 3.5).toFixed(2));
+            else crashPoint = parseFloat((5.01 + Math.random() * 194.99).toFixed(2));
+
+            currentMultiplier = 1.00;
+            isPlaying = true;
+            betBtn.style.display = hasBet ? "none" : "block";
+            cashOutBtn.style.display = hasBet ? "block" : "none";
+
+            let gameInterval = setInterval(() => {
+                currentMultiplier += 0.01;
+                multiplierDisplay.innerText = currentMultiplier.toFixed(2) + "x";
+                if (hasBet) document.getElementById('cashOutAmount').innerText = Math.floor(currentBet * currentMultiplier).toLocaleString();
+                if (currentMultiplier >= crashPoint) {
+                    clearInterval(gameInterval);
+                    endGame(false);
+                }
+            }, 50);
         }
+
+        function placeBet() {
+            let amount = parseInt(betInput.value);
+            if (amount < 1000 || amount > 500000) { alert("Stavka 1,000 dan 500,000 gacha bo'lishi kerak!"); return; }
+            if (amount > balance) { alert("Balansingizda yetarli mablag' yo'q!"); return; }
+            
+            balance -= amount;
+            currentBet = amount;
+            hasBet = true;
+            updateBalance();
+            betBtn.disabled = true;
+            betBtn.innerText = "Kutilmoqda...";
+        }
+
+        function cashOut() {
+            if (!hasBet || !isPlaying) return;
+            let winAmount = Math.floor(currentBet * currentMultiplier);
+            balance += winAmount;
+            hasBet = false;
+            updateBalance();
+            endGame(true);
+        }
+
+        function endGame(isWon) {
+            isPlaying = false;
+            multiplierDisplay.innerText = crashPoint.toFixed(2) + "x";
+            betBtn.style.display = "block";
+            betBtn.disabled = false;
+            betBtn.innerText = "Stavka qo'yish";
+            cashOutBtn.style.display = "none";
+            setTimeout(startGameCycle, 2000);
+        }
+
+        updateBalance();
+        setTimeout(startGameCycle, 1500);
     </script>
 </body>
 </html>
