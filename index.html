@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hamster Kombat - Pro Version</title>
+    <title>Hamster Kombat - Asoschi Version</title>
     <style>
         :root { --accent: #f3ba2f; --bg: #0f121a; --card: #191f2d; --text-gray: #8a96a3; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
@@ -25,9 +25,12 @@
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
         .hamster-container { position: relative; margin: 10px 0; display: flex; justify-content: center; align-items: center; }
-        .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 90px; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; text-align: center; outline: none; }
+        .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; text-align: center; outline: none; position: relative; overflow: hidden; }
         .hamster-circle:active { transform: scale(0.93); }
-        .hamster-outfit-text { font-size: 11px; color: var(--accent); margin-top: 5px; font-weight: bold; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px; }
+        
+        /* CEO Hamster Styling */
+        .hamster-img-box { font-size: 80px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .hamster-outfit-text { font-size: 12px; color: white; background: rgba(0, 0, 0, 0.6); padding: 3px 10px; border-radius: 6px; margin-top: 8px; font-weight: bold; border: 1px solid var(--accent); }
 
         .floating-number { position: absolute; font-size: 24px; font-weight: bold; color: var(--accent); pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 50; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-70px) scale(1.3); } }
@@ -56,10 +59,11 @@
         .wallet-input { width: 100%; padding: 10px; background: #0f121a; border: 1px solid #283348; border-radius: 8px; color: white; margin-bottom: 10px; font-size: 14px; outline: none; }
         .wallet-btn { width: 100%; padding: 10px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card); width: 90%; max-width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #283348; }
-        .modal-content h3 { color: var(--accent); margin-bottom: 15px; font-size: 16px; }
-        .boost-option { background: #121620; border: 1px solid #283348; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--card); width: 100%; max-width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #283348; text-align: center; }
+        .modal-content h3 { color: var(--accent); margin-bottom: 15px; font-size: 18px; }
+        .modal-text { font-size: 14px; line-height: 1.5; color: #d1d5db; margin-bottom: 20px; }
+        .boost-option { background: #121620; border: 1px solid #283348; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 440px; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #283348; z-index: 100; }
         .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 11px; cursor: pointer; outline: none; }
@@ -103,8 +107,10 @@
 
         <div class="hamster-container" id="hamsterWrapper">
             <button class="hamster-circle" id="hamsterClicker">
-                <span id="hamsterEmoji">🐹</span>
-                <div class="hamster-outfit-text" id="outfitText">Oddiy kiyim</div>
+                <div class="hamster-img-box">
+                    <span id="hamsterEmoji">🐹🕶️👔</span>
+                    <div class="hamster-outfit-text" id="outfitText">Oddiy kiyim</div>
+                </div>
             </button>
         </div>
 
@@ -152,6 +158,39 @@
     <!-- EARN TAB -->
     <div id="tab-earn" class="content-area">
         <h3 style="margin-bottom: 12px; font-size: 16px; color: var(--accent);">Bonus Vazifalar</h3>
+        
+        <div class="task-item">
+            <div class="task-info">
+                <div>100 ta tanga olish</div>
+                <div>+10 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimEarnTask(100, 10, this)">Bajarish</button>
+        </div>
+
+        <div class="task-item">
+            <div class="task-info">
+                <div>10,000 tanga to'plash</div>
+                <div>+7,000 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimEarnTask(10000, 7000, this)">Bajarish</button>
+        </div>
+
+        <div class="task-item">
+            <div class="task-info">
+                <div>15,000 tanga to'plash</div>
+                <div>+12,000 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimEarnTask(15000, 12000, this)">Bajarish</button>
+        </div>
+
+        <div class="task-item">
+            <div class="task-info">
+                <div>70,000 tanga to'plash</div>
+                <div>+900,000 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimEarnTask(70000, 900000, this)">Bajarish</button>
+        </div>
+
         <div class="task-item">
             <div class="task-info">
                 <div>YouTube Shorts Videoni ko'rish</div>
@@ -201,6 +240,17 @@
                 <button class="task-btn" onclick="buyBoost(10000, 40)">Sotib olish</button>
             </div>
             <button id="closeBoostBtn" style="width:100%; background:#283348; border:none; color:white; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;">Yopish</button>
+        </div>
+    </div>
+
+    <!-- WITHDRAW WARNING MODAL -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <h3>Diqqat! ⚠️</h3>
+            <div class="modal-text" id="withdrawWarningText">
+                1 oydan keyin yechib olsangiz boʻladi. Sababi Botda hozir pul kam!
+            </div>
+            <button onclick="closeWithdrawModal()" style="width:100%; background:var(--accent); border:none; color:#000; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">Tushunarli</button>
         </div>
     </div>
 
@@ -256,7 +306,6 @@
             }
         }, 1000);
 
-        // Sichqoncha va Telefon uchun teginish hodisasi (Hamster click)
         const hamsterBtn = document.getElementById('hamsterClicker');
         hamsterBtn.addEventListener('pointerdown', function(e) {
             if (coins >= MAX_COINS || energy < tapPower) return;
@@ -287,13 +336,41 @@
             document.getElementById('level').innerText = level;
             document.getElementById('energy').innerText = energy;
 
-            let hamsterEmoji = "🐹";
+            // 10 ta kiyim bosqichi
+            let hamsterEmoji = "🐹🕶️👔";
             let outfitName = "Oddiy kiyim";
-            if (coins >= 50000) { hamsterEmoji = "👑🐹"; outfitName = "Qirol libosi"; }
-            else if (coins >= 25000) { hamsterEmoji = "🕶️🐹"; outfitName = "Stilist kiyim"; }
-            else if (coins >= 10000) { hamsterEmoji = "🎩🐹"; outfitName = "Smoking kostyum"; }
-            else if (coins >= 5000) { hamsterEmoji = "👔🐹"; outfitName = "Biznes kostyum"; }
-            else if (coins >= 1000) { hamsterEmoji = "🧣🐹"; outfitName = "Sportcha sharf"; }
+            
+            if (coins >= 10000000) {
+                hamsterEmoji = "👑🌟🦁";
+                outfitName = "Asoschi (Rangbarang)";
+            } else if (coins >= 5000000) {
+                hamsterEmoji = "💎👑👔";
+                outfitName = "9-chi: Super Boss";
+            } else if (coins >= 1000000) {
+                hamsterEmoji = "⚡🕶️💼";
+                outfitName = "8-chi: Premium Agent";
+            } else if (coins >= 500000) {
+                hamsterEmoji = "🔥🎩🧥";
+                outfitName = "7-chi: Elita Kostyum";
+            } else if (coins >= 100000) {
+                hamsterEmoji = "🌟👔🕶️";
+                outfitName = "6-chi: Stilist Libos";
+            } else if (coins >= 50000) {
+                hamsterEmoji = "👑🐹👔";
+                outfitName = "5-chi: Qirol Libosi";
+            } else if (coins >= 25000) {
+                hamsterEmoji = "🕶️🐹🧣";
+                outfitName = "4-chi: Stilist Kiyim";
+            } else if (coins >= 10000) {
+                hamsterEmoji = "🎩🐹🧥";
+                outfitName = "3-chi: Smoking Kostyum";
+            } else if (coins >= 5000) {
+                hamsterEmoji = "👔🐹💼";
+                outfitName = "2-chi: Biznes Kostyum";
+            } else if (coins >= 1000) {
+                hamsterEmoji = "🧣🐹❄️";
+                outfitName = "1-chi: Sportcha Sharf";
+            }
 
             document.getElementById('hamsterEmoji').innerText = hamsterEmoji;
             document.getElementById('outfitText').innerText = outfitName;
@@ -324,6 +401,20 @@
                 alert("Karta muvaffaqiyatli sotib olindi!");
             } else {
                 alert("Tangangiz yetarli emas!");
+            }
+        }
+
+        function claimEarnTask(requiredCoins, rewardCoins, btn) {
+            if (coins >= requiredCoins) {
+                coins = Math.min(MAX_COINS, coins + rewardCoins);
+                updateUI();
+                saveData();
+                btn.innerText = "Bajarildi";
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+                alert("Tabriklaymiz! Mukofot berildi: +" + rewardCoins.toLocaleString() + " 🪙");
+            } else {
+                alert("Tangangiz yetarli emas! Bu vazifa uchun " + requiredCoins.toLocaleString() + " tanga kerak.");
             }
         }
 
@@ -363,7 +454,7 @@
             let wallet = document.getElementById('tonWallet').value;
             if (!wallet) { alert("Hamyon manzilini kiriting!"); return; }
             if (amount < 13 || amount > 53) { alert("Minimal miqdor 13 TON, Maksimal 53 TON bo'lishi kerak!"); return; }
-            alert("TON yechish bo'yicha ariza qabul qilindi!");
+            document.getElementById('withdrawModal').style.display = 'flex';
         }
 
         function withdrawUsdt() {
@@ -371,7 +462,11 @@
             let wallet = document.getElementById('usdtWallet').value;
             if (!wallet) { alert("Hamyon manzilini kiriting!"); return; }
             if (amount < 5 || amount > 15) { alert("Minimal miqdor 5 USDT, Maksimal 15 USDT bo'lishi kerak!"); return; }
-            alert("USDT yechish bo'yicha ariza qabul qilindi!");
+            document.getElementById('withdrawModal').style.display = 'flex';
+        }
+
+        function closeWithdrawModal() {
+            document.getElementById('withdrawModal').style.display = 'none';
         }
 
         function switchTab(tabName, event) {
