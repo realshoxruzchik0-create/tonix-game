@@ -2,14 +2,14 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hamster Kombat - Pro Version</title>
     <style>
         :root { --accent: #f3ba2f; --bg: #0f121a; --card: #191f2d; --text-gray: #8a96a3; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 70px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        body { background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 80px; }
         
-        .header { width: 100%; max-width: 440px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid #283348; }
+        .header { width: 100%; max-width: 440px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid #283348; z-index: 10; }
         .exchange-info { font-size: 13px; color: var(--text-gray); }
         .exchange-name { font-size: 15px; font-weight: bold; color: white; }
         .profit-box { background: #121620; padding: 6px 12px; border-radius: 8px; font-size: 12px; border: 1px solid #283348; text-align: right; cursor: pointer; }
@@ -25,7 +25,7 @@
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
         .hamster-container { position: relative; margin: 10px 0; display: flex; justify-content: center; align-items: center; }
-        .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 90px; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; text-align: center; }
+        .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 90px; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; text-align: center; outline: none; }
         .hamster-circle:active { transform: scale(0.93); }
         .hamster-outfit-text { font-size: 11px; color: var(--accent); margin-top: 5px; font-weight: bold; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px; }
 
@@ -44,26 +44,25 @@
         .market-card { background: var(--card); border: 1px solid #283348; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
         .card-title { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
         .card-profit { font-size: 11px; color: #2ecc71; margin-bottom: 8px; }
-        .card-buy { background: #283348; color: var(--accent); border: none; padding: 6px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .card-buy:hover { background: #354460; }
+        .card-buy { background: #283348; color: var(--accent); border: none; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
         .task-item { background: var(--card); border: 1px solid #283348; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .task-info div:first-child { font-size: 14px; font-weight: bold; }
         .task-info div:last-child { font-size: 12px; color: var(--accent); margin-top: 2px; }
-        .task-btn { background: var(--accent); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-decoration: none; display: inline-block; text-align: center; }
+        .task-btn { background: var(--accent); color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-decoration: none; display: inline-block; text-align: center; }
 
         .wallet-box { background: var(--card); border: 1px solid #283348; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
         .wallet-title { font-size: 14px; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
         .wallet-input { width: 100%; padding: 10px; background: #0f121a; border: 1px solid #283348; border-radius: 8px; color: white; margin-bottom: 10px; font-size: 14px; outline: none; }
         .wallet-btn { width: 100%; padding: 10px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: var(--card); width: 90%; max-width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #283348; }
         .modal-content h3 { color: var(--accent); margin-bottom: 15px; font-size: 16px; }
         .boost-option { background: #121620; border: 1px solid #283348; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 440px; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #283348; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 11px; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 440px; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #283348; z-index: 100; }
+        .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 11px; cursor: pointer; outline: none; }
         .nav-item.active { color: var(--accent); }
         .nav-item span { font-size: 18px; margin-bottom: 2px; }
     </style>
@@ -103,10 +102,10 @@
         </div>
 
         <div class="hamster-container" id="hamsterWrapper">
-            <div class="hamster-circle" id="hamsterClicker">
+            <button class="hamster-circle" id="hamsterClicker">
                 <span id="hamsterEmoji">🐹</span>
                 <div class="hamster-outfit-text" id="outfitText">Oddiy kiyim</div>
-            </div>
+            </button>
         </div>
 
         <div class="energy-footer">
@@ -201,17 +200,17 @@
                 </div>
                 <button class="task-btn" onclick="buyBoost(10000, 40)">Sotib olish</button>
             </div>
-            <button id="closeBoostBtn" style="width:100%; background:transparent; border:none; color:var(--text-gray); margin-top:10px; cursor:pointer; padding:8px;">Yopish</button>
+            <button id="closeBoostBtn" style="width:100%; background:#283348; border:none; color:white; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;">Yopish</button>
         </div>
     </div>
 
     <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('exchange', event)"><span>🪙</span>Exchange</div>
-        <div class="nav-item" onclick="switchTab('mine', event)"><span>⛏️</span>Mine</div>
-        <div class="nav-item" onclick="switchTab('earn', event)"><span>🎁</span>Earn</div>
-        <div class="nav-item" onclick="switchTab('wallet', event)"><span>💳</span>Wallet</div>
-    </div>
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('exchange', event)"><span>🪙</span>Exchange</button>
+        <button class="nav-item" onclick="switchTab('mine', event)"><span>⛏️</span>Mine</button>
+        <button class="nav-item" onclick="switchTab('earn', event)"><span>🎁</span>Earn</button>
+        <button class="nav-item" onclick="switchTab('wallet', event)"><span>💳</span>Wallet</button>
+    </nav>
 
     <script>
         let coins = parseInt(localStorage.getItem('hamster_coins')) || 0;
@@ -257,8 +256,9 @@
             }
         }, 1000);
 
-        // Hamsterni bosish hodisasi
-        document.getElementById('hamsterClicker').addEventListener('click', function(e) {
+        // Sichqoncha va Telefon uchun teginish hodisasi (Hamster click)
+        const hamsterBtn = document.getElementById('hamsterClicker');
+        hamsterBtn.addEventListener('pointerdown', function(e) {
             if (coins >= MAX_COINS || energy < tapPower) return;
             
             coins = Math.min(MAX_COINS, coins + tapPower);
@@ -337,7 +337,6 @@
             }
         }
 
-        // Boost Modal ochish va yopish tugmalari
         document.getElementById('openBoostBtn').addEventListener('click', function() {
             document.getElementById('boostModal').style.display = 'flex';
         });
@@ -386,6 +385,6 @@
         }
 
         updateUI();
-    </string>
+    </script>
 </body>
 </html>
