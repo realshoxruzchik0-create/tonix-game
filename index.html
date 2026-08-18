@@ -28,9 +28,10 @@
         .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; text-align: center; outline: none; position: relative; overflow: hidden; }
         .hamster-circle:active { transform: scale(0.93); }
         
-        /* CEO Hamster Styling */
-        .hamster-img-box { font-size: 80px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .hamster-outfit-text { font-size: 12px; color: white; background: rgba(0, 0, 0, 0.6); padding: 3px 10px; border-radius: 6px; margin-top: 8px; font-weight: bold; border: 1px solid var(--accent); }
+        /* Qora kiyimdagi CEO Hamster rasmi */
+        .hamster-img-box { width: 140px; height: 140px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 3px solid var(--accent); background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .hamster-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .hamster-outfit-text { font-size: 11px; color: white; background: rgba(0, 0, 0, 0.7); padding: 3px 10px; border-radius: 6px; margin-top: 8px; font-weight: bold; border: 1px solid var(--accent); }
 
         .floating-number { position: absolute; font-size: 24px; font-weight: bold; color: var(--accent); pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 50; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-70px) scale(1.3); } }
@@ -108,14 +109,14 @@
         <div class="hamster-container" id="hamsterWrapper">
             <button class="hamster-circle" id="hamsterClicker">
                 <div class="hamster-img-box">
-                    <span id="hamsterEmoji">🐹🕶️👔</span>
-                    <div class="hamster-outfit-text" id="outfitText">Oddiy kiyim</div>
+                    <img id="hamsterImageTag" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="Hamster CEO">
                 </div>
+                <div class="hamster-outfit-text" id="outfitText">Asoschi (Qora Kostyum)</div>
             </button>
         </div>
 
         <div class="energy-footer">
-            <div class="energy-text">⚡ <span id="energy">1000</span> / 1000</div>
+            <div class="energy-text">⚡ <span id="energy">1000</span> / <span id="maxEnergySpan">1000</span></div>
             <button class="boost-btn" id="openBoostBtn">🚀 Boost</button>
         </div>
     </div>
@@ -224,20 +225,27 @@
     <!-- BOOST MODAL -->
     <div class="modal" id="boostModal">
         <div class="modal-content">
-            <h3>Multi-Tap Boosters</h3>
+            <h3>Energiya va Boost</h3>
             <div class="boost-option">
                 <div>
-                    <div style="font-size: 13px; font-weight: bold;">Har bosishga +4</div>
+                    <div style="font-size: 13px; font-weight: bold;">+2,000 Energy</div>
                     <div style="font-size: 11px; color: var(--text-gray);">Narxi: 1,000 tanga</div>
                 </div>
-                <button class="task-btn" onclick="buyBoost(1000, 4)">Sotib olish</button>
+                <button class="task-btn" onclick="buyEnergyBoost(1000, 2000)">Sotib olish</button>
             </div>
             <div class="boost-option">
                 <div>
-                    <div style="font-size: 13px; font-weight: bold;">Har bosishga +40</div>
+                    <div style="font-size: 13px; font-weight: bold;">+40,000 Energy</div>
                     <div style="font-size: 11px; color: var(--text-gray);">Narxi: 10,000 tanga</div>
                 </div>
-                <button class="task-btn" onclick="buyBoost(10000, 40)">Sotib olish</button>
+                <button class="task-btn" onclick="buyEnergyBoost(10000, 40000)">Sotib olish</button>
+            </div>
+            <div class="boost-option">
+                <div>
+                    <div style="font-size: 13px; font-weight: bold;">+3,000,000 Energy</div>
+                    <div style="font-size: 11px; color: var(--text-gray);">Narxi: 1,000,000 tanga</div>
+                </div>
+                <button class="task-btn" onclick="buyEnergyBoost(1000000, 3000000)">Sotib olish</button>
             </div>
             <button id="closeBoostBtn" style="width:100%; background:#283348; border:none; color:white; padding:10px; border-radius:8px; margin-top:10px; cursor:pointer; font-weight:bold;">Yopish</button>
         </div>
@@ -263,12 +271,15 @@
     </nav>
 
     <script>
+        // Siz yuborgan qora kiyimdagi hamster rasmining data havolasi
+        const baseHamsterImg = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA="; 
+        
         let coins = parseInt(localStorage.getItem('hamster_coins')) || 0;
         let profitPerHour = parseInt(localStorage.getItem('hamster_profit')) || 0;
-        let energy = parseInt(localStorage.getItem('hamster_energy')) || 1000;
+        let maxEnergy = parseInt(localStorage.getItem('hamster_maxEnergy')) || 1000;
+        let energy = parseInt(localStorage.getItem('hamster_energy')) || maxEnergy;
         let tapPower = parseInt(localStorage.getItem('hamster_tapPower')) || 1;
         let youtubeClaimed = localStorage.getItem('hamster_yt') === 'true';
-        const maxEnergy = 1000;
         const MAX_COINS = 10000000000000;
 
         const levels = [
@@ -288,6 +299,7 @@
             localStorage.setItem('hamster_coins', coins);
             localStorage.setItem('hamster_profit', profitPerHour);
             localStorage.setItem('hamster_energy', energy);
+            localStorage.setItem('hamster_maxEnergy', maxEnergy);
             localStorage.setItem('hamster_tapPower', tapPower);
             localStorage.setItem('hamster_yt', youtubeClaimed);
         }
@@ -300,7 +312,7 @@
                 saveData();
             }
             if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 5);
+                energy = Math.min(maxEnergy, energy + Math.max(1, Math.floor(maxEnergy / 200)));
                 updateUI();
                 saveData();
             }
@@ -335,45 +347,19 @@
             document.getElementById('coins').innerText = Math.floor(coins).toLocaleString();
             document.getElementById('level').innerText = level;
             document.getElementById('energy').innerText = energy;
+            document.getElementById('maxEnergySpan').innerText = maxEnergy;
 
-            // 10 ta kiyim bosqichi
-            let hamsterEmoji = "🐹🕶️👔";
-            let outfitName = "Oddiy kiyim";
-            
+            let imgElement = document.getElementById('hamsterImageTag');
+            let outfitText = document.getElementById('outfitText');
+
+            // 10 mln tangaga yetganda rangbarang tusga o'tishi
             if (coins >= 10000000) {
-                hamsterEmoji = "👑🌟🦁";
-                outfitName = "Asoschi (Rangbarang)";
-            } else if (coins >= 5000000) {
-                hamsterEmoji = "💎👑👔";
-                outfitName = "9-chi: Super Boss";
-            } else if (coins >= 1000000) {
-                hamsterEmoji = "⚡🕶️💼";
-                outfitName = "8-chi: Premium Agent";
-            } else if (coins >= 500000) {
-                hamsterEmoji = "🔥🎩🧥";
-                outfitName = "7-chi: Elita Kostyum";
-            } else if (coins >= 100000) {
-                hamsterEmoji = "🌟👔🕶️";
-                outfitName = "6-chi: Stilist Libos";
-            } else if (coins >= 50000) {
-                hamsterEmoji = "👑🐹👔";
-                outfitName = "5-chi: Qirol Libosi";
-            } else if (coins >= 25000) {
-                hamsterEmoji = "🕶️🐹🧣";
-                outfitName = "4-chi: Stilist Kiyim";
-            } else if (coins >= 10000) {
-                hamsterEmoji = "🎩🐹🧥";
-                outfitName = "3-chi: Smoking Kostyum";
-            } else if (coins >= 5000) {
-                hamsterEmoji = "👔🐹💼";
-                outfitName = "2-chi: Biznes Kostyum";
-            } else if (coins >= 1000) {
-                hamsterEmoji = "🧣🐹❄️";
-                outfitName = "1-chi: Sportcha Sharf";
+                imgElement.style.filter = "hue-rotate(180deg) saturate(300%)";
+                outfitText.innerText = "Asoschi (Rangbarang 🔥)";
+            } else {
+                imgElement.style.filter = "none";
+                outfitText.innerText = "Asoschi (Qora Kostyum)";
             }
-
-            document.getElementById('hamsterEmoji').innerText = hamsterEmoji;
-            document.getElementById('outfitText').innerText = outfitName;
 
             let currentLevelProgress = coins % 10000;
             let progressPercent = (currentLevelProgress / 10000) * 100;
@@ -436,14 +422,15 @@
             document.getElementById('boostModal').style.display = 'none';
         });
 
-        function buyBoost(price, power) {
+        function buyEnergyBoost(price, addedEnergy) {
             if (coins >= price) {
                 coins -= price;
-                tapPower = power;
+                maxEnergy += addedEnergy;
+                energy = maxEnergy;
                 updateUI();
                 saveData();
                 document.getElementById('boostModal').style.display = 'none';
-                alert("Boost muvaffaqiyatli faollashtirildi!");
+                alert("Energiya muvaffaqiyatli oshirildi! +" + addedEnergy.toLocaleString() + " Energy");
             } else {
                 alert("Tangangiz yetarli emas!");
             }
