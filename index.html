@@ -3,50 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hamster Kombat - Full Version</title>
+    <title>Hamster Kombat - Pro Version</title>
     <style>
         :root { --accent: #f3ba2f; --bg: #0f121a; --card: #191f2d; --text-gray: #8a96a3; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
         body { background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 70px; }
         
-        /* Top Header */
         .header { width: 100%; max-width: 440px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid #283348; }
         .exchange-info { font-size: 13px; color: var(--text-gray); }
         .exchange-name { font-size: 15px; font-weight: bold; color: white; }
-        .profit-box { background: #121620; padding: 6px 12px; border-radius: 8px; font-size: 12px; border: 1px solid #283348; text-align: right; }
+        .profit-box { background: #121620; padding: 6px 12px; border-radius: 8px; font-size: 12px; border: 1px solid #283348; text-align: right; cursor: pointer; }
         .profit-value { color: #2ecc71; font-weight: bold; }
 
-        /* Main Score Section */
-        .score-section { display: flex; flex-direction: column; align-items: center; margin: 20px 0; }
+        .score-section { display: flex; flex-direction: column; align-items: center; margin: 15px 0; }
         .balance-container { display: flex; align-items: center; gap: 8px; font-size: 38px; font-weight: 900; color: var(--accent); margin-bottom: 5px; }
-        .level-info { font-size: 13px; color: var(--text-gray); cursor: pointer; }
+        .level-info { font-size: 13px; color: var(--text-gray); }
 
-        /* Progress Bar */
         .progress-container { width: 90%; max-width: 400px; margin-bottom: 15px; }
         .progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-gray); margin-bottom: 5px; }
         .progress-bar { width: 100%; height: 8px; background: #283348; border-radius: 4px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
-        /* Hamster Tap Area */
         .hamster-container { position: relative; margin: 10px 0; display: flex; justify-content: center; align-items: center; }
-        .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 110px; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; }
+        .hamster-circle { width: 240px; height: 240px; background: radial-gradient(circle, #27344d 0%, #151b28 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 90px; cursor: pointer; border: 6px solid var(--accent); box-shadow: 0 0 35px rgba(243, 186, 47, 0.25); transition: transform 0.08s; text-align: center; }
         .hamster-circle:active { transform: scale(0.93); }
+        .hamster-outfit-text { font-size: 11px; color: var(--accent); margin-top: 5px; font-weight: bold; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px; }
 
-        /* Floating Tap Text (+1) */
         .floating-number { position: absolute; font-size: 24px; font-weight: bold; color: var(--accent); pointer-events: none; animation: floatUp 0.8s ease-out forwards; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-70px) scale(1.3); } }
 
-        /* Energy & Boost Bar */
         .energy-footer { width: 90%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .energy-text { font-size: 14px; font-weight: bold; color: var(--text-gray); }
         .energy-text span { color: white; }
         .boost-btn { background: #283348; border: none; color: var(--accent); padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 5px; }
 
-        /* Tab Contents */
         .content-area { width: 100%; max-width: 440px; flex: 1; padding: 10px 15px; display: none; }
         .content-area.active { display: block; }
 
-        /* Mine Cards Grid */
         .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .market-card { background: var(--card); border: 1px solid #283348; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
         .card-title { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
@@ -54,13 +47,23 @@
         .card-buy { background: #283348; color: var(--accent); border: none; padding: 6px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
         .card-buy:hover { background: #354460; }
 
-        /* Earn Tasks List */
         .task-item { background: var(--card); border: 1px solid #283348; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .task-info div:first-child { font-size: 14px; font-weight: bold; }
         .task-info div:last-child { font-size: 12px; color: var(--accent); margin-top: 2px; }
-        .task-btn { background: var(--accent); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .task-btn { background: var(--accent); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-decoration: none; display: inline-block; }
 
-        /* Bottom Navigation Menu */
+        /* Wallet / Kassa paneli */
+        .wallet-box { background: var(--card); border: 1px solid #283348; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .wallet-title { font-size: 14px; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
+        .wallet-input { width: 100%; padding: 10px; background: #0f121a; border: 1px solid #283348; border-radius: 8px; color: white; margin-bottom: 10px; font-size: 14px; outline: none; }
+        .wallet-btn { width: 100%; padding: 10px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+
+        /* Boost Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card); width: 90%; max-width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #283348; }
+        .modal-content h3 { color: var(--accent); margin-bottom: 15px; font-size: 16px; }
+        .boost-option { background: #121620; border: 1px solid #283348; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
         .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 440px; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #283348; z-index: 100; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 11px; cursor: pointer; }
         .nav-item.active { color: var(--accent); }
@@ -69,26 +72,25 @@
 </head>
 <body>
 
-    <!-- Header -->
     <div class="header">
         <div>
             <div class="exchange-info">Birja</div>
             <div class="exchange-name">Binance CEO</div>
         </div>
-        <div class="profit-box">
-            <div style="color:var(--text-gray); font-size:10px;">Soatlik daromad</div>
-            <div>+<span id="profitPerHour" class="profit-value">0</span></div>
+        <div class="profit-box" onclick="switchTab('wallet')">
+            <div style="color:var(--text-gray); font-size:10px;">Kassa / Yechish</div>
+            <div>💳 <span class="profit-value">Wallet</span></div>
         </div>
     </div>
 
-    <!-- EXCHANGE TAB (Asosiy Sahifa) -->
-    <div id="tab-exchange" class="content-area active">
+    <!-- EXCHANGE TAB -->
+    <div id="tab-exchange" class="content-active content-area active">
         <div class="score-section">
             <div class="balance-container">
                 <span>🪙</span> <span id="coins">0</span>
             </div>
-            <div class="level-info" onclick="alert('Daraja tizimi: Har 10,000 tangada 1 Level oshadi. Maksimal limit: 10 Trillion.')">
-                Daraja: <span id="levelName">Bronze</span> (<span id="level">1</span>-lvl) ➔
+            <div class="level-info">
+                Daraja: <span id="levelName">Bronze</span> (<span id="level">1</span>-lvl)
             </div>
         </div>
 
@@ -103,16 +105,19 @@
         </div>
 
         <div class="hamster-container" id="hamsterWrapper">
-            <div class="hamster-circle" onclick="tapHamster(event)">🐹</div>
+            <div class="hamster-circle" onclick="tapHamster(event)">
+                <span id="hamsterEmoji">🐹</span>
+                <div class="hamster-outfit-text" id="outfitText">Oddiy kiyim</div>
+            </div>
         </div>
 
         <div class="energy-footer">
             <div class="energy-text">⚡ <span id="energy">1000</span> / 1000</div>
-            <button class="boost-btn" onclick="useFullEnergy()">🚀 Boost</button>
+            <button class="boost-btn" onclick="openBoostModal()">🚀 Boost</button>
         </div>
     </div>
 
-    <!-- MINE TAB (Kartalar va Passiv Daromad) -->
+    <!-- MINE TAB -->
     <div id="tab-mine" class="content-area">
         <h3 style="margin-bottom: 12px; font-size: 16px; color: var(--accent);">Kartalar va Passiv Daromad</h3>
         <div class="cards-grid">
@@ -147,22 +152,58 @@
         </div>
     </div>
 
-    <!-- EARN TAB (Vazifalar) -->
+    <!-- EARN TAB -->
     <div id="tab-earn" class="content-area">
         <h3 style="margin-bottom: 12px; font-size: 16px; color: var(--accent);">Bonus Vazifalar</h3>
         <div class="task-item">
             <div class="task-info">
-                <div>YouTube Videoni ko'rish</div>
+                <div>YouTube Shorts Videoni ko'rish</div>
                 <div>+10,000 🪙</div>
             </div>
-            <button class="task-btn" onclick="claimTask(10000)">Bajarish</button>
+            <a href="https://youtube.com/shorts/MWk2KPL33bw?si=Dh3JtFDzqrE4bbBw" target="_blank" class="task-btn" onclick="claimYouTubeTask()">Ko'rish</a>
         </div>
-        <div class="task-item">
-            <div class="task-info">
-                <div>Telegram kanalga qo'shilish</div>
-                <div>+5,000 🪙</div>
+    </div>
+
+    <!-- WALLET / PUL YECHISH TAB -->
+    <div id="tab-wallet" class="content-area">
+        <h3 style="margin-bottom: 12px; font-size: 16px; color: var(--accent);">Pul Yechish (Kassa)</h3>
+        
+        <div class="wallet-box">
+            <div class="wallet-title">💎 TON / GRAM Yechish</div>
+            <div style="font-size: 11px; color: var(--text-gray); margin-bottom: 8px;">Minimal: 13 TON | Maksimal: 53 TON</div>
+            <input type="number" id="tonAmount" class="wallet-input" placeholder="Miqdori (TON)">
+            <input type="text" id="tonWallet" class="wallet-input" placeholder="TON Hamyon manzili">
+            <button class="wallet-btn" onclick="withdrawTon()">TON Yechish</button>
+        </div>
+
+        <div class="wallet-box">
+            <div class="wallet-title">💵 USDT Yechish</div>
+            <div style="font-size: 11px; color: var(--text-gray); margin-bottom: 8px;">Minimal: 5 USDT | Maksimal: 15 USDT</div>
+            <input type="number" id="usdtAmount" class="wallet-input" placeholder="Miqdori (USDT)">
+            <input type="text" id="usdtWallet" class="wallet-input" placeholder="USDT Hamyon (TRC20/TON)">
+            <button class="wallet-btn" onclick="withdrawUsdt()">USDT Yechish</button>
+        </div>
+    </div>
+
+    <!-- BOOST MODAL -->
+    <div class="modal" id="boostModal">
+        <div class="modal-content">
+            <h3>Multi-Tap Boosters</h3>
+            <div class="boost-option">
+                <div>
+                    <div style="font-size: 13px; font-weight: bold;">Har bosishga +4</div>
+                    <div style="font-size: 11px; color: var(--text-gray);">Narxi: 1,000 tanga</div>
+                </div>
+                <button class="task-btn" onclick="buyBoost(1000, 4)">Sotib olish</button>
             </div>
-            <button class="task-btn" onclick="claimTask(5000)">Bajarish</button>
+            <div class="boost-option">
+                <div>
+                    <div style="font-size: 13px; font-weight: bold;">Har bosishga +40</div>
+                    <div style="font-size: 11px; color: var(--text-gray);">Narxi: 10,000 tanga</div>
+                </div>
+                <button class="task-btn" onclick="buyBoost(10000, 40)">Sotib olish</button>
+            </div>
+            <button onclick="closeBoostModal()" style="width:100%; background:transparent; border:none; color:var(--text-gray); margin-top:10px; cursor:pointer;">Yopish</button>
         </div>
     </div>
 
@@ -171,14 +212,17 @@
         <div class="nav-item active" onclick="switchTab('exchange', event)"><span>🪙</span>Exchange</div>
         <div class="nav-item" onclick="switchTab('mine', event)"><span>⛏️</span>Mine</div>
         <div class="nav-item" onclick="switchTab('earn', event)"><span>🎁</span>Earn</div>
+        <div class="nav-item" onclick="switchTab('wallet', event)"><span>💳</span>Wallet</div>
     </div>
 
     <script>
-        let coins = 0;
-        let profitPerHour = 0;
-        let energy = 1000;
+        let coins = parseInt(localStorage.getItem('hamster_coins')) || 0;
+        let profitPerHour = parseInt(localStorage.getItem('hamster_profit')) || 0;
+        let energy = parseInt(localStorage.getItem('hamster_energy')) || 1000;
+        let tapPower = parseInt(localStorage.getItem('hamster_tapPower')) || 1;
+        let youtubeClaimed = localStorage.getItem('hamster_yt') === 'true';
         const maxEnergy = 1000;
-        const MAX_COINS = 10000000000000; // 10 Trillion
+        const MAX_COINS = 10000000000000;
 
         const levels = [
             { name: "Bronze", min: 0 },
@@ -193,34 +237,44 @@
             { name: "Lord", min: 5000000000 }
         ];
 
-        // Har 1 soniyada passiv daromad qo'shish va energiyani tiklash
+        // Ma'lumotlarni saqlash funksiyasi
+        function saveData() {
+            localStorage.setItem('hamster_coins', coins);
+            localStorage.setItem('hamster_profit', profitPerHour);
+            localStorage.setItem('hamster_energy', energy);
+            localStorage.setItem('hamster_tapPower', tapPower);
+            localStorage.setItem('hamster_yt', youtubeClaimed);
+        }
+
         setInterval(() => {
             if (profitPerHour > 0 && coins < MAX_COINS) {
                 let add = profitPerHour / 3600;
                 coins = Math.min(MAX_COINS, coins + add);
                 updateUI();
+                saveData();
             }
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 5);
                 updateUI();
+                saveData();
             }
         }, 1000);
 
         function tapHamster(e) {
-            if (coins >= MAX_COINS || energy <= 0) return;
+            if (coins >= MAX_COINS || energy < tapPower) return;
             
-            coins = Math.min(MAX_COINS, coins + 1);
-            energy -= 1;
+            coins = Math.min(MAX_COINS, coins + tapPower);
+            energy -= tapPower;
             updateUI();
+            saveData();
 
-            // Floating text animatsiyasi
             let rect = e.currentTarget.getBoundingClientRect();
             let x = e.clientX - rect.left;
             let y = e.clientY - rect.top;
 
             let floatEl = document.createElement('div');
             floatEl.className = 'floating-number';
-            floatEl.innerText = "+1";
+            floatEl.innerText = "+" + tapPower;
             floatEl.style.left = x + 'px';
             floatEl.style.top = y + 'px';
             document.getElementById('hamsterWrapper').appendChild(floatEl);
@@ -229,21 +283,28 @@
         }
 
         function updateUI() {
-            // Level hisoblash: Har 10,000 tanga = +1 Level
             let level = Math.floor(coins / 10000) + 1;
             
-            // Balansni chiqarish (kasrlarni yaxlitlab)
             document.getElementById('coins').innerText = Math.floor(coins).toLocaleString();
             document.getElementById('level').innerText = level;
-            document.getElementById('profitPerHour5') || (document.getElementById('profitPerHour').innerText = Math.floor(profitPerHour).toLocaleString());
             document.getElementById('energy').innerText = energy;
 
-            // Progres bar va daraja nomlari
+            // Hamster kiyimlarini har 1000 ta tapda yoki levelga qarab o'zgartirish
+            let hamsterEmoji = "🐹";
+            let outfitName = "Oddiy kiyim";
+            if (coins >= 50000) { hamsterEmoji = "👑🐹"; outfitName = "Qirol libosi"; }
+            else if (coins >= 25000) { hamsterEmoji = "🕶️🐹"; outfitName = "Stilist kiyim"; }
+            else if (coins >= 10000) { hamsterEmoji = "🎩🐹"; outfitName = "Smoking kostyum"; }
+            else if (coins >= 5000) { hamsterEmoji = "👔🐹"; outfitName = "Biznes kostyum"; }
+            else if (coins >= 1000) { hamsterEmoji = "🧣🐹"; outfitName = "Sportcha sharf"; }
+
+            document.getElementById('hamsterEmoji').innerText = hamsterEmoji;
+            document.getElementById('outfitText').innerText = outfitName;
+
             let currentLevelProgress = coins % 10000;
             let progressPercent = (currentLevelProgress / 10000) * 100;
             document.getElementById('levelProgress').style.width = progressPercent + "%";
 
-            // Daraja nomini aniqlash
             let currentLvlObj = levels[0];
             let nextLvlObj = levels[1] || levels[0];
             for (let i = 0; i < levels.length; i++) {
@@ -262,22 +323,53 @@
                 coins -= price;
                 profitPerHour += profitInc;
                 updateUI();
-                alert("Karta muvaffaqiyatli sotib olindi! Soatlik daromadingiz oshdi.");
+                saveData();
+                alert("Karta muvaffaqiyatli sotib olindi!");
             } else {
                 alert("Tangangiz yetarli emas!");
             }
         }
 
-        function claimTask(reward) {
-            coins = Math.min(MAX_COINS, coins + reward);
-            updateUI();
-            alert("Tabriklaymiz! " + reward.toLocaleString() + " tanga qo'shildi.");
+        function claimYouTubeTask() {
+            if (!youtubeClaimed) {
+                coins = Math.min(MAX_COINS, coins + 10000);
+                youtubeClaimed = true;
+                updateUI();
+                saveData();
+                alert("Tabriklaymiz! 10,000 tanga qo'shildi.");
+            }
         }
 
-        function useFullEnergy() {
-            energy = maxEnergy;
-            updateUI();
-            alert("Energiya to'ldirildi!");
+        function openBoostModal() { document.getElementById('boostModal').style.display = 'flex'; }
+        function closeBoostModal() { document.getElementById('boostModal').style.display = 'none'; }
+
+        function buyBoost(price, power) {
+            if (coins >= price) {
+                coins -= price;
+                tapPower = power;
+                updateUI();
+                saveData();
+                closeBoostModal();
+                alert("Boost muvaffaqiyatli faollashtirildi!");
+            } else {
+                alert("Tangangiz yetarli emas!");
+            }
+        }
+
+        function withdrawTon() {
+            let amount = parseFloat(document.getElementById('tonAmount').value);
+            let wallet = document.getElementById('tonWallet').value;
+            if (!wallet) { alert("Hamyon manzilini kiriting!"); return; }
+            if (amount < 13 || amount > 53) { alert("Minimal miqdor 13 TON, Maksimal 53 TON bo'lishi kerak!"); return; }
+            alert("TON yechish bo'yicha ariza qabul qilindi!");
+        }
+
+        function withdrawUsdt() {
+            let amount = parseFloat(document.getElementById('usdtAmount').value);
+            let wallet = document.getElementById('usdtWallet').value;
+            if (!wallet) { alert("Hamyon manzilini kiriting!"); return; }
+            if (amount < 5 || amount > 15) { alert("Minimal miqdor 5 USDT, Maksimal 15 USDT bo'lishi kerak!"); return; }
+            alert("USDT yechish bo'yicha ariza qabul qilindi!");
         }
 
         function switchTab(tabName, event) {
@@ -291,6 +383,6 @@
         }
 
         updateUI();
-    </script>
+    </string>
 </body>
 </html>
