@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aviator TON</title>
+    <title>Aviator SO'M</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -70,7 +70,7 @@
         .balance {
             color: #00e676;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
             background: #1a2230;
             padding: 5px 12px;
             border-radius: 20px;
@@ -112,7 +112,7 @@
             text-shadow: 0 0 20px rgba(255, 51, 75, 0.6);
         }
         .status-text {
-            font-size: 14px;
+            font-size: 13px;
             color: #888;
             margin-top: 5px;
             font-weight: bold;
@@ -188,7 +188,7 @@
             background: none;
             border: none;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             width: 100%;
             text-align: center;
@@ -202,7 +202,7 @@
             border-radius: 12px;
             padding: 12px;
             font-weight: 900;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             text-align: center;
             box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
@@ -219,7 +219,7 @@
             color: #ccc;
             padding: 6px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -249,26 +249,27 @@
 
     <!-- Yuklanish Ekrani -->
     <div id="loader">
-        <div class="loader-logo">Aviator TON</div>
+        <div class="loader-logo">Aviator SO'M</div>
         <div class="loader-sub">X7000 ROKETA</div>
         <div class="spinner"></div>
     </div>
 
     <div class="header">
         <div class="logo">Aviator</div>
-        <div class="balance" id="balance">10.00 TON</div>
+        <div class="balance" id="balance">150,000 SO'M</div>
     </div>
 
     <div class="history-bar" id="history-bar">
         <span class="hist-item h-purple">10.45x</span>
-        <span class="hist-item h-blue">1.31x</span>
+        <span class="hist-item h-blue">1.20x</span>
+        <span class="hist-item h-red">1.00x</span>
         <span class="hist-item h-purple">x72.50</span>
     </div>
 
     <div class="game-screen">
         <div class="multiplier" id="multiplier">1.00x</div>
         <div class="status-text" id="status-text">O'YIN BOSHLANISHIGA TAYYORGARLIK</div>
-        <div class="online-users">👥 742</div>
+        <div class="online-users">👥 842</div>
     </div>
 
     <div class="bet-container" style="padding-bottom: 70px;">
@@ -280,17 +281,17 @@
             </div>
             <div class="bet-row">
                 <div class="amount-control">
-                    <button onclick="changeBet(1, -0.5)">-</button>
-                    <input type="text" id="bet1" value="1.00">
-                    <button onclick="changeBet(1, 0.5)">+</button>
+                    <button onclick="changeBet(1, -5000)">-</button>
+                    <input type="text" id="bet1" value="10000">
+                    <button onclick="changeBet(1, 5000)">+</button>
                 </div>
-                <button class="action-btn" id="btn1" onclick="handleBet(1)">BET<br><span style="font-size:11px">1.00 TON</span></button>
+                <button class="action-btn" id="btn1" onclick="handleBet(1)">BET<br><span style="font-size:10px">10,000 SO'M</span></button>
             </div>
             <div class="quick-amounts">
-                <button class="q-btn" onclick="setBet(1, 0.5)">0.5</button>
-                <button class="q-btn" onclick="setBet(1, 1.0)">1.0</button>
-                <button class="q-btn" onclick="setBet(1, 5.0)">5.0</button>
-                <button class="q-btn" onclick="setBet(1, 10.0)">10.0</button>
+                <button class="q-btn" onclick="setBet(1, 5000)">5K</button>
+                <button class="q-btn" onclick="setBet(1, 10000)">10K</button>
+                <button class="q-btn" onclick="setBet(1, 50000)">50K</button>
+                <button class="q-btn" onclick="setBet(1, 100000)">100K</button>
             </div>
         </div>
 
@@ -302,17 +303,17 @@
             </div>
             <div class="bet-row">
                 <div class="amount-control">
-                    <button onclick="changeBet(2, -0.5)">-</button>
-                    <input type="text" id="bet2" value="0.50">
-                    <button onclick="changeBet(2, 0.5)">+</button>
+                    <button onclick="changeBet(2, -5000)">-</button>
+                    <input type="text" id="bet2" value="5000">
+                    <button onclick="changeBet(2, 5000)">+</button>
                 </div>
-                <button class="action-btn" id="btn2" onclick="handleBet(2)">BET<br><span style="font-size:11px">0.50 TON</span></button>
+                <button class="action-btn" id="btn2" onclick="handleBet(2)">BET<br><span style="font-size:10px">5,000 SO'M</span></button>
             </div>
             <div class="quick-amounts">
-                <button class="q-btn" onclick="setBet(2, 0.5)">0.5</button>
-                <button class="q-btn" onclick="setBet(2, 1.0)">1.0</button>
-                <button class="q-btn" onclick="setBet(2, 5.0)">5.0</button>
-                <button class="q-btn" onclick="setBet(2, 10.0)">10.0</button>
+                <button class="q-btn" onclick="setBet(2, 5000)">5K</button>
+                <button class="q-btn" onclick="setBet(2, 10000)">10K</button>
+                <button class="q-btn" onclick="setBet(2, 50000)">50K</button>
+                <button class="q-btn" onclick="setBet(2, 100000)">100K</button>
             </div>
         </div>
     </div>
@@ -327,11 +328,9 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Load balance from localStorage or set default 10 TON
-        let userBalance = parseFloat(localStorage.getItem('aviator_balance') || "10.00");
-        document.getElementById('balance').innerText = userBalance.toFixed(2) + " TON";
+        let userBalance = parseFloat(localStorage.getItem('aviator_som_balance') || "150000");
+        document.getElementById('balance').innerText = userBalance.toLocaleString() + " SO'M";
 
-        // Hide loader after 1.5 seconds
         setTimeout(() => {
             let loader = document.getElementById('loader');
             loader.style.opacity = '0';
@@ -343,101 +342,104 @@
         let crashPoint = 1.00;
         let gameInterval = null;
         
-        let bet1Active = false;
-        let bet2Active = false;
-        let bet1Amount = 1.00;
-        let bet2Amount = 0.50;
+        let bet1State = 'none'; // none, active, next_round
+        let bet2State = 'none';
+        let bet1Amount = 10000;
+        let bet2Amount = 5000;
 
         function saveBalance() {
-            localStorage.setItem('aviator_balance', userBalance.toFixed(2));
-            document.getElementById('balance').innerText = userBalance.toFixed(2) + " TON";
+            localStorage.setItem('aviator_som_balance', userBalance);
+            document.getElementById('balance').innerText = userBalance.toLocaleString() + " SO'M";
         }
 
         function setBet(box, val) {
-            document.getElementById('bet' + box).value = val.toFixed(2);
+            document.getElementById('bet' + box).value = val;
             if(box === 1) bet1Amount = val;
             else bet2Amount = val;
-            updateButton(box);
+            updateButtonVisual(box);
         }
 
         function changeBet(box, delta) {
             let input = document.getElementById('bet' + box);
-            let val = parseFloat(input.value) + delta;
-            if(val < 0.1) val = 0.1;
-            input.value = val.toFixed(2);
+            let val = parseInt(input.value) + delta;
+            if(val < 1000) val = 1000;
+            input.value = val;
             if(box === 1) bet1Amount = val;
             else bet2Amount = val;
-            updateButton(box);
+            updateButtonVisual(box);
         }
 
-        function updateButton(box) {
-            let val = document.getElementById('bet' + box).value;
+        function updateButtonVisual(box) {
+            let val = parseInt(document.getElementById('bet' + box).value);
             let btn = document.getElementById('btn' + box);
-            if(!((box === 1 && bet1Active) || (box === 2 && bet2Active))) {
-                btn.innerHTML = `BET<br><span style="font-size:11px">${val} TON</span>`;
+            let state = (box === 1) ? bet1State : bet2State;
+
+            if(state === 'none') {
+                btn.style.background = "#ffcc00";
+                btn.style.color = "#000";
+                btn.innerHTML = `BET<br><span style="font-size:10px">${val.toLocaleString()} SO'M</span>`;
+            } else if(state === 'next_round') {
+                btn.style.background = "#28a745";
+                btn.style.color = "white";
+                btn.innerHTML = `BEKOR QILISH<br><span style="font-size:10px">KUTILMOqda</span>`;
+            } else if(state === 'active') {
+                btn.style.background = "#ff334b";
+                btn.style.color = "white";
+                btn.innerHTML = `CASH OUT<br><span style="font-size:10px">${val.toLocaleString()} SO'M</span>`;
             }
         }
 
         function handleBet(box) {
-            let val = parseFloat(document.getElementById('bet' + box).value);
-            let btn = document.getElementById('btn' + box);
+            let val = parseInt(document.getElementById('bet' + box).value);
+            let currentState = (box === 1) ? bet1State : bet2State;
 
-            if(box === 1) {
-                if(!bet1Active) {
-                    if(userBalance < val) { alert("Balansda yetarli mablag' yo'q!"); return; }
-                    userBalance -= val;
-                    saveBalance();
-                    bet1Amount = val;
-                    bet1Active = true;
-                    btn.style.background = "#ff334b";
-                    btn.style.color = "white";
-                    btn.innerHTML = `CASH OUT<br><span style="font-size:11px">${val.toFixed(2)} TON</span>`;
+            if(currentState === 'none') {
+                if(userBalance < val) { alert("Hisobda yetarli mablag' yo'q!"); return; }
+                userBalance -= val;
+                saveBalance();
+                if(box === 1) bet1Amount = val; else bet2Amount = val;
+
+                if(gameState === 'playing') {
+                    // O'yin ketayotgan bo'lsa, keyingi raundga yoziladi
+                    if(box === 1) bet1State = 'next_round'; else bet2State = 'next_round';
                 } else {
-                    // Cash out 1
-                    if(gameState === 'playing') {
-                        let win = bet1Amount * currentMultiplier;
-                        userBalance += win;
-                        saveBalance();
-                        alert(`Tabriklayman! ${win.toFixed(2)} TON yutib oldingiz!`);
-                    }
-                    bet1Active = false;
-                    btn.style.background = "#ffcc00";
-                    btn.style.color = "#000";
-                    updateButton(1);
+                    // Kutish vaqtida darhol faollashadi
+                    if(box === 1) bet1State = 'active'; else bet2State = 'active';
                 }
-            } else {
-                if(!bet2Active) {
-                    if(userBalance < val) { alert("Balansda yetarli mablag' yo'q!"); return; }
-                    userBalance -= val;
+                updateButtonVisual(box);
+
+            } else if(currentState === 'next_round') {
+                // Keyingi raundga tikilgan stavkani qaytarib olish (bekor qilish)
+                userBalance += val;
+                saveBalance();
+                if(box === 1) bet1State = 'none'; else bet2State = 'none';
+                updateButtonVisual(box);
+
+            } else if(currentState === 'active') {
+                // O'yin paytida CASH OUT qilish
+                if(gameState === 'playing') {
+                    let win = (box === 1 ? bet1Amount : bet2Amount) * currentMultiplier;
+                    userBalance += Math.floor(win);
                     saveBalance();
-                    bet2Amount = val;
-                    bet2Active = true;
-                    btn.style.background = "#ff334b";
-                    btn.style.color = "white";
-                    btn.innerHTML = `CASH OUT<br><span style="font-size:11px">${val.toFixed(2)} TON</span>`;
-                } else {
-                    // Cash out 2
-                    if(gameState === 'playing') {
-                        let win = bet2Amount * currentMultiplier;
-                        userBalance += win;
-                        saveBalance();
-                        alert(`Tabriklayman! ${win.toFixed(2)} TON yutib oldingiz!`);
-                    }
-                    bet2Active = false;
-                    btn.style.background = "#ffcc00";
-                    btn.style.color = "#000";
-                    updateButton(2);
+                    alert(`Tabriklayman! ${Math.floor(win).toLocaleString()} SO'M yutib oldingiz!`);
                 }
+                if(box === 1) bet1State = 'none'; else bet2State = 'none';
+                updateButtonVisual(box);
             }
         }
 
-        // Real Aviator Game Loop with random crash up to 6000x and strict 1.00x chances
         function startWaitingPeriod() {
             gameState = 'waiting';
             currentMultiplier = 1.00;
             document.getElementById('multiplier').innerText = "1.00x";
             document.getElementById('multiplier').style.color = "#fff";
             document.getElementById('status-text').innerText = "KEYINGI O'YIN BOSHLANISHIGA...";
+
+            // Keyingi raundga kutilayotgan stavkalarni aktivlashtirish
+            if(bet1State === 'next_round') bet1State = 'active';
+            if(bet2State === 'next_round') bet2State = 'active';
+            updateButtonVisual(1);
+            updateButtonVisual(2);
             
             let countdown = 5;
             let cdInterval = setInterval(() => {
@@ -454,19 +456,19 @@
             gameState = 'playing';
             document.getElementById('status-text').innerText = "UCHOQ UCHMOQDA...";
             
-            // Generate realistic crash point (1.00x to 6000x, highly weighted towards lower numbers)
+            // Haqiqiy Aviator ehtimolligi: 1.00x da o'lishi yoki 6000x gacha chiqishi
             let rand = Math.random();
-            if(rand < 0.08) {
-                crashPoint = 1.00; // Immediate 1.00x crash
+            if(rand < 0.12) {
+                crashPoint = 1.00; // Darhol 1.00x da o'lishi
+            } else if(rand < 0.35) {
+                crashPoint = parseFloat((1.01 + Math.random() * 0.3).toFixed(2)); // 1.01x - 1.30x oralig'ida tez o'lishi
             } else {
-                // Exponential random distribution up to 6000x
-                crashPoint = parseFloat((1.01 + Math.pow(Math.random(), 4) * 5999).toFixed(2));
+                crashPoint = parseFloat((1.31 + Math.pow(Math.random(), 3.5) * 5998.69).toFixed(2));
                 if(crashPoint > 6000) crashPoint = 6000.00;
             }
 
             gameInterval = setInterval(() => {
-                // Increment multiplier smoothly
-                currentMultiplier += 0.01 + (currentMultiplier * 0.03);
+                currentMultiplier += 0.01 + (currentMultiplier * 0.025);
                 if(currentMultiplier >= crashPoint) {
                     currentMultiplier = crashPoint;
                     clearInterval(gameInterval);
@@ -475,12 +477,11 @@
                 
                 document.getElementById('multiplier').innerText = currentMultiplier.toFixed(2) + "x";
 
-                // Update active cash out buttons text with live winnings
-                if(bet1Active) {
-                    document.getElementById('btn1').innerHTML = `CASH OUT<br><span style="font-size:11px">${(bet1Amount * currentMultiplier).toFixed(2)} TON</span>`;
+                if(bet1State === 'active') {
+                    document.getElementById('btn1').innerHTML = `CASH OUT<br><span style="font-size:10px">${Math.floor(bet1Amount * currentMultiplier).toLocaleString()} SO'M</span>`;
                 }
-                if(bet2Active) {
-                    document.getElementById('btn2').innerHTML = `CASH OUT<br><span style="font-size:11px">${(bet2Amount * currentMultiplier).toFixed(2)} TON</span>`;
+                if(bet2State === 'active') {
+                    document.getElementById('btn2').innerHTML = `CASH OUT<br><span style="font-size:10px">${Math.floor(bet2Amount * currentMultiplier).toLocaleString()} SO'M</span>`;
                 }
             }, 100);
         }
@@ -490,23 +491,9 @@
             document.getElementById('multiplier').style.color = "#ff334b";
             document.getElementById('status-text').innerText = "UCHIB KETDI! (" + currentMultiplier.toFixed(2) + "x)";
 
-            // Auto-fail active bets if not cashed out
-            if(bet1Active) {
-                bet1Active = false;
-                let btn1 = document.getElementById('btn1');
-                btn1.style.background = "#ffcc00";
-                btn1.style.color = "#000";
-                updateButton(1);
-            }
-            if(bet2Active) {
-                bet2Active = false;
-                let btn2 = document.getElementById('btn2');
-                btn2.style.background = "#ffcc00";
-                btn2.style.color = "#000";
-                updateButton(2);
-            }
+            if(bet1State === 'active') { bet1State = 'none'; updateButtonVisual(1); }
+            if(bet2State === 'active') { bet2State = 'none'; updateButtonVisual(2); }
 
-            // Add to history bar
             let hBar = document.getElementById('history-bar');
             let cssClass = currentMultiplier > 10 ? "h-purple" : (currentMultiplier > 2 ? "h-blue" : "h-red");
             hBar.insertAdjacentHTML('afterbegin', `<span class="hist-item ${cssClass}">${currentMultiplier.toFixed(2)}x</span>`);
@@ -514,7 +501,6 @@
             setTimeout(startWaitingPeriod, 3000);
         }
 
-        // Start the game loop
         setTimeout(startWaitingPeriod, 1500);
     </script>
 </body>
