@@ -13,7 +13,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow-x: hidden;
         }
-        /* Loader Screen */
+        /* Loader */
         #loader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -31,7 +31,6 @@
             font-style: italic;
             color: #ff334b;
             margin-bottom: 5px;
-            text-shadow: 0 0 15px rgba(255, 51, 75, 0.5);
         }
         .loader-sub {
             font-size: 14px;
@@ -40,17 +39,13 @@
             letter-spacing: 2px;
         }
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border: 4px solid #222938;
             border-top: 4px solid #ff334b;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .header {
             display: flex;
@@ -65,7 +60,6 @@
             font-weight: 900;
             font-style: italic;
             font-size: 22px;
-            letter-spacing: 1px;
         }
         .balance {
             color: #00e676;
@@ -97,7 +91,7 @@
         /* Game Screen */
         .game-screen {
             position: relative;
-            height: 230px;
+            height: 210px;
             background: radial-gradient(circle, #25121a 0%, #0c0f16 80%);
             display: flex;
             flex-direction: column;
@@ -106,7 +100,7 @@
             border-bottom: 2px solid #ff334b;
         }
         .multiplier {
-            font-size: 48px;
+            font-size: 46px;
             font-weight: 900;
             color: #ffffff;
             text-shadow: 0 0 20px rgba(255, 51, 75, 0.6);
@@ -116,7 +110,6 @@
             color: #888;
             margin-top: 5px;
             font-weight: bold;
-            letter-spacing: 1px;
         }
         .online-users {
             position: absolute;
@@ -134,7 +127,7 @@
             padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         .bet-card {
             background: #141923;
@@ -142,30 +135,11 @@
             padding: 12px;
             border: 1px solid #222938;
         }
-        .bet-tabs {
-            display: flex;
-            background: #0c0f16;
-            border-radius: 10px;
-            padding: 2px;
-            margin-bottom: 10px;
-            width: fit-content;
-        }
-        .bet-tab {
-            padding: 4px 16px;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #888;
-        }
-        .bet-tab.active {
-            background: #222d42;
-            color: white;
-        }
         .bet-row {
             display: flex;
             gap: 10px;
             align-items: center;
+            margin-top: 5px;
         }
         .amount-control {
             display: flex;
@@ -177,22 +151,10 @@
             border: 1px solid #222938;
         }
         .amount-control button {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
+            background: none; border: none; color: #888; font-size: 18px; font-weight: bold; cursor: pointer;
         }
         .amount-control input {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            width: 100%;
-            text-align: center;
-            outline: none;
+            background: none; border: none; color: white; font-size: 15px; font-weight: bold; width: 100%; text-align: center; outline: none;
         }
         .action-btn {
             flex: 1.2;
@@ -214,42 +176,130 @@
             margin-top: 8px;
         }
         .q-btn {
-            background: #1a2230;
-            border: none;
-            color: #ccc;
-            padding: 6px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
+            background: #1a2230; border: none; color: #ccc; padding: 6px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;
         }
+
+        /* Footer Nav with Deposit/Withdraw Buttons */
         .footer-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            bottom: 0; left: 0; width: 100%;
             background: #10141d;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 5px;
             border-top: 1px solid #222938;
-            font-size: 12px;
-            color: #888;
+            z-index: 100;
         }
-        .footer-nav div {
+        .nav-btn {
+            background: #1a2230;
+            border: 1px solid #222938;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
             cursor: pointer;
         }
-        .footer-nav .active-ft {
-            color: #ff334b;
+        .nav-btn.deposit {
+            background: #00e676;
+            color: #000;
+        }
+        .nav-btn.withdraw {
+            background: #ff334b;
+            color: #fff;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #141923;
+            width: 90%;
+            max-width: 380px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #222938;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 18px;
             font-weight: bold;
+            margin-bottom: 15px;
+            color: #ff334b;
+            text-align: center;
+        }
+        .modal-group {
+            margin-bottom: 12px;
+        }
+        .modal-group label {
+            font-size: 12px;
+            color: #aaa;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .modal-group input, .modal-group select {
+            width: 100%;
+            background: #0c0f16;
+            border: 1px solid #222938;
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .card-info-box {
+            background: #0c0f16;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px dashed #ff334b;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .card-num {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00e676;
+            letter-spacing: 1px;
+        }
+        .card-holder {
+            font-size: 13px;
+            color: #ffcc00;
+            margin-top: 4px;
+        }
+        .modal-btn {
+            width: 100%;
+            background: #00e676;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .close-modal {
+            background: #222938;
+            color: #fff;
+            margin-top: 6px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Yuklanish Ekrani -->
+    <!-- Loader -->
     <div id="loader">
-        <div class="loader-logo">Aviator SO'M</div>
+        <div class="loader-logo">Aviator TON</div>
         <div class="loader-sub">X7000 ROKETA</div>
         <div class="spinner"></div>
     </div>
@@ -260,25 +310,21 @@
     </div>
 
     <div class="history-bar" id="history-bar">
-        <span class="hist-item h-purple">10.45x</span>
-        <span class="hist-item h-blue">1.20x</span>
         <span class="hist-item h-red">1.00x</span>
-        <span class="hist-item h-purple">x72.50</span>
+        <span class="hist-item h-blue">2.45x</span>
+        <span class="hist-item h-purple">8.20x</span>
     </div>
 
     <div class="game-screen">
         <div class="multiplier" id="multiplier">1.00x</div>
         <div class="status-text" id="status-text">O'YIN BOSHLANISHIGA TAYYORGARLIK</div>
-        <div class="online-users">👥 842</div>
+        <div class="online-users">👥 612</div>
     </div>
 
-    <div class="bet-container" style="padding-bottom: 70px;">
-        <!-- 1-stavka bloki -->
+    <div class="bet-container" style="padding-bottom: 75px;">
+        <!-- 1-stavka -->
         <div class="bet-card">
-            <div class="bet-tabs">
-                <div class="bet-tab active">Bet</div>
-                <div class="bet-tab">Auto</div>
-            </div>
+            <div style="font-size: 12px; color: #888; font-weight: bold;">STAVKA 1</div>
             <div class="bet-row">
                 <div class="amount-control">
                     <button onclick="changeBet(1, -5000)">-</button>
@@ -295,12 +341,9 @@
             </div>
         </div>
 
-        <!-- 2-stavka bloki -->
+        <!-- 2-stavka -->
         <div class="bet-card">
-            <div class="bet-tabs">
-                <div class="bet-tab active">Bet</div>
-                <div class="bet-tab">Auto</div>
-            </div>
+            <div style="font-size: 12px; color: #888; font-weight: bold;">STAVKA 2</div>
             <div class="bet-row">
                 <div class="amount-control">
                     <button onclick="changeBet(2, -5000)">-</button>
@@ -318,10 +361,64 @@
         </div>
     </div>
 
+    <!-- Pastdagi Depozit va Yechib olish paneli -->
     <div class="footer-nav">
-        <div class="active-ft">All Bets</div>
-        <div>Previous</div>
-        <div>Top</div>
+        <button class="nav-btn deposit" onclick="openDepositModal()">💳 Pul Tashash</button>
+        <button class="nav-btn withdraw" onclick="openWithdrawModal()">📥 Yechib Olish</button>
+    </div>
+
+    <!-- Pul Tashash (Deposit) Oynasi -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-title">Hisobni To'ldirish</div>
+            <div class="card-info-box">
+                <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Quyidagi kartaga o'tkazing:</div>
+                <div class="card-num">9860 6067 5865 7385</div>
+                <div class="card-holder">Xolboyeva. S (Humo)</div>
+            </div>
+            <div style="font-size: 11px; color: #ffcc00; margin-bottom: 10px; text-align: center;">
+                Minimal Deposit: 5,000 so'm<br>Maksimal Deposit: 1,000,000 so'm
+            </div>
+            <div class="modal-group">
+                <label>O'tkazgan summa (SO'M):</label>
+                <input type="number" id="depositAmount" placeholder="Masalan: 20000" min="5000" max="1000000">
+            </div>
+            <div class="modal-group">
+                <label>Chekni galereyadan yuklash:</label>
+                <input type="file" id="depositCheck" accept="image/*">
+            </div>
+            <button class="modal-btn" onclick="submitDeposit()">Tashlaganingizni Tasdiqlash</button>
+            <button class="modal-btn close-modal" onclick="closeModals()">Yopish</button>
+        </div>
+    </div>
+
+    <!-- Yechib Olish (Withdraw) Oynasi -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-title">Pulni Yechib Olish</div>
+            <div class="modal-group">
+                <label>Karta turini tanlang:</label>
+                <select id="cardType">
+                    <option value="Humo">Humo</option>
+                    <option value="Uzcard">Uzcard</option>
+                    <option value="Visa">Visa</option>
+                </select>
+            </div>
+            <div class="modal-group">
+                <label>Karta raqami (16 xonali):</label>
+                <input type="text" id="cardNumber" placeholder="9860xxxxxxxxxxxx" maxlength="16">
+            </div>
+            <div class="modal-group">
+                <label>Karta muddati (MM/YY):</label>
+                <input type="text" id="cardExpiry" placeholder="05/28" maxlength="5">
+            </div>
+            <div class="modal-group">
+                <label>Yechib olinadigan summa (SO'M):</label>
+                <input type="number" id="withdrawAmount" placeholder="Summani kiriting">
+            </div>
+            <button class="modal-btn" style="background: #ff334b; color: white;" onclick="submitWithdraw()">Kartaga O'tkazish</button>
+            <button class="modal-btn close-modal" onclick="closeModals()">Yopish</button>
+        </div>
     </div>
 
     <script>
@@ -337,12 +434,12 @@
             setTimeout(() => loader.style.display = 'none', 500);
         }, 1500);
 
-        let gameState = 'waiting'; // waiting, playing, crashed
+        let gameState = 'waiting';
         let currentMultiplier = 1.00;
         let crashPoint = 1.00;
         let gameInterval = null;
         
-        let bet1State = 'none'; // none, active, next_round
+        let bet1State = 'none';
         let bet2State = 'none';
         let bet1Amount = 10000;
         let bet2Amount = 5000;
@@ -354,8 +451,7 @@
 
         function setBet(box, val) {
             document.getElementById('bet' + box).value = val;
-            if(box === 1) bet1Amount = val;
-            else bet2Amount = val;
+            if(box === 1) bet1Amount = val; else bet2Amount = val;
             updateButtonVisual(box);
         }
 
@@ -364,8 +460,7 @@
             let val = parseInt(input.value) + delta;
             if(val < 1000) val = 1000;
             input.value = val;
-            if(box === 1) bet1Amount = val;
-            else bet2Amount = val;
+            if(box === 1) bet1Amount = val; else bet2Amount = val;
             updateButtonVisual(box);
         }
 
@@ -375,16 +470,13 @@
             let state = (box === 1) ? bet1State : bet2State;
 
             if(state === 'none') {
-                btn.style.background = "#ffcc00";
-                btn.style.color = "#000";
+                btn.style.background = "#ffcc00"; btn.style.color = "#000";
                 btn.innerHTML = `BET<br><span style="font-size:10px">${val.toLocaleString()} SO'M</span>`;
             } else if(state === 'next_round') {
-                btn.style.background = "#28a745";
-                btn.style.color = "white";
-                btn.innerHTML = `BEKOR QILISH<br><span style="font-size:10px">KUTILMOqda</span>`;
+                btn.style.background = "#28a745"; btn.style.color = "white";
+                btn.innerHTML = `BEKOR QILISH<br><span style="font-size:10px">KUTILMOQDA</span>`;
             } else if(state === 'active') {
-                btn.style.background = "#ff334b";
-                btn.style.color = "white";
+                btn.style.background = "#ff334b"; btn.style.color = "white";
                 btn.innerHTML = `CASH OUT<br><span style="font-size:10px">${val.toLocaleString()} SO'M</span>`;
             }
         }
@@ -400,23 +492,17 @@
                 if(box === 1) bet1Amount = val; else bet2Amount = val;
 
                 if(gameState === 'playing') {
-                    // O'yin ketayotgan bo'lsa, keyingi raundga yoziladi
                     if(box === 1) bet1State = 'next_round'; else bet2State = 'next_round';
                 } else {
-                    // Kutish vaqtida darhol faollashadi
                     if(box === 1) bet1State = 'active'; else bet2State = 'active';
                 }
                 updateButtonVisual(box);
-
             } else if(currentState === 'next_round') {
-                // Keyingi raundga tikilgan stavkani qaytarib olish (bekor qilish)
                 userBalance += val;
                 saveBalance();
                 if(box === 1) bet1State = 'none'; else bet2State = 'none';
                 updateButtonVisual(box);
-
             } else if(currentState === 'active') {
-                // O'yin paytida CASH OUT qilish
                 if(gameState === 'playing') {
                     let win = (box === 1 ? bet1Amount : bet2Amount) * currentMultiplier;
                     userBalance += Math.floor(win);
@@ -435,7 +521,6 @@
             document.getElementById('multiplier').style.color = "#fff";
             document.getElementById('status-text').innerText = "KEYINGI O'YIN BOSHLANISHIGA...";
 
-            // Keyingi raundga kutilayotgan stavkalarni aktivlashtirish
             if(bet1State === 'next_round') bet1State = 'active';
             if(bet2State === 'next_round') bet2State = 'active';
             updateButtonVisual(1);
@@ -456,19 +541,19 @@
             gameState = 'playing';
             document.getElementById('status-text').innerText = "UCHOQ UCHMOQDA...";
             
-            // Haqiqiy Aviator ehtimolligi: 1.00x da o'lishi yoki 6000x gacha chiqishi
+            // Qiyinroq o'yin: Minimal 1.00x, Maksimal 10.00x - 12.00x oralig'i, tez-tez 1.00x da o'ladi
             let rand = Math.random();
-            if(rand < 0.12) {
-                crashPoint = 1.00; // Darhol 1.00x da o'lishi
-            } else if(rand < 0.35) {
-                crashPoint = parseFloat((1.01 + Math.random() * 0.3).toFixed(2)); // 1.01x - 1.30x oralig'ida tez o'lishi
+            if(rand < 0.25) {
+                crashPoint = 1.00; // Tez-tez 1.00x da o'lishi
+            } else if(rand < 0.60) {
+                crashPoint = parseFloat((1.01 + Math.random() * 0.8).toFixed(2)); // Past koeffitsiyentlar
             } else {
-                crashPoint = parseFloat((1.31 + Math.pow(Math.random(), 3.5) * 5998.69).toFixed(2));
-                if(crashPoint > 6000) crashPoint = 6000.00;
+                crashPoint = parseFloat((1.80 + Math.pow(Math.random(), 3) * 10.2).toFixed(2));
+                if(crashPoint > 12.00) crashPoint = 12.00;
             }
 
             gameInterval = setInterval(() => {
-                currentMultiplier += 0.01 + (currentMultiplier * 0.025);
+                currentMultiplier += 0.01 + (currentMultiplier * 0.02);
                 if(currentMultiplier >= crashPoint) {
                     currentMultiplier = crashPoint;
                     clearInterval(gameInterval);
@@ -495,10 +580,52 @@
             if(bet2State === 'active') { bet2State = 'none'; updateButtonVisual(2); }
 
             let hBar = document.getElementById('history-bar');
-            let cssClass = currentMultiplier > 10 ? "h-purple" : (currentMultiplier > 2 ? "h-blue" : "h-red");
+            let cssClass = currentMultiplier > 5 ? "h-purple" : (currentMultiplier > 2 ? "h-blue" : "h-red");
             hBar.insertAdjacentHTML('afterbegin', `<span class="hist-item ${cssClass}">${currentMultiplier.toFixed(2)}x</span>`);
 
             setTimeout(startWaitingPeriod, 3000);
+        }
+
+        // Modal funksiyalari
+        function openDepositModal() { document.getElementById('depositModal').style.display = 'flex'; }
+        function openWithdrawModal() { document.getElementById('withdrawModal').style.display = 'flex'; }
+        function closeModals() { 
+            document.getElementById('depositModal').style.display = 'none'; 
+            document.getElementById('withdrawModal').style.display = 'none'; 
+        }
+
+        function submitDeposit() {
+            let amount = parseInt(document.getElementById('depositAmount').value);
+            let checkFile = document.getElementById('depositCheck').files[0];
+            if(!amount || amount < 5000 || amount > 1000000) {
+                alert("Minimal deposit 5,000 so'm, maksimal 1,000,000 so'm bo'lishi kerak!");
+                return;
+            }
+            if(!checkFile) {
+                alert("Iltimos, to'lov chekini galereyadan yuklang!");
+                return;
+            }
+            userBalance += amount;
+            saveBalance();
+            alert("Chek muvaffaqiyatli yuborildi! Balansingiz to'ldirildi.");
+            closeModals();
+        }
+
+        function submitWithdraw() {
+            let cardNum = document.getElementById('cardNumber').value;
+            let amount = parseInt(document.getElementById('withdrawAmount').value);
+            if(cardNum.length < 16) {
+                alert("Karta raqamini to'liq kiriting!");
+                return;
+            }
+            if(!amount || amount <= 0 || amount > userBalance) {
+                alert("Noto'g'ri summa kiritildi yoki balansingiz yetarli emas!");
+                return;
+            }
+            userBalance -= amount;
+            saveBalance();
+            alert("Pul yechish uchun ariza qabul qilindi!\n\nPul tushish muddati 1 soatdan 24 soatgacha. Agar 24 soatda ham pul bank kartangizga tushmasa, u holda pul o'yiningizga qaytariladi.");
+            closeModals();
         }
 
         setTimeout(startWaitingPeriod, 1500);
