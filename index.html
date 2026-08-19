@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aviator SO'M</title>
+    <title>Aviator SO'M - Kirish</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -47,6 +47,90 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Auth Screen */
+        #authScreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0c0f16;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+        }
+        .auth-card {
+            background: #141923;
+            width: 88%;
+            max-width: 360px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #222938;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .auth-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #ff334b;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .auth-tabs {
+            display: flex;
+            background: #0c0f16;
+            border-radius: 10px;
+            padding: 3px;
+            margin-bottom: 15px;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #888;
+        }
+        .auth-tab.active {
+            background: #222d42;
+            color: white;
+        }
+        .auth-group {
+            margin-bottom: 12px;
+        }
+        .auth-group label {
+            font-size: 12px;
+            color: #aaa;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .auth-group input {
+            width: 100%;
+            background: #0c0f16;
+            border: 1px solid #222938;
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .auth-btn {
+            width: 100%;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Main Game Layout */
+        #mainApp {
+            display: none;
+        }
         .header {
             display: flex;
             justify-content: space-between;
@@ -88,41 +172,88 @@
         .h-blue { color: #3ea6ff; }
         .h-red { color: #ff334b; }
 
-        /* Game Screen */
+        /* Game Screen with Rocket and Red Curve Style */
         .game-screen {
             position: relative;
-            height: 210px;
-            background: radial-gradient(circle, #25121a 0%, #0c0f16 80%);
+            height: 220px;
+            background: #090c12;
+            overflow: hidden;
+            border-bottom: 2px solid #ff334b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Background sunburst lines */
+        .sunburst {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-conic-gradient(from 0deg at 20% 80%, #151b28 0deg, #090c12 15deg, #090c12 30deg);
+            opacity: 0.6;
+        }
+        /* Red filled curve area */
+        .red-curve-area {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(255, 51, 75, 0.35) 0%, rgba(255, 51, 75, 0.0) 70%);
+            clip-path: polygon(0 100%, 0 70%, 25% 62%, 50% 50%, 75% 35%, 100% 15%, 100% 100%);
+            z-index: 1;
+        }
+        /* Solid Red curve line */
+        .curve-line {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 100%;
+            background: none;
+            border-bottom: 4px solid #ff334b;
+            z-index: 2;
+        }
+        /* Rocket graphic container */
+        .rocket-container {
+            position: absolute;
+            bottom: 50px;
+            right: 45px;
+            z-index: 3;
+            transform: rotate(35deg);
+            transition: transform 0.1s ease;
+        }
+        .rocket-icon {
+            font-size: 38px;
+            filter: drop-shadow(0 0 10px rgba(255, 51, 75, 0.8));
+        }
+        /* Multiplier text overlay */
+        .multiplier-box {
+            position: relative;
+            z-index: 4;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            border-bottom: 2px solid #ff334b;
         }
         .multiplier {
             font-size: 46px;
             font-weight: 900;
             color: #ffffff;
-            text-shadow: 0 0 20px rgba(255, 51, 75, 0.6);
+            text-shadow: 0 0 20px rgba(255, 51, 75, 0.8);
         }
         .status-text {
             font-size: 13px;
-            color: #888;
-            margin-top: 5px;
+            color: #aaa;
+            margin-top: 2px;
             font-weight: bold;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 8px;
+            border-radius: 6px;
         }
         .online-users {
             position: absolute;
-            bottom: 10px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.6);
+            bottom: 8px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.7);
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 12px;
             color: #bbb;
+            z-index: 5;
         }
 
-        /* Bet Panels */
         .bet-container {
             padding: 10px;
             display: flex;
@@ -179,7 +310,6 @@
             background: #1a2230; border: none; color: #ccc; padding: 6px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;
         }
 
-        /* Footer Nav with Deposit/Withdraw Buttons */
         .footer-nav {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
@@ -200,16 +330,9 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .nav-btn.deposit {
-            background: #00e676;
-            color: #000;
-        }
-        .nav-btn.withdraw {
-            background: #ff334b;
-            color: #fff;
-        }
+        .nav-btn.deposit { background: #00e676; color: #000; }
+        .nav-btn.withdraw { background: #ff334b; color: #fff; }
 
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -231,68 +354,26 @@
             overflow-y: auto;
         }
         .modal-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #ff334b;
-            text-align: center;
+            font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #ff334b; text-align: center;
         }
         .modal-group {
             margin-bottom: 12px;
         }
         .modal-group label {
-            font-size: 12px;
-            color: #aaa;
-            display: block;
-            margin-bottom: 4px;
+            font-size: 12px; color: #aaa; display: block; margin-bottom: 4px;
         }
         .modal-group input, .modal-group select {
-            width: 100%;
-            background: #0c0f16;
-            border: 1px solid #222938;
-            padding: 10px;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
+            width: 100%; background: #0c0f16; border: 1px solid #222938; padding: 10px; border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; outline: none;
         }
         .card-info-box {
-            background: #0c0f16;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px dashed #ff334b;
-            margin-bottom: 12px;
-            text-align: center;
+            background: #0c0f16; padding: 12px; border-radius: 10px; border: 1px dashed #ff334b; margin-bottom: 12px; text-align: center;
         }
-        .card-num {
-            font-size: 16px;
-            font-weight: bold;
-            color: #00e676;
-            letter-spacing: 1px;
-        }
-        .card-holder {
-            font-size: 13px;
-            color: #ffcc00;
-            margin-top: 4px;
-        }
+        .card-num { font-size: 16px; font-weight: bold; color: #00e676; letter-spacing: 1px; }
+        .card-holder { font-size: 13px; color: #ffcc00; margin-top: 4px; }
         .modal-btn {
-            width: 100%;
-            background: #00e676;
-            color: #000;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 10px;
+            width: 100%; background: #00e676; color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px;
         }
-        .close-modal {
-            background: #222938;
-            color: #fff;
-            margin-top: 6px;
-        }
+        .close-modal { background: #222938; color: #fff; margin-top: 6px; }
     </style>
 </head>
 <body>
@@ -304,70 +385,117 @@
         <div class="spinner"></div>
     </div>
 
-    <div class="header">
-        <div class="logo">Aviator</div>
-        <div class="balance" id="balance">150,000 SO'M</div>
-    </div>
+    <!-- Ro'yxatdan o'tish ekrani -->
+    <div id="authScreen">
+        <div class="auth-card">
+            <div class="auth-title">Aviator Kirish</div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tabPhone" onclick="switchAuthMode('phone')">Telefon Raqam</div>
+                <div class="auth-tab" id="tabEmail" onclick="switchAuthMode('email')">Email (Gmail)</div>
+            </div>
 
-    <div class="history-bar" id="history-bar">
-        <span class="hist-item h-red">1.00x</span>
-        <span class="hist-item h-blue">2.45x</span>
-        <span class="hist-item h-purple">8.20x</span>
-    </div>
-
-    <div class="game-screen">
-        <div class="multiplier" id="multiplier">1.00x</div>
-        <div class="status-text" id="status-text">O'YIN BOSHLANISHIGA TAYYORGARLIK</div>
-        <div class="online-users">👥 612</div>
-    </div>
-
-    <div class="bet-container" style="padding-bottom: 75px;">
-        <!-- 1-stavka -->
-        <div class="bet-card">
-            <div style="font-size: 12px; color: #888; font-weight: bold;">STAVKA 1</div>
-            <div class="bet-row">
-                <div class="amount-control">
-                    <button onclick="changeBet(1, -5000)">-</button>
-                    <input type="text" id="bet1" value="10000">
-                    <button onclick="changeBet(1, 5000)">+</button>
+            <!-- Telefon orqali -->
+            <div id="phoneAuthBox">
+                <div class="auth-group">
+                    <label>Telefon raqamingiz:</label>
+                    <input type="text" id="phoneNumber" placeholder="+998 90 123 45 67">
                 </div>
-                <button class="action-btn" id="btn1" onclick="handleBet(1)">BET<br><span style="font-size:10px">10,000 SO'M</span></button>
-            </div>
-            <div class="quick-amounts">
-                <button class="q-btn" onclick="setBet(1, 5000)">5K</button>
-                <button class="q-btn" onclick="setBet(1, 10000)">10K</button>
-                <button class="q-btn" onclick="setBet(1, 50000)">50K</button>
-                <button class="q-btn" onclick="setBet(1, 100000)">100K</button>
-            </div>
-        </div>
-
-        <!-- 2-stavka -->
-        <div class="bet-card">
-            <div style="font-size: 12px; color: #888; font-weight: bold;">STAVKA 2</div>
-            <div class="bet-row">
-                <div class="amount-control">
-                    <button onclick="changeBet(2, -5000)">-</button>
-                    <input type="text" id="bet2" value="5000">
-                    <button onclick="changeBet(2, 5000)">+</button>
+                <div class="auth-group" id="phoneCodeGroup" style="display: none;">
+                    <label>SMS kodni kiriting (Masalan: 7777):</label>
+                    <input type="text" id="phoneCodeInput" placeholder="4 xonali kod">
                 </div>
-                <button class="action-btn" id="btn2" onclick="handleBet(2)">BET<br><span style="font-size:10px">5,000 SO'M</span></button>
+                <button class="auth-btn" id="phoneAuthBtn" onclick="handlePhoneAction()">SMS Kodni Olish</button>
             </div>
-            <div class="quick-amounts">
-                <button class="q-btn" onclick="setBet(2, 5000)">5K</button>
-                <button class="q-btn" onclick="setBet(2, 10000)">10K</button>
-                <button class="q-btn" onclick="setBet(2, 50000)">50K</button>
-                <button class="q-btn" onclick="setBet(2, 100000)">100K</button>
+
+            <!-- Email orqali -->
+            <div id="emailAuthBox" style="display: none;">
+                <div class="auth-group">
+                    <label>Gmail manzilingiz:</label>
+                    <input type="email" id="emailAddress" placeholder="example@gmail.com">
+                </div>
+                <div class="auth-group" id="emailCodeGroup" style="display: none;">
+                    <label>Emailga kelgan kodni kiriting (Masalan: 5555):</label>
+                    <input type="text" id="emailCodeInput" placeholder="4 xonali kod">
+                </div>
+                <button class="auth-btn" id="emailAuthBtn" onclick="handleEmailAction()">Kodni Yuborish</button>
             </div>
         </div>
     </div>
 
-    <!-- Pastdagi Depozit va Yechib olish paneli -->
-    <div class="footer-nav">
-        <button class="nav-btn deposit" onclick="openDepositModal()">💳 Pul Tashash</button>
-        <button class="nav-btn withdraw" onclick="openWithdrawModal()">📥 Yechib Olish</button>
+    <!-- Asosiy O'yin Qismi -->
+    <div id="mainApp">
+        <div class="header">
+            <div class="logo">Aviator</div>
+            <div class="balance" id="balance">150,000 SO'M</div>
+        </div>
+
+        <div class="history-bar" id="history-bar">
+            <span class="hist-item h-blue">2.15x</span>
+            <span class="hist-item h-purple">5.40x</span>
+            <span class="hist-item h-blue">1.95x</span>
+        </div>
+
+        <div class="game-screen">
+            <div class="sunburst"></div>
+            <div class="red-curve-area" id="redCurveArea"></div>
+            
+            <div class="multiplier-box">
+                <div class="multiplier" id="multiplier">1.00x</div>
+                <div class="status-text" id="status-text">TAYYORGARLIK</div>
+            </div>
+
+            <div class="rocket-container" id="rocketContainer">
+                <div class="rocket-icon">🚀</div>
+            </div>
+
+            <div class="online-users">👥 742</div>
+        </div>
+
+        <div class="bet-container" style="padding-bottom: 75px;">
+            <div class="bet-card">
+                <div style="font-size: 12px; color: #888; font-weight: bold;">STAVKA 1</div>
+                <div class="bet-row">
+                    <div class="amount-control">
+                        <button onclick="changeBet(1, -5000)">-</button>
+                        <input type="text" id="bet1" value="10000">
+                        <button onclick="changeBet(1, 5000)">+</button>
+                    </div>
+                    <button class="action-btn" id="btn1" onclick="handleBet(1)">BET<br><span style="font-size:10px">10,000 SO'M</span></button>
+                </div>
+                <div class="quick-amounts">
+                    <button class="q-btn" onclick="setBet(1, 5000)">5K</button>
+                    <button class="q-btn" onclick="setBet(1, 10000)">10K</button>
+                    <button class="q-btn" onclick="setBet(1, 50000)">50K</button>
+                    <button class="q-btn" onclick="setBet(1, 100000)">100K</button>
+                </div>
+            </div>
+
+            <div class="bet-card">
+                <div style="font-size: 12px; color: #888; font-weight: bold;">STAVKA 2</div>
+                <div class="bet-row">
+                    <div class="amount-control">
+                        <button onclick="changeBet(2, -5000)">-</button>
+                        <input type="text" id="bet2" value="5000">
+                        <button onclick="changeBet(2, 5000)">+</button>
+                    </div>
+                    <button class="action-btn" id="btn2" onclick="handleBet(2)">BET<br><span style="font-size:10px">5,000 SO'M</span></button>
+                </div>
+                <div class="quick-amounts">
+                    <button class="q-btn" onclick="setBet(2, 5000)">5K</button>
+                    <button class="q-btn" onclick="setBet(2, 10000)">10K</button>
+                    <button class="q-btn" onclick="setBet(2, 50000)">50K</button>
+                    <button class="q-btn" onclick="setBet(2, 100000)">100K</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-nav">
+            <button class="nav-btn deposit" onclick="openDepositModal()">💳 Pul Tashash</button>
+            <button class="nav-btn withdraw" onclick="openWithdrawModal()">📥 Yechib Olish</button>
+        </div>
     </div>
 
-    <!-- Pul Tashash (Deposit) Oynasi -->
+    <!-- Modals -->
     <div class="modal" id="depositModal">
         <div class="modal-content">
             <div class="modal-title">Hisobni To'ldirish</div>
@@ -381,7 +509,7 @@
             </div>
             <div class="modal-group">
                 <label>O'tkazgan summa (SO'M):</label>
-                <input type="number" id="depositAmount" placeholder="Masalan: 20000" min="5000" max="1000000">
+                <input type="number" id="depositAmount" placeholder="Masalan: 20000">
             </div>
             <div class="modal-group">
                 <label>Chekni galereyadan yuklash:</label>
@@ -392,7 +520,6 @@
         </div>
     </div>
 
-    <!-- Yechib Olish (Withdraw) Oynasi -->
     <div class="modal" id="withdrawModal">
         <div class="modal-content">
             <div class="modal-title">Pulni Yechib Olish</div>
@@ -425,14 +552,74 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let userBalance = parseFloat(localStorage.getItem('aviator_som_balance') || "150000");
-        document.getElementById('balance').innerText = userBalance.toLocaleString() + " SO'M";
+        let isAuth = localStorage.getItem('aviator_is_auth');
+        if(isAuth === 'true') {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        }
 
         setTimeout(() => {
             let loader = document.getElementById('loader');
             loader.style.opacity = '0';
             setTimeout(() => loader.style.display = 'none', 500);
-        }, 1500);
+        }, 1200);
+
+        let phoneStep = 1;
+        let emailStep = 1;
+
+        function switchAuthMode(mode) {
+            if(mode === 'phone') {
+                document.getElementById('tabPhone').classList.add('active');
+                document.getElementById('tabEmail').classList.remove('active');
+                document.getElementById('phoneAuthBox').style.display = 'block';
+                document.getElementById('emailAuthBox').style.display = 'none';
+            } else {
+                document.getElementById('tabEmail').classList.add('active');
+                document.getElementById('tabPhone').classList.remove('active');
+                document.getElementById('emailAuthBox').style.display = 'block';
+                document.getElementById('phoneAuthBox').style.display = 'none';
+            }
+        }
+
+        function handlePhoneAction() {
+            let phone = document.getElementById('phoneNumber').value;
+            if(phoneStep === 1) {
+                if(phone.length < 9) { alert("Telefon raqamni to'g'ri kiriting!"); return; }
+                document.getElementById('phoneCodeGroup').style.display = 'block';
+                document.getElementById('phoneAuthBtn').innerText = "Tasdiqlash va Kirish";
+                alert("SMS kod yuborildi! (Sinov uchun istalgan 4 xonali kod yozing, masalan: 7777)");
+                phoneStep = 2;
+            } else {
+                let code = document.getElementById('phoneCodeInput').value;
+                if(code.length < 4) { alert("Kodni to'liq kiriting!"); return; }
+                completeAuth();
+            }
+        }
+
+        function handleEmailAction() {
+            let email = document.getElementById('emailAddress').value;
+            if(emailStep === 1) {
+                if(!email.includes('@')) { alert("Gmail manzilini to'g'ri kiriting!"); return; }
+                document.getElementById('emailCodeGroup').style.display = 'block';
+                document.getElementById('emailAuthBtn').innerText = "Tasdiqlash va Kirish";
+                alert("Gmail pochtangizga kod yuborildi! (Sinov uchun istalgan 4 xonali kod yozing, masalan: 5555)");
+                emailStep = 2;
+            } else {
+                let code = document.getElementById('emailCodeInput').value;
+                if(code.length < 4) { alert("Kodni to'liq kiriting!"); return; }
+                completeAuth();
+            }
+        }
+
+        function completeAuth() {
+            localStorage.setItem('aviator_is_auth', 'true');
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            startWaitingPeriod();
+        }
+
+        let userBalance = parseFloat(localStorage.getItem('aviator_som_balance') || "150000");
+        document.getElementById('balance').innerText = userBalance.toLocaleString() + " SO'M";
 
         let gameState = 'waiting';
         let currentMultiplier = 1.00;
@@ -515,11 +702,18 @@
         }
 
         function startWaitingPeriod() {
+            if(isAuth !== 'true' && document.getElementById('authScreen').style.display !== 'none') return;
             gameState = 'waiting';
             currentMultiplier = 1.00;
             document.getElementById('multiplier').innerText = "1.00x";
             document.getElementById('multiplier').style.color = "#fff";
-            document.getElementById('status-text').innerText = "KEYINGI O'YIN BOSHLANISHIGA...";
+            document.getElementById('status-text').innerText = "TAYYORGARLIK";
+            
+            // Reset rocket position
+            let rocket = document.getElementById('rocketContainer');
+            rocket.style.bottom = "20px";
+            rocket.style.right = "20px";
+            rocket.style.transform = "rotate(20deg)";
 
             if(bet1State === 'next_round') bet1State = 'active';
             if(bet2State === 'next_round') bet2State = 'active';
@@ -528,7 +722,7 @@
             
             let countdown = 5;
             let cdInterval = setInterval(() => {
-                document.getElementById('status-text').innerText = `KEYINGI O'YIN: ${countdown}s`;
+                document.getElementById('status-text').innerText = `BOSHLANISHI: ${countdown}s`;
                 countdown--;
                 if(countdown < 0) {
                     clearInterval(cdInterval);
@@ -539,21 +733,21 @@
 
         function startFlight() {
             gameState = 'playing';
-            document.getElementById('status-text').innerText = "UCHOQ UCHMOQDA...";
+            document.getElementById('status-text').innerText = "UCHMOQDA...";
             
-            // Qiyinroq o'yin: Minimal 1.00x, Maksimal 10.00x - 12.00x oralig'i, tez-tez 1.00x da o'ladi
+            // 100/60 osonroq ehtimollik algoritmi
             let rand = Math.random();
-            if(rand < 0.25) {
-                crashPoint = 1.00; // Tez-tez 1.00x da o'lishi
-            } else if(rand < 0.60) {
-                crashPoint = parseFloat((1.01 + Math.random() * 0.8).toFixed(2)); // Past koeffitsiyentlar
+            if(rand < 0.10) {
+                crashPoint = 1.00;
+            } else if(rand < 0.40) {
+                crashPoint = parseFloat((1.15 + Math.random() * 1.5).toFixed(2));
             } else {
-                crashPoint = parseFloat((1.80 + Math.pow(Math.random(), 3) * 10.2).toFixed(2));
-                if(crashPoint > 12.00) crashPoint = 12.00;
+                crashPoint = parseFloat((2.20 + Math.pow(Math.random(), 2) * 15.0).toFixed(2));
+                if(crashPoint > 20.00) crashPoint = 20.00;
             }
 
             gameInterval = setInterval(() => {
-                currentMultiplier += 0.01 + (currentMultiplier * 0.02);
+                currentMultiplier += 0.01 + (currentMultiplier * 0.015);
                 if(currentMultiplier >= crashPoint) {
                     currentMultiplier = crashPoint;
                     clearInterval(gameInterval);
@@ -561,6 +755,15 @@
                 }
                 
                 document.getElementById('multiplier').innerText = currentMultiplier.toFixed(2) + "x";
+
+                // Rocket animation movement based on multiplier progress
+                let progress = Math.min((currentMultiplier - 1) / (crashPoint - 1 || 1), 1);
+                let rBottom = 20 + progress * 100;
+                let rRight = 20 + progress * 140;
+                let rocket = document.getElementById('rocketContainer');
+                rocket.style.bottom = rBottom + "px";
+                rocket.style.right = rRight + "px";
+                rocket.style.transform = `rotate(${20 + progress * 25}deg)`;
 
                 if(bet1State === 'active') {
                     document.getElementById('btn1').innerHTML = `CASH OUT<br><span style="font-size:10px">${Math.floor(bet1Amount * currentMultiplier).toLocaleString()} SO'M</span>`;
@@ -574,7 +777,7 @@
         function triggerCrash() {
             gameState = 'crashed';
             document.getElementById('multiplier').style.color = "#ff334b";
-            document.getElementById('status-text').innerText = "UCHIB KETDI! (" + currentMultiplier.toFixed(2) + "x)";
+            document.getElementById('status-text').innerText = "UCHIB KETDI!";
 
             if(bet1State === 'active') { bet1State = 'none'; updateButtonVisual(1); }
             if(bet2State === 'active') { bet2State = 'none'; updateButtonVisual(2); }
@@ -586,7 +789,6 @@
             setTimeout(startWaitingPeriod, 3000);
         }
 
-        // Modal funksiyalari
         function openDepositModal() { document.getElementById('depositModal').style.display = 'flex'; }
         function openWithdrawModal() { document.getElementById('withdrawModal').style.display = 'flex'; }
         function closeModals() { 
@@ -628,7 +830,9 @@
             closeModals();
         }
 
-        setTimeout(startWaitingPeriod, 1500);
+        if(isAuth === 'true') {
+            setTimeout(startWaitingPeriod, 1500);
+        }
     </script>
 </body>
 </html>
