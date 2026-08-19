@@ -18,9 +18,8 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding-bottom: 70px; /* Pastki menyu yopib qo'ymasligi uchun */
+            padding-bottom: 70px;
         }
-        /* Top Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -50,8 +49,6 @@
             font-size: 20px;
             cursor: pointer;
         }
-
-        /* Categories Chips */
         .chips-container {
             display: flex;
             gap: 10px;
@@ -75,8 +72,14 @@
             background-color: white;
             color: black;
         }
-
-        /* Video Card */
+        /* Sahifalar */
+        .page {
+            display: none;
+            padding: 15px;
+        }
+        .page.active {
+            display: block;
+        }
         .video-card {
             margin-bottom: 20px;
             background-color: var(--bg-color);
@@ -88,15 +91,11 @@
             background-size: cover;
             background-position: center;
             position: relative;
-        }
-        .duration {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background-color: rgba(0,0,0,0.8);
-            padding: 3px 6px;
-            font-size: 12px;
-            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
         .video-details {
             display: flex;
@@ -119,8 +118,27 @@
             font-size: 13px;
             color: var(--secondary-text);
         }
-
-        /* Bottom Navigation Bar (YouTube Style) */
+        /* Yuklash formasi */
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .upload-form input, .upload-form button {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: #212121;
+            color: white;
+            font-size: 15px;
+        }
+        .upload-form button {
+            background-color: var(--red-color);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -142,6 +160,8 @@
             font-size: 11px;
             cursor: pointer;
             text-decoration: none;
+            background: none;
+            border: none;
         }
         .nav-item.active {
             color: white;
@@ -158,71 +178,145 @@
     <div class="header">
         <div class="logo">Uz<span>Tube</span></div>
         <div class="header-icons">
-            🔍 👤
+            <span onclick="alert('Qidiruv tez orada ishga tushadi!')">🔍</span>
+            <span onclick="switchPage('profile')">👤</span>
         </div>
     </div>
 
-    <!-- Kategoriyalar -->
-    <div class="chips-container">
-        <button class="chip active">Barchasi</button>
-        <button class="chip">O'yinlar</button>
-        <button class="chip">Musiqa</button>
-        <button class="chip">Futbol</button>
-        <button class="chip">Shorts</button>
-        <button class="chip">Dasturlash</button>
+    <!-- ASOSIY SAHIFA -->
+    <div id="home-page" class="page active">
+        <div class="chips-container">
+            <button class="chip active">Barchasi</button>
+            <button class="chip">O'yinlar</button>
+            <button class="chip">Musiqa</button>
+            <button class="chip">Futbol</button>
+            <button class="chip">Shorts</button>
+        </div>
+        <div id="video-feed">
+            <!-- Videolar shu yerga tushadi -->
+        </div>
     </div>
 
-    <!-- Video Lenta -->
-    <div id="feed">
-        <div class="video-card">
-            <div class="thumbnail" style="background: linear-gradient(45deg, #1d4ed8, #3b82f6);">
-                <div class="duration">12:45</div>
-            </div>
-            <div class="video-details">
-                <div class="channel-avatar"></div>
-                <div class="video-meta">
-                    <h3>Telegramda YouTube Bot yaratish - To'liq darslik 2026</h3>
-                    <p>Janob Shoxruz • 12K ko'rish • 2 kun oldin</p>
-                </div>
-            </div>
-        </div>
+    <!-- SHORTS SAHIFASI -->
+    <div id="shorts-page" class="page">
+        <h2>⚡ Shorts Qisqa Videolar</h2>
+        <p style="color: #aaa;">Tez kunda qisqa videolar lentasi ishga tushadi!</p>
+    </div>
 
-        <div class="video-card">
-            <div class="thumbnail" style="background: linear-gradient(45deg, #b91c1c, #ef4444);">
-                <div class="duration">08:20</div>
-            </div>
-            <div class="video-details">
-                <div class="channel-avatar"></div>
-                <div class="video-meta">
-                    <h3>PUBG Mobile O'zbekiston chempionati - Eng zo'r lahzalar</h3>
-                    <p>Gaming Uz • 45K ko'rish • 1 hafta oldin</p>
-                </div>
-            </div>
+    <!-- YUKLASH SAHIFASI -->
+    <div id="upload-page" class="page">
+        <h2>➕ Videoni Joylash</h2>
+        <div class="upload-form">
+            <input type="text" id="v-title" placeholder="Video sarlavhasi (Nomi)">
+            <input type="text" id="v-channel" placeholder="Kanal nomingiz">
+            <input type="text" id="v-link" placeholder="Video havolasi (YouTube / Telegram link)">
+            <button onclick="uploadVideo()">Videoni Yuklash</button>
         </div>
+    </div>
+
+    <!-- OBUNALAR SAHIFASI -->
+    <div id="subscriptions-page" class="page">
+        <h2>🔔 Obunalar</h2>
+        <p style="color: #aaa;">Siz obuna bo'lgan kanallar ro'shyati bo'sh.</p>
+    </div>
+
+    <!-- PROFIL SAHIFASI -->
+    <div id="profile-page" class="page">
+        <h2>👤 Foydalanuvchi Profili</h2>
+        <p style="color: #aaa;">Xush kelibsiz! Bu yerda sizning yuklagan videolaringiz chiqadi.</p>
     </div>
 
     <!-- YouTube Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <a href="#" class="nav-item active">
+        <button class="nav-item active" onclick="switchPage('home')">
             <span>🏠</span>Asosiy
-        </a>
-        <a href="#" class="nav-item">
+        </button>
+        <button class="nav-item" onclick="switchPage('shorts')">
             <span>⚡</span>Shorts
-        </a>
-        <a href="#" class="nav-item">
+        </button>
+        <button class="nav-item" onclick="switchPage('upload')">
             <span>➕</span>Yuklash
-        </a>
-        <a href="#" class="nav-item">
+        </button>
+        <button class="nav-item" onclick="switchPage('subscriptions')">
             <span>🔔</span>Obunalar
-        </a>
-        <a href="#" class="nav-item">
+        </button>
+        <button class="nav-item" onclick="switchPage('profile')">
             <span>👤</span>Siz
-        </a>
+        </button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Sahifalarni almashtirish funksiyasi
+        function switchPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            if (pageName === 'home') {
+                document.getElementById('home-page').classList.add('active');
+                event.currentTarget.classList.add('active');
+            } else if (pageName === 'shorts') {
+                document.getElementById('shorts-page').classList.add('active');
+                event.currentTarget.classList.add('active');
+            } else if (pageName === 'upload') {
+                document.getElementById('upload-page').classList.add('active');
+                event.currentTarget.classList.add('active');
+            } else if (pageName === 'subscriptions') {
+                document.getElementById('subscriptions-page').classList.add('active');
+                event.currentTarget.classList.add('active');
+            } else if (pageName === 'profile') {
+                document.getElementById('profile-page').classList.add('active');
+            }
+        }
+
+        // Boshlang'ich videolar bazasi
+        let videos = [
+            {title: "Telegramda Bot yaratish darsligi", channel: "Janob Shoxruz", views: "12K ko'rish", link: "#"},
+            {title: "PUBG Mobile yangi mavsum", channel: "Gaming Uz", views: "45K ko'rish", link: "#"}
+        ];
+
+        function renderVideos() {
+            let feed = document.getElementById('video-feed');
+            feed.innerHTML = "";
+            videos.forEach(v => {
+                feed.innerHTML += `
+                    <div class="video-card" onclick="window.open('${v.link}')">
+                        <div class="thumbnail">▶ Tomosha qilish</div>
+                        <div class="video-details">
+                            <div class="channel-avatar"></div>
+                            <div class="video-meta">
+                                <h3>${v.title}</h3>
+                                <p>${v.channel} • ${v.views} • Yangi</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function uploadVideo() {
+            let title = document.getElementById('v-title').value;
+            let channel = document.getElementById('v-channel').value;
+            let link = document.getElementById('v-link').value;
+
+            if(!title || !channel) {
+                alert("Iltimos, video nomi va kanal nomini kiriting!");
+                return;
+            }
+
+            videos.unshift({title: title, channel: channel, views: "1 ko'rish", link: link ? link : "#"});
+            alert("Muvaffaqiyatli yuklandi!");
+            document.getElementById('v-title').value = "";
+            document.getElementById('v-channel').value = "";
+            document.getElementById('v-link').value = "";
+            
+            switchPage('home');
+            renderVideos();
+        }
+
+        renderVideos();
     </script>
 </body>
 </html>
