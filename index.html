@@ -72,7 +72,6 @@
             background-color: white;
             color: black;
         }
-        /* Sahifalar */
         .page {
             display: none;
             padding: 15px;
@@ -82,20 +81,15 @@
         }
         .video-card {
             margin-bottom: 20px;
-            background-color: var(--bg-color);
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
         }
-        .thumbnail {
+        .video-card video {
             width: 100%;
-            height: 200px;
-            background-color: #333;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+            height: 220px;
+            object-fit: cover;
+            background: black;
         }
         .video-details {
             display: flex;
@@ -107,6 +101,10 @@
             height: 36px;
             background-color: #555;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
         .video-meta h3 {
             margin: 0 0 5px 0;
@@ -117,6 +115,24 @@
             margin: 0;
             font-size: 13px;
             color: var(--secondary-text);
+        }
+        /* Shorts Grid */
+        .shorts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .short-card {
+            background: #212121;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            height: 280px;
+        }
+        .short-card iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
         /* Yuklash formasi */
         .upload-form {
@@ -137,6 +153,46 @@
             background-color: var(--red-color);
             font-weight: bold;
             cursor: pointer;
+        }
+        .file-label {
+            background: #272727;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px dashed #555;
+        }
+        /* Profil dizayni */
+        .profile-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #222;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--red-color);
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .subscribe-btn {
+            background: white;
+            color: black;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .subscribe-btn.subscribed {
+            background: #333;
+            color: white;
         }
         /* Bottom Navigation Bar */
         .bottom-nav {
@@ -174,11 +230,11 @@
 </head>
 <body>
 
-    <!-- YouTube Header -->
+    <!-- Header -->
     <div class="header">
         <div class="logo">Uz<span>Tube</span></div>
         <div class="header-icons">
-            <span onclick="alert('Qidiruv tez orada ishga tushadi!')">🔍</span>
+            <span onclick="alert('Qidiruv tizimi')">🔍</span>
             <span onclick="switchPage('profile')">👤</span>
         </div>
     </div>
@@ -190,66 +246,84 @@
             <button class="chip">O'yinlar</button>
             <button class="chip">Musiqa</button>
             <button class="chip">Futbol</button>
-            <button class="chip">Shorts</button>
         </div>
         <div id="video-feed">
-            <!-- Videolar shu yerga tushadi -->
+            <p style="text-align: center; color: var(--secondary-text); margin-top: 40px;">Hozircha videolar yo'k. 'Yuklash' bo'limidan video qo'shing!</p>
         </div>
     </div>
 
     <!-- SHORTS SAHIFASI -->
     <div id="shorts-page" class="page">
         <h2>⚡ Shorts Qisqa Videolar</h2>
-        <p style="color: #aaa;">Tez kunda qisqa videolar lentasi ishga tushadi!</p>
+        <div class="shorts-grid">
+            <div class="short-card">
+                <iframe src="https://www.youtube.com/embed/oz2oTmjmzgk" allowfullscreen></iframe>
+            </div>
+            <div class="short-card">
+                <iframe src="https://www.youtube.com/embed/UO1sW2FsYiA" allowfullscreen></iframe>
+            </div>
+            <div class="short-card">
+                <iframe src="https://www.youtube.com/embed/p-r0PbAMslc" allowfullscreen></iframe>
+            </div>
+            <div class="short-card">
+                <iframe src="https://www.youtube.com/embed/E6kRWWu-HtU" allowfullscreen></iframe>
+            </div>
+        </div>
     </div>
 
     <!-- YUKLASH SAHIFASI -->
     <div id="upload-page" class="page">
-        <h2>➕ Videoni Joylash</h2>
+        <h2>➕ Galereyadan Video Yuklash</h2>
         <div class="upload-form">
             <input type="text" id="v-title" placeholder="Video sarlavhasi (Nomi)">
-            <input type="text" id="v-channel" placeholder="Kanal nomingiz">
-            <input type="text" id="v-link" placeholder="Video havolasi (YouTube / Telegram link)">
-            <button onclick="uploadVideo()">Videoni Yuklash</button>
+            <input type="text" id="v-channel" placeholder="Kanal nomingiz (Nik)">
+            <label class="file-label" id="file-label-text">📁 Galereyadan video tanlash
+                <input type="file" id="v-file" accept="video/*" style="display: none;" onchange="handleFileSelect(this)">
+            </label>
+            <button onclick="uploadVideo()">Videoni Joylash</button>
         </div>
     </div>
 
     <!-- OBUNALAR SAHIFASI -->
     <div id="subscriptions-page" class="page">
         <h2>🔔 Obunalar</h2>
-        <p style="color: #aaa;">Siz obuna bo'lgan kanallar ro'shyati bo'sh.</p>
+        <div id="subscriptions-list">
+            <p style="color: var(--secondary-text);">Siz hali hech kimga obuna bo'lmadingiz.</p>
+        </div>
     </div>
 
     <!-- PROFIL SAHIFASI -->
     <div id="profile-page" class="page">
-        <h2>👤 Foydalanuvchi Profili</h2>
-        <p style="color: #aaa;">Xush kelibsiz! Bu yerda sizning yuklagan videolaringiz chiqadi.</p>
+        <div class="profile-header">
+            <div class="profile-avatar" id="prof-initial">S</div>
+            <h2 id="prof-name" style="margin: 5px 0;">Mening Kanalim</h2>
+            <p id="prof-subs" style="color: var(--secondary-text); margin: 0; font-size: 14px;">0 obunachi</p>
+            <button class="subscribe-btn" id="sub-action-btn" onclick="toggleSubscribe()">Obuna bo'lish</button>
+        </div>
+        <h3 style="margin-top: 20px;">Kanal videolari:</h3>
+        <div id="profile-videos">
+            <p style="color: var(--secondary-text);">Bu kanalda videolar yo'q.</p>
+        </div>
     </div>
 
-    <!-- YouTube Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchPage('home')">
-            <span>🏠</span>Asosiy
-        </button>
-        <button class="nav-item" onclick="switchPage('shorts')">
-            <span>⚡</span>Shorts
-        </button>
-        <button class="nav-item" onclick="switchPage('upload')">
-            <span>➕</span>Yuklash
-        </button>
-        <button class="nav-item" onclick="switchPage('subscriptions')">
-            <span>🔔</span>Obunalar
-        </button>
-        <button class="nav-item" onclick="switchPage('profile')">
-            <span>👤</span>Siz
-        </button>
+        <button class="nav-item active" onclick="switchPage('home')"><span>🏠</span>Asosiy</button>
+        <button class="nav-item" onclick="switchPage('shorts')"><span>⚡</span>Shorts</button>
+        <button class="nav-item" onclick="switchPage('upload')"><span>➕</span>Yuklash</button>
+        <button class="nav-item" onclick="switchPage('subscriptions')"><span>🔔</span>Obunalar</button>
+        <button class="nav-item" onclick="switchPage('profile')"><span>👤</span>Siz</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Sahifalarni almashtirish funksiyasi
+        let videos = [];
+        let selectedVideoUrl = "";
+        let isSubscribed = false;
+        let subscriberCount = 0;
+
         function switchPage(pageName) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -271,24 +345,59 @@
             }
         }
 
-        // Boshlang'ich videolar bazasi
-        let videos = [
-            {title: "Telegramda Bot yaratish darsligi", channel: "Janob Shoxruz", views: "12K ko'rish", link: "#"},
-            {title: "PUBG Mobile yangi mavsum", channel: "Gaming Uz", views: "45K ko'rish", link: "#"}
-        ];
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                let file = input.files[0];
+                selectedVideoUrl = URL.createObjectURL(file);
+                document.getElementById('file-label-text').innerText = "✅ Tanlandi: " + file.name;
+            }
+        }
 
-        function renderVideos() {
+        function uploadVideo() {
+            let title = document.getElementById('v-title').value;
+            let channel = document.getElementById('v-channel').value;
+
+            if(!title || !channel || !selectedVideoUrl) {
+                alert("Iltimos, video nomi, kanal niki va galereyadan videoni tanlang!");
+                return;
+            }
+
+            let newVideo = {title: title, channel: channel, url: selectedVideoUrl, time: "Yangi"};
+            videos.unshift(newVideo);
+
+            // Profil ma'lumotlarini yangilash
+            document.getElementById('prof-name').innerText = channel;
+            document.getElementById('prof-initial').innerText = channel.charAt(0).toUpperCase();
+
+            alert("Video muvaffaqiyatli joylandi!");
+            
+            // Formani tozalash
+            document.getElementById('v-title').value = "";
+            document.getElementById('v-channel').value = "";
+            document.getElementById('file-label-text').innerText = "📁 Galereyadan video tanlash";
+            selectedVideoUrl = "";
+
+            renderFeed();
+            renderProfileVideos();
+            switchPage('home');
+        }
+
+        function renderFeed() {
             let feed = document.getElementById('video-feed');
+            if (videos.length === 0) {
+                feed.innerHTML = `<p style="text-align: center; color: var(--secondary-text); margin-top: 40px;">Hozircha videolar yo'k. 'Yuklash' bo'limidan video qo'shing!</p>`;
+                return;
+            }
             feed.innerHTML = "";
             videos.forEach(v => {
                 feed.innerHTML += `
-                    <div class="video-card" onclick="window.open('${v.link}')">
-                        <div class="thumbnail">▶ Tomosha qilish</div>
+                    <div class="video-card">
+                        <video controls src="${v.url}"></video>
                         <div class="video-details">
-                            <div class="channel-avatar"></div>
+                            <div class="channel-avatar">${v.channel.charAt(0).toUpperCase()}</div>
                             <div class="video-meta">
                                 <h3>${v.title}</h3>
-                                <p>${v.channel} • ${v.views} • Yangi</p>
+                                <p>${v.channel} • ${v.time}</p>
                             </div>
                         </div>
                     </div>
@@ -296,27 +405,50 @@
             });
         }
 
-        function uploadVideo() {
-            let title = document.getElementById('v-title').value;
-            let channel = document.getElementById('v-channel').value;
-            let link = document.getElementById('v-link').value;
-
-            if(!title || !channel) {
-                alert("Iltimos, video nomi va kanal nomini kiriting!");
+        function renderProfileVideos() {
+            let pVideos = document.getElementById('profile-videos');
+            if (videos.length === 0) {
+                pVideos.innerHTML = `<p style="color: var(--secondary-text);">Bu kanalda videolar yo'q.</p>`;
                 return;
             }
-
-            videos.unshift({title: title, channel: channel, views: "1 ko'rish", link: link ? link : "#"});
-            alert("Muvaffaqiyatli yuklandi!");
-            document.getElementById('v-title').value = "";
-            document.getElementById('v-channel').value = "";
-            document.getElementById('v-link').value = "";
-            
-            switchPage('home');
-            renderVideos();
+            pVideos.innerHTML = "";
+            videos.forEach(v => {
+                pVideos.innerHTML += `
+                    <div class="video-card">
+                        <video controls src="${v.url}"></video>
+                        <div class="video-details">
+                            <div class="video-meta">
+                                <h3>${v.title}</h3>
+                                <p>${v.time}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        renderVideos();
+        function toggleSubscribe() {
+            isSubscribed = !isSubscribed;
+            let btn = document.getElementById('sub-action-btn');
+            let subList = document.getElementById('subscriptions-list');
+            let channelName = document.getElementById('prof-name').innerText;
+
+            if (isSubscribed) {
+                subscriberCount++;
+                btn.innerText = "Obuna bo'lingan";
+                btn.classList.add('subscribed');
+                subList.innerHTML = `<div style="background:#212121; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span><b>${channelName}</b></span>
+                    <span style="color:var(--secondary-text);">Obunadasiz</span>
+                </div>`;
+            } else {
+                subscriberCount = Math.max(0, subscriberCount - 1);
+                btn.innerText = "Obuna bo'lish";
+                btn.classList.remove('subscribed');
+                subList.innerHTML = `<p style="color: var(--secondary-text);">Siz hali hech kimga obuna bo'lmadingiz.</p>`;
+            }
+            document.getElementById('prof-subs').innerText = subscriberCount + " obunachi";
+        }
     </script>
 </body>
 </html>
