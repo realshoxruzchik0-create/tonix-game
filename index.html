@@ -128,20 +128,51 @@
             overflow: hidden;
             position: relative;
             height: 280px;
+            cursor: pointer;
         }
         .short-card iframe {
             width: 100%;
             height: 100%;
             border: none;
+            pointer-events: none;
         }
-        /* Yuklash formasi */
-        .upload-form {
+        .short-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            font-size: 12px;
+        }
+        /* Shorts Player Modal */
+        #shorts-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 2000;
+            flex-direction: column;
+        }
+        #shorts-modal iframe {
+            width: 100%;
+            height: 60vh;
+            border: none;
+        }
+        .shorts-actions {
+            padding: 15px;
+            background: #121212;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        /* Yuklash & Sozlama formasi */
+        .upload-form, .settings-form {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 15px;
         }
-        .upload-form input, .upload-form button {
+        .upload-form input, .upload-form button, .settings-form input, .settings-form button {
             padding: 12px;
             border-radius: 8px;
             border: 1px solid #333;
@@ -149,7 +180,7 @@
             color: white;
             font-size: 15px;
         }
-        .upload-form button {
+        .upload-form button, .settings-form button {
             background-color: var(--red-color);
             font-weight: bold;
             cursor: pointer;
@@ -194,6 +225,21 @@
             background: #333;
             color: white;
         }
+        .verified-badge {
+            color: #3ea6ff;
+            font-size: 16px;
+            margin-left: 4px;
+        }
+        /* Modal Qidiruv */
+        #search-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
         /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
@@ -234,7 +280,7 @@
     <div class="header">
         <div class="logo">Uz<span>Tube</span></div>
         <div class="header-icons">
-            <span onclick="alert('Qidiruv tizimi')">🔍</span>
+            <span onclick="openSearch()">🔍</span>
             <span onclick="switchPage('profile')">👤</span>
         </div>
     </div>
@@ -255,19 +301,8 @@
     <!-- SHORTS SAHIFASI -->
     <div id="shorts-page" class="page">
         <h2>⚡ Shorts Qisqa Videolar</h2>
-        <div class="shorts-grid">
-            <div class="short-card">
-                <iframe src="https://www.youtube.com/embed/oz2oTmjmzgk" allowfullscreen></iframe>
-            </div>
-            <div class="short-card">
-                <iframe src="https://www.youtube.com/embed/UO1sW2FsYiA" allowfullscreen></iframe>
-            </div>
-            <div class="short-card">
-                <iframe src="https://www.youtube.com/embed/p-r0PbAMslc" allowfullscreen></iframe>
-            </div>
-            <div class="short-card">
-                <iframe src="https://www.youtube.com/embed/E6kRWWu-HtU" allowfullscreen></iframe>
-            </div>
+        <div class="shorts-grid" id="shorts-grid-container">
+            <!-- Shorts videolari -->
         </div>
     </div>
 
@@ -276,7 +311,6 @@
         <h2>➕ Galereyadan Video Yuklash</h2>
         <div class="upload-form">
             <input type="text" id="v-title" placeholder="Video sarlavhasi (Nomi)">
-            <input type="text" id="v-channel" placeholder="Kanal nomingiz (Nik)">
             <label class="file-label" id="file-label-text">📁 Galereyadan video tanlash
                 <input type="file" id="v-file" accept="video/*" style="display: none;" onchange="handleFileSelect(this)">
             </label>
@@ -293,16 +327,54 @@
     </div>
 
     <!-- PROFIL SAHIFASI -->
-    <div id="profile-page" class="page">
+    <div id="profil-page" class="page">
         <div class="profile-header">
             <div class="profile-avatar" id="prof-initial">S</div>
-            <h2 id="prof-name" style="margin: 5px 0;">Mening Kanalim</h2>
+            <h2 id="prof-name" style="margin: 5px 0;">@JanobShoxruz26.uz <span class="verified-badge">✓</span></h2>
             <p id="prof-subs" style="color: var(--secondary-text); margin: 0; font-size: 14px;">0 obunachi</p>
             <button class="subscribe-btn" id="sub-action-btn" onclick="toggleSubscribe()">Obuna bo'lish</button>
         </div>
+        
+        <div class="settings-form" style="margin-top: 15px;">
+            <h3>Nikni o'zgartirish:</h3>
+            <input type="text" id="new-nik-input" placeholder="@kanalnikingiz.uz">
+            <button onclick="updateNik()">Nikni Saqlash</button>
+        </div>
+
         <h3 style="margin-top: 20px;">Kanal videolari:</h3>
         <div id="profile-videos">
             <p style="color: var(--secondary-text);">Bu kanalda videolar yo'q.</p>
+        </div>
+    </div>
+
+    <!-- QIDIRUV MODALI -->
+    <div id="search-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Odamlarni qidirish</h3>
+            <span onclick="closeSearch()" style="font-size: 24px; cursor: pointer;">✕</span>
+        </div>
+        <input type="text" id="search-input" placeholder="@nikni_kiriting.uz" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #212121; color: white; box-sizing: border-box;" oninput="searchUser(this.value)">
+        <div id="search-results" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- SHORTS PLAYER MODALI -->
+    <div id="shorts-modal">
+        <div style="display: flex; justify-content: space-between; padding: 10px 15px; background: #121212;">
+            <span id="shorts-title-top" style="font-weight: bold;">Shorts</span>
+            <span onclick="closeShortsModal()" style="font-size: 22px; cursor: pointer;">✕</span>
+        </div>
+        <iframe id="shorts-iframe" src="" allowfullscreen></iframe>
+        <div class="shorts-actions">
+            <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 10px;">
+                <button onclick="toggleShortsLike()" id="like-btn" style="background: #272727; border: none; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer;">❤️ <span id="like-count">0</span></button>
+                <button onclick="toggleShortsSubscribe()" id="shorts-sub-btn" style="background: white; color: black; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;">Obuna bo'lish</button>
+            </div>
+            <h4>Izohlar:</h4>
+            <div id="comments-list" style="margin-bottom: 10px; max-height: 100px; overflow-y: auto;"></div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="comment-input" placeholder="Izoh yozish..." style="flex-grow: 1; padding: 8px; border-radius: 8px; border: 1px solid #333; background: #212121; color: white;">
+                <button onclick="addComment()" style="background: var(--red-color); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Yuborish</button>
+            </div>
         </div>
     </div>
 
@@ -312,39 +384,62 @@
         <button class="nav-item" onclick="switchPage('shorts')"><span>⚡</span>Shorts</button>
         <button class="nav-item" onclick="switchPage('upload')"><span>➕</span>Yuklash</button>
         <button class="nav-item" onclick="switchPage('subscriptions')"><span>🔔</span>Obunalar</button>
-        <button class="nav-item" onclick="switchPage('profile')"><span>👤</span>Siz</button>
+        <button class="nav-item" onclick="switchPage('profil')"><span>👤</span>Siz</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let videos = [];
-        let selectedVideoUrl = "";
-        let isSubscribed = false;
-        let subscriberCount = 0;
+        // LocalStorage dan malumotlarni yuklash
+        let myChannelNik = localStorage.getItem('myNik') || "@JanobShoxruz26.uz";
+        let subscriberCount = parseInt(localStorage.getItem('subCount') || "0");
+        let isSubscribed = localStorage.getItem('isSub') === 'true';
+        let videos = JSON.parse(localStorage.getItem('videos') || "[]");
+        let subscriptions = JSON.parse(localStorage.getItem('subscriptions') || "[]");
+        
+        // Shorts videolari bazasi
+        let shortsVideos = [
+            {id: "oz2oTmjmzgk", title: "Janimni | SOHIBJON", channel: "SOHIBJON_...", likes: 120, liked: false, comments: ["Zo'r ekan!"]},
+            {id: "UO1sW2FsYiA", title: "TOXIR❤️", channel: "TOXIR", likes: 85, liked: false, comments: []},
+            {id: "p-r0PbAMslc", title: "Kommeyi saqla", channel: "Kommen", likes: 230, liked: false, comments: ["Super"]},
+            {id: "E6kRWWu-HtU", title: "Zufarr M", channel: "OCTAGON", likes: 94, liked: false, comments: []},
+            {id: "oYDt8cj3X2g", title: "Yangi Shorts 1", channel: "Shoxruz_Uz", likes: 45, liked: false, comments: []},
+            {id: "v6GSKQSeVHo", title: "Yangi Shorts 2", channel: "UzMobile", likes: 60, liked: false, comments: []}
+        ];
+        
+        let activeShortIndex = 0;
+
+        document.getElementById('prof-name').innerHTML = myChannelNik + ' <span class="verified-badge">✓</span>';
+        document.getElementById('prof-subs').innerText = subscriberCount + " obunachi";
+        if(isSubscribed) {
+            let btn = document.getElementById('sub-action-btn');
+            btn.innerText = "Obuna bo'lingan";
+            btn.classList.add('subscribed');
+        }
 
         function switchPage(pageName) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-            if (pageName === 'home') {
-                document.getElementById('home-page').classList.add('active');
-                event.currentTarget.classList.add('active');
-            } else if (pageName === 'shorts') {
-                document.getElementById('shorts-page').classList.add('active');
-                event.currentTarget.classList.add('active');
-            } else if (pageName === 'upload') {
-                document.getElementById('upload-page').classList.add('active');
-                event.currentTarget.classList.add('active');
-            } else if (pageName === 'subscriptions') {
-                document.getElementById('subscriptions-page').classList.add('active');
-                event.currentTarget.classList.add('active');
-            } else if (pageName === 'profile') {
-                document.getElementById('profile-page').classList.add('active');
-            }
+            document.getElementById(pageName + '-page').classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
+        function updateNik() {
+            let nik = document.getElementById('new-nik-input').value.trim();
+            if(!nik.startsWith('@') || !nik.endsWith('.uz')) {
+                alert("Xato! Nik '@' bilan boshlanishi va oxiri '.uz' bilan tugashi shart! (Masalan: @shoxruz.uz)");
+                return;
+            }
+            myChannelNik = nik;
+            localStorage.setItem('myNik', myChannelNik);
+            document.getElementById('prof-name').innerHTML = myChannelNik + ' <span class="verified-badge">✓</span>';
+            alert("Nik muvaffaqiyatli o'zgartirildi!");
+            document.getElementById('new-nik-input').value = "";
+        }
+
+        let selectedVideoUrl = "";
         function handleFileSelect(input) {
             if (input.files && input.files[0]) {
                 let file = input.files[0];
@@ -355,25 +450,17 @@
 
         function uploadVideo() {
             let title = document.getElementById('v-title').value;
-            let channel = document.getElementById('v-channel').value;
-
-            if(!title || !channel || !selectedVideoUrl) {
-                alert("Iltimos, video nomi, kanal niki va galereyadan videoni tanlang!");
+            if(!title || !selectedVideoUrl) {
+                alert("Video nomi va galereyadan video tanlanishi shart!");
                 return;
             }
 
-            let newVideo = {title: title, channel: channel, url: selectedVideoUrl, time: "Yangi"};
+            let newVideo = {title: title, channel: myChannelNik, url: selectedVideoUrl, time: "Yangi"};
             videos.unshift(newVideo);
-
-            // Profil ma'lumotlarini yangilash
-            document.getElementById('prof-name').innerText = channel;
-            document.getElementById('prof-initial').innerText = channel.charAt(0).toUpperCase();
+            localStorage.setItem('videos', JSON.stringify(videos));
 
             alert("Video muvaffaqiyatli joylandi!");
-            
-            // Formani tozalash
             document.getElementById('v-title').value = "";
-            document.getElementById('v-channel').value = "";
             document.getElementById('file-label-text').innerText = "📁 Galereyadan video tanlash";
             selectedVideoUrl = "";
 
@@ -394,10 +481,10 @@
                     <div class="video-card">
                         <video controls src="${v.url}"></video>
                         <div class="video-details">
-                            <div class="channel-avatar">${v.channel.charAt(0).toUpperCase()}</div>
+                            <div class="channel-avatar">${v.channel.charAt(1).toUpperCase()}</div>
                             <div class="video-meta">
                                 <h3>${v.title}</h3>
-                                <p>${v.channel} • ${v.time}</p>
+                                <p>${v.channel} <span class="verified-badge">✓</span> • ${v.time}</p>
                             </div>
                         </div>
                     </div>
@@ -407,12 +494,13 @@
 
         function renderProfileVideos() {
             let pVideos = document.getElementById('profile-videos');
-            if (videos.length === 0) {
+            let myVideos = videos.filter(v => v.channel === myChannelNik);
+            if (myVideos.length === 0) {
                 pVideos.innerHTML = `<p style="color: var(--secondary-text);">Bu kanalda videolar yo'q.</p>`;
                 return;
             }
             pVideos.innerHTML = "";
-            videos.forEach(v => {
+            myVideos.forEach(v => {
                 pVideos.innerHTML += `
                     <div class="video-card">
                         <video controls src="${v.url}"></video>
@@ -427,28 +515,147 @@
             });
         }
 
+        function renderShorts() {
+            let grid = document.getElementById('shorts-grid-container');
+            grid.innerHTML = "";
+            shortsVideos.forEach((s, index) => {
+                grid.innerHTML += `
+                    <div class="short-card" onclick="openShortsModal(${index})">
+                        <iframe src="https://www.youtube.com/embed/${s.id}"></iframe>
+                        <div class="short-overlay">
+                            <b>${s.title}</b><br><span style="color:#aaa;">${s.channel}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openShortsModal(index) {
+            activeShortIndex = index;
+            let s = shortsVideos[index];
+            document.getElementById('shorts-iframe').src = `https://www.youtube.com/embed/${s.id}?autoplay=1`;
+            document.getElementById('shorts-title-top').innerText = s.title;
+            document.getElementById('like-count').innerText = s.likes;
+            
+            let btn = document.getElementById('like-btn');
+            btn.style.background = s.liked ? '#ff0000' : '#272727';
+
+            renderComments();
+            document.getElementById('shorts-modal').style.display = 'flex';
+        }
+
+        function closeShortsModal() {
+            document.getElementById('shorts-iframe').src = "";
+            document.getElementById('shorts-modal').style.display = 'none';
+        }
+
+        function toggleShortsLike() {
+            let s = shortsVideos[activeShortIndex];
+            s.liked = !s.liked;
+            s.likes += s.liked ? 1 : -1;
+            document.getElementById('like-count').innerText = s.likes;
+            document.getElementById('like-btn').style.background = s.liked ? '#ff0000' : '#272727';
+        }
+
+        function toggleShortsSubscribe() {
+            alert("Kanalga obuna bo'lindi!");
+        }
+
+        function renderComments() {
+            let cList = document.getElementById('comments-list');
+            let s = shortsVideos[activeShortIndex];
+            if(s.comments.length === 0) {
+                cList.innerHTML = `<p style="color:var(--secondary-text); font-size:13px;">Hozircha izohlar yo'q.</p>`;
+                return;
+            }
+            cList.innerHTML = "";
+            s.comments.forEach(c => {
+                cList.innerHTML += `<div style="background:#212121; padding:6px 10px; border-radius:6px; margin-bottom:5px; font-size:13px;">${c}</div>`;
+            });
+        }
+
+        function addComment() {
+            let input = document.getElementById('comment-input');
+            let text = input.value.trim();
+            if(!text) return;
+            shortsVideos[activeShortIndex].comments.push(text);
+            input.value = "";
+            renderComments();
+        }
+
         function toggleSubscribe() {
             isSubscribed = !isSubscribed;
+            subscriberCount += isSubscribed ? 1 : -1;
+            localStorage.setItem('subCount', subscriberCount);
+            localStorage.setItem('isSub', isSubscribed);
+
             let btn = document.getElementById('sub-action-btn');
             let subList = document.getElementById('subscriptions-list');
-            let channelName = document.getElementById('prof-name').innerText;
 
             if (isSubscribed) {
-                subscriberCount++;
                 btn.innerText = "Obuna bo'lingan";
                 btn.classList.add('subscribed');
-                subList.innerHTML = `<div style="background:#212121; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span><b>${channelName}</b></span>
-                    <span style="color:var(--secondary-text);">Obunadasiz</span>
-                </div>`;
+                subscriptions.push({name: myChannelNik});
             } else {
-                subscriberCount = Math.max(0, subscriberCount - 1);
                 btn.innerText = "Obuna bo'lish";
                 btn.classList.remove('subscribed');
-                subList.innerHTML = `<p style="color: var(--secondary-text);">Siz hali hech kimga obuna bo'lmadingiz.</p>`;
+                subscriptions = subscriptions.filter(sub => sub.name !== myChannelNik);
             }
+            localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
             document.getElementById('prof-subs').innerText = subscriberCount + " obunachi";
+            renderSubscriptions();
         }
+
+        function renderSubscriptions() {
+            let subList = document.getElementById('subscriptions-list');
+            if (subscriptions.length === 0) {
+                subList.innerHTML = `<p style="color: var(--secondary-text);">Siz hali hech kimga obuna bo'lmadingiz.</p>`;
+                return;
+            }
+            subList.innerHTML = "";
+            subscriptions.forEach(sub => {
+                subList.innerHTML += `
+                    <div style="background:#212121; padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span><b>${sub.name}</b> <span class="verified-badge">✓</span></span>
+                        <span style="color:var(--secondary-text); font-size:13px;">Obunadasiz</span>
+                    </div>
+                `;
+            });
+        }
+
+        function openSearch() {
+            document.getElementById('search-modal').style.display = 'block';
+        }
+        function closeSearch() {
+            document.getElementById('search-modal').style.display = 'none';
+        }
+
+        function searchUser(query) {
+            let resDiv = document.getElementById('search-results');
+            query = query.trim();
+            if(!query) {
+                resDiv.innerHTML = "";
+                return;
+            }
+            if(myChannelNik.toLowerCase().includes(query.toLowerCase()) || query === "@shoxruz") {
+                resDiv.innerHTML = `
+                    <div style="background:#212121; padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <b>${myChannelNik}</b> <span class="verified-badge">✓</span><br>
+                            <small style="color:var(--secondary-text);">${subscriberCount} obunachi</small>
+                        </div>
+                        <button onclick="switchPage('profil'); closeSearch();" style="background:white; color:black; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer;">Kanalga o'tish</button>
+                    </div>
+                `;
+            } else {
+                resDiv.innerHTML = `<p style="color:var(--secondary-text);">Bunday foydalanuvchi topilmadi.</p>`;
+            }
+        }
+
+        renderFeed();
+        renderProfileVideos();
+        renderShorts();
+        renderSubscriptions();
     </script>
 </body>
 </html>
