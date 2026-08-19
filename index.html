@@ -1,38 +1,228 @@
-import asyncio
-import logging
-from aiogram import Bot, Dispatcher, Router
-from aiogram.filters import Command
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UzTube Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --text-color: #ffffff;
+            --secondary-text: #aaa;
+            --card-bg: #212121;
+            --red-color: #ff0000;
+        }
+        body {
+            font-family: Roboto, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding-bottom: 70px; /* Pastki menyu yopib qo'ymasligi uchun */
+        }
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--bg-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .logo span {
+            background-color: var(--red-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .header-icons {
+            display: flex;
+            gap: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
 
-TOKEN = "8873497419:AAEvhFMTVu8IU5KoyxAJd8TdstA2P00xSvE"
+        /* Categories Chips */
+        .chips-container {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: var(--bg-color);
+            scrollbar-width: none;
+        }
+        .chips-container::-webkit-scrollbar { display: none; }
+        .chip {
+            background-color: #272727;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+        .chip.active {
+            background-color: white;
+            color: black;
+        }
 
-router = Router()
+        /* Video Card */
+        .video-card {
+            margin-bottom: 20px;
+            background-color: var(--bg-color);
+        }
+        .thumbnail {
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0,0,0,0.8);
+            padding: 3px 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        .video-details {
+            display: flex;
+            gap: 12px;
+            padding: 12px 15px;
+        }
+        .channel-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #555;
+            border-radius: 50%;
+        }
+        .video-meta h3 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        .video-meta p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--secondary-text);
+        }
 
-@router.message(Command("start"))
-async def cmd_start(message: Message):
-    # Vercel yoki GitHub Pages'ga joylagan saytingiz havolasini shu yerga yozasiz
-    # Misol uchun: "https://uztube-app.vercel.app"
-    web_app_url = "https://SIZNING-HAQIQIY-LINKINGIZ.vercel.app"
-    
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="▶️ UzTube'ni ochish", web_app=WebAppInfo(url=web_app_url))]
-    ])
-    
-    await message.answer(
-        "<b>Xush kelibsiz, UzTube rasmiy botiga! 🎬</b>\n\n"
-        "Pastdagi tugmani bosing va xuddi YouTube kabi videolarni tomosha qiling:",
-        parse_html=True,
-        reply_markup=keyboard
-    )
+        /* Bottom Navigation Bar (YouTube Style) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #121212;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #272727;
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--secondary-text);
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .nav-item.active {
+            color: white;
+        }
+        .nav-item span {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
 
-async def main():
-    logging.basicConfig(level=logging.INFO)
-    bot = Bot(token=TOKEN)
-    dp = Dispatcher()
-    dp.include_router(router)
-    
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    <!-- YouTube Header -->
+    <div class="header">
+        <div class="logo">Uz<span>Tube</span></div>
+        <div class="header-icons">
+            🔍 👤
+        </div>
+    </div>
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    <!-- Kategoriyalar -->
+    <div class="chips-container">
+        <button class="chip active">Barchasi</button>
+        <button class="chip">O'yinlar</button>
+        <button class="chip">Musiqa</button>
+        <button class="chip">Futbol</button>
+        <button class="chip">Shorts</button>
+        <button class="chip">Dasturlash</button>
+    </div>
+
+    <!-- Video Lenta -->
+    <div id="feed">
+        <div class="video-card">
+            <div class="thumbnail" style="background: linear-gradient(45deg, #1d4ed8, #3b82f6);">
+                <div class="duration">12:45</div>
+            </div>
+            <div class="video-details">
+                <div class="channel-avatar"></div>
+                <div class="video-meta">
+                    <h3>Telegramda YouTube Bot yaratish - To'liq darslik 2026</h3>
+                    <p>Janob Shoxruz • 12K ko'rish • 2 kun oldin</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <div class="thumbnail" style="background: linear-gradient(45deg, #b91c1c, #ef4444);">
+                <div class="duration">08:20</div>
+            </div>
+            <div class="video-details">
+                <div class="channel-avatar"></div>
+                <div class="video-meta">
+                    <h3>PUBG Mobile O'zbekiston chempionati - Eng zo'r lahzalar</h3>
+                    <p>Gaming Uz • 45K ko'rish • 1 hafta oldin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <span>🏠</span>Asosiy
+        </a>
+        <a href="#" class="nav-item">
+            <span>⚡</span>Shorts
+        </a>
+        <a href="#" class="nav-item">
+            <span>➕</span>Yuklash
+        </a>
+        <a href="#" class="nav-item">
+            <span>🔔</span>Obunalar
+        </a>
+        <a href="#" class="nav-item">
+            <span>👤</span>Siz
+        </a>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+    </script>
+</body>
+</html>
