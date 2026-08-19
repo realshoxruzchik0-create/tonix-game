@@ -3,659 +3,519 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UzTube Web App</title>
+    <title>Aviator TON</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #0f0f0f;
-            --text-color: #ffffff;
-            --secondary-text: #aaa;
-            --card-bg: #212121;
-            --red-color: #ff0000;
-        }
         body {
-            font-family: Roboto, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
             margin: 0;
-            padding-bottom: 70px;
+            background-color: #0c0f16;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
         }
+        /* Loader Screen */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0c0f16;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .loader-logo {
+            font-size: 32px;
+            font-weight: 900;
+            font-style: italic;
+            color: #ff334b;
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(255, 51, 75, 0.5);
+        }
+        .loader-sub {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #222938;
+            border-top: 4px solid #ff334b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 15px;
-            background-color: var(--bg-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: #141923;
+            border-bottom: 1px solid #222938;
         }
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            color: #ff334b;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+        .balance {
+            color: #00e676;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 16px;
+            background: #1a2230;
+            padding: 5px 12px;
+            border-radius: 20px;
         }
-        .logo span {
-            background-color: var(--red-color);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-        .header-icons {
+        .history-bar {
             display: flex;
-            gap: 20px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .chips-container {
-            display: flex;
-            gap: 10px;
-            padding: 10px 15px;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #10141d;
             overflow-x: auto;
             white-space: nowrap;
-            background-color: var(--bg-color);
-            scrollbar-width: none;
         }
-        .chips-container::-webkit-scrollbar { display: none; }
-        .chip {
-            background-color: #272727;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-        }
-        .chip.active {
-            background-color: white;
-            color: black;
-        }
-        .page {
-            display: none;
-            padding: 15px;
-        }
-        .page.active {
-            display: block;
-        }
-        .video-card {
-            margin-bottom: 20px;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .video-card video {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            background: black;
-        }
-        .video-details {
-            display: flex;
-            gap: 12px;
-            padding: 12px 15px;
-        }
-        .channel-avatar {
-            width: 36px;
-            height: 36px;
-            background-color: #555;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        .video-meta h3 {
-            margin: 0 0 5px 0;
-            font-size: 15px;
-            line-height: 1.4;
-        }
-        .video-meta p {
-            margin: 0;
-            font-size: 13px;
-            color: var(--secondary-text);
-        }
-        /* Shorts Grid */
-        .shorts-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .short-card {
-            background: #212121;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            height: 280px;
-            cursor: pointer;
-        }
-        .short-card iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            pointer-events: none;
-        }
-        .short-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        .hist-item {
             font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #1a2230;
         }
-        /* Shorts Player Modal */
-        #shorts-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black;
-            z-index: 2000;
+        .h-purple { color: #b57edc; }
+        .h-blue { color: #3ea6ff; }
+        .h-red { color: #ff334b; }
+
+        /* Game Screen */
+        .game-screen {
+            position: relative;
+            height: 230px;
+            background: radial-gradient(circle, #25121a 0%, #0c0f16 80%);
+            display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 2px solid #ff334b;
         }
-        #shorts-modal iframe {
-            width: 100%;
-            height: 60vh;
-            border: none;
+        .multiplier {
+            font-size: 48px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 51, 75, 0.6);
         }
-        .shorts-actions {
-            padding: 15px;
-            background: #121212;
-            flex-grow: 1;
-            overflow-y: auto;
+        .status-text {
+            font-size: 14px;
+            color: #888;
+            margin-top: 5px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-        /* Yuklash & Sozlama formasi */
-        .upload-form, .settings-form {
+        .online-users {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        /* Bet Panels */
+        .bet-container {
+            padding: 10px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 15px;
         }
-        .upload-form input, .upload-form button, .settings-form input, .settings-form button {
+        .bet-card {
+            background: #141923;
+            border-radius: 16px;
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background-color: #212121;
-            color: white;
-            font-size: 15px;
+            border: 1px solid #222938;
         }
-        .upload-form button, .settings-form button {
-            background-color: var(--red-color);
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .file-label {
-            background: #272727;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px dashed #555;
-        }
-        /* Profil dizayni */
-        .profile-header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #222;
-        }
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            background: var(--red-color);
-            border-radius: 50%;
-            margin: 0 auto 10px auto;
+        .bet-tabs {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
+            background: #0c0f16;
+            border-radius: 10px;
+            padding: 2px;
+            margin-bottom: 10px;
+            width: fit-content;
         }
-        .subscribe-btn {
-            background: white;
-            color: black;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
+        .bet-tab {
+            padding: 4px 16px;
+            font-size: 12px;
             font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 10px;
+            color: #888;
         }
-        .subscribe-btn.subscribed {
-            background: #333;
+        .bet-tab.active {
+            background: #222d42;
             color: white;
         }
-        .verified-badge {
-            color: #3ea6ff;
-            font-size: 16px;
-            margin-left: 4px;
-        }
-        /* Modal Qidiruv */
-        #search-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        /* Bottom Navigation Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background-color: #121212;
+        .bet-row {
             display: flex;
-            justify-content: space-around;
+            gap: 10px;
             align-items: center;
-            border-top: 1px solid #272727;
-            z-index: 1000;
         }
-        .nav-item {
+        .amount-control {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            color: var(--secondary-text);
-            font-size: 11px;
-            cursor: pointer;
-            text-decoration: none;
+            background: #0c0f16;
+            border-radius: 10px;
+            padding: 6px 10px;
+            flex: 1;
+            border: 1px solid #222938;
+        }
+        .amount-control button {
             background: none;
             border: none;
+            color: #888;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
         }
-        .nav-item.active {
+        .amount-control input {
+            background: none;
+            border: none;
             color: white;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            outline: none;
         }
-        .nav-item span {
-            font-size: 20px;
-            margin-bottom: 2px;
+        .action-btn {
+            flex: 1.2;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 900;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+        }
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .q-btn {
+            background: #1a2230;
+            border: none;
+            color: #ccc;
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #10141d;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #222938;
+            font-size: 12px;
+            color: #888;
+        }
+        .footer-nav div {
+            cursor: pointer;
+        }
+        .footer-nav .active-ft {
+            color: #ff334b;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Yuklanish Ekrani -->
+    <div id="loader">
+        <div class="loader-logo">Aviator TON</div>
+        <div class="loader-sub">X7000 ROKETA</div>
+        <div class="spinner"></div>
+    </div>
+
     <div class="header">
-        <div class="logo">Uz<span>Tube</span></div>
-        <div class="header-icons">
-            <span onclick="openSearch()">🔍</span>
-            <span onclick="switchPage('profile')">👤</span>
-        </div>
+        <div class="logo">Aviator</div>
+        <div class="balance" id="balance">10.00 TON</div>
     </div>
 
-    <!-- ASOSIY SAHIFA -->
-    <div id="home-page" class="page active">
-        <div class="chips-container">
-            <button class="chip active">Barchasi</button>
-            <button class="chip">O'yinlar</button>
-            <button class="chip">Musiqa</button>
-            <button class="chip">Futbol</button>
-        </div>
-        <div id="video-feed">
-            <p style="text-align: center; color: var(--secondary-text); margin-top: 40px;">Hozircha videolar yo'k. 'Yuklash' bo'limidan video qo'shing!</p>
-        </div>
+    <div class="history-bar" id="history-bar">
+        <span class="hist-item h-purple">10.45x</span>
+        <span class="hist-item h-blue">1.31x</span>
+        <span class="hist-item h-purple">x72.50</span>
     </div>
 
-    <!-- SHORTS SAHIFASI -->
-    <div id="shorts-page" class="page">
-        <h2>⚡ Shorts Qisqa Videolar</h2>
-        <div class="shorts-grid" id="shorts-grid-container">
-            <!-- Shorts videolari -->
-        </div>
+    <div class="game-screen">
+        <div class="multiplier" id="multiplier">1.00x</div>
+        <div class="status-text" id="status-text">O'YIN BOSHLANISHIGA TAYYORGARLIK</div>
+        <div class="online-users">👥 742</div>
     </div>
 
-    <!-- YUKLASH SAHIFASI -->
-    <div id="upload-page" class="page">
-        <h2>➕ Galereyadan Video Yuklash</h2>
-        <div class="upload-form">
-            <input type="text" id="v-title" placeholder="Video sarlavhasi (Nomi)">
-            <label class="file-label" id="file-label-text">📁 Galereyadan video tanlash
-                <input type="file" id="v-file" accept="video/*" style="display: none;" onchange="handleFileSelect(this)">
-            </label>
-            <button onclick="uploadVideo()">Videoni Joylash</button>
-        </div>
-    </div>
-
-    <!-- OBUNALAR SAHIFASI -->
-    <div id="subscriptions-page" class="page">
-        <h2>🔔 Obunalar</h2>
-        <div id="subscriptions-list">
-            <p style="color: var(--secondary-text);">Siz hali hech kimga obuna bo'lmadingiz.</p>
-        </div>
-    </div>
-
-    <!-- PROFIL SAHIFASI -->
-    <div id="profil-page" class="page">
-        <div class="profile-header">
-            <div class="profile-avatar" id="prof-initial">S</div>
-            <h2 id="prof-name" style="margin: 5px 0;">@JanobShoxruz26.uz <span class="verified-badge">✓</span></h2>
-            <p id="prof-subs" style="color: var(--secondary-text); margin: 0; font-size: 14px;">0 obunachi</p>
-            <button class="subscribe-btn" id="sub-action-btn" onclick="toggleSubscribe()">Obuna bo'lish</button>
-        </div>
-        
-        <div class="settings-form" style="margin-top: 15px;">
-            <h3>Nikni o'zgartirish:</h3>
-            <input type="text" id="new-nik-input" placeholder="@kanalnikingiz.uz">
-            <button onclick="updateNik()">Nikni Saqlash</button>
-        </div>
-
-        <h3 style="margin-top: 20px;">Kanal videolari:</h3>
-        <div id="profile-videos">
-            <p style="color: var(--secondary-text);">Bu kanalda videolar yo'q.</p>
-        </div>
-    </div>
-
-    <!-- QIDIRUV MODALI -->
-    <div id="search-modal">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3>Odamlarni qidirish</h3>
-            <span onclick="closeSearch()" style="font-size: 24px; cursor: pointer;">✕</span>
-        </div>
-        <input type="text" id="search-input" placeholder="@nikni_kiriting.uz" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #212121; color: white; box-sizing: border-box;" oninput="searchUser(this.value)">
-        <div id="search-results" style="margin-top: 15px;"></div>
-    </div>
-
-    <!-- SHORTS PLAYER MODALI -->
-    <div id="shorts-modal">
-        <div style="display: flex; justify-content: space-between; padding: 10px 15px; background: #121212;">
-            <span id="shorts-title-top" style="font-weight: bold;">Shorts</span>
-            <span onclick="closeShortsModal()" style="font-size: 22px; cursor: pointer;">✕</span>
-        </div>
-        <iframe id="shorts-iframe" src="" allowfullscreen></iframe>
-        <div class="shorts-actions">
-            <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 10px;">
-                <button onclick="toggleShortsLike()" id="like-btn" style="background: #272727; border: none; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer;">❤️ <span id="like-count">0</span></button>
-                <button onclick="toggleShortsSubscribe()" id="shorts-sub-btn" style="background: white; color: black; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;">Obuna bo'lish</button>
+    <div class="bet-container" style="padding-bottom: 70px;">
+        <!-- 1-stavka bloki -->
+        <div class="bet-card">
+            <div class="bet-tabs">
+                <div class="bet-tab active">Bet</div>
+                <div class="bet-tab">Auto</div>
             </div>
-            <h4>Izohlar:</h4>
-            <div id="comments-list" style="margin-bottom: 10px; max-height: 100px; overflow-y: auto;"></div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="comment-input" placeholder="Izoh yozish..." style="flex-grow: 1; padding: 8px; border-radius: 8px; border: 1px solid #333; background: #212121; color: white;">
-                <button onclick="addComment()" style="background: var(--red-color); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Yuborish</button>
+            <div class="bet-row">
+                <div class="amount-control">
+                    <button onclick="changeBet(1, -0.5)">-</button>
+                    <input type="text" id="bet1" value="1.00">
+                    <button onclick="changeBet(1, 0.5)">+</button>
+                </div>
+                <button class="action-btn" id="btn1" onclick="handleBet(1)">BET<br><span style="font-size:11px">1.00 TON</span></button>
+            </div>
+            <div class="quick-amounts">
+                <button class="q-btn" onclick="setBet(1, 0.5)">0.5</button>
+                <button class="q-btn" onclick="setBet(1, 1.0)">1.0</button>
+                <button class="q-btn" onclick="setBet(1, 5.0)">5.0</button>
+                <button class="q-btn" onclick="setBet(1, 10.0)">10.0</button>
+            </div>
+        </div>
+
+        <!-- 2-stavka bloki -->
+        <div class="bet-card">
+            <div class="bet-tabs">
+                <div class="bet-tab active">Bet</div>
+                <div class="bet-tab">Auto</div>
+            </div>
+            <div class="bet-row">
+                <div class="amount-control">
+                    <button onclick="changeBet(2, -0.5)">-</button>
+                    <input type="text" id="bet2" value="0.50">
+                    <button onclick="changeBet(2, 0.5)">+</button>
+                </div>
+                <button class="action-btn" id="btn2" onclick="handleBet(2)">BET<br><span style="font-size:11px">0.50 TON</span></button>
+            </div>
+            <div class="quick-amounts">
+                <button class="q-btn" onclick="setBet(2, 0.5)">0.5</button>
+                <button class="q-btn" onclick="setBet(2, 1.0)">1.0</button>
+                <button class="q-btn" onclick="setBet(2, 5.0)">5.0</button>
+                <button class="q-btn" onclick="setBet(2, 10.0)">10.0</button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchPage('home')"><span>🏠</span>Asosiy</button>
-        <button class="nav-item" onclick="switchPage('shorts')"><span>⚡</span>Shorts</button>
-        <button class="nav-item" onclick="switchPage('upload')"><span>➕</span>Yuklash</button>
-        <button class="nav-item" onclick="switchPage('subscriptions')"><span>🔔</span>Obunalar</button>
-        <button class="nav-item" onclick="switchPage('profil')"><span>👤</span>Siz</button>
+    <div class="footer-nav">
+        <div class="active-ft">All Bets</div>
+        <div>Previous</div>
+        <div>Top</div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // LocalStorage dan malumotlarni yuklash
-        let myChannelNik = localStorage.getItem('myNik') || "@JanobShoxruz26.uz";
-        let subscriberCount = parseInt(localStorage.getItem('subCount') || "0");
-        let isSubscribed = localStorage.getItem('isSub') === 'true';
-        let videos = JSON.parse(localStorage.getItem('videos') || "[]");
-        let subscriptions = JSON.parse(localStorage.getItem('subscriptions') || "[]");
+        // Load balance from localStorage or set default 10 TON
+        let userBalance = parseFloat(localStorage.getItem('aviator_balance') || "10.00");
+        document.getElementById('balance').innerText = userBalance.toFixed(2) + " TON";
+
+        // Hide loader after 1.5 seconds
+        setTimeout(() => {
+            let loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+        }, 1500);
+
+        let gameState = 'waiting'; // waiting, playing, crashed
+        let currentMultiplier = 1.00;
+        let crashPoint = 1.00;
+        let gameInterval = null;
         
-        // Shorts videolari bazasi
-        let shortsVideos = [
-            {id: "oz2oTmjmzgk", title: "Janimni | SOHIBJON", channel: "SOHIBJON_...", likes: 120, liked: false, comments: ["Zo'r ekan!"]},
-            {id: "UO1sW2FsYiA", title: "TOXIR❤️", channel: "TOXIR", likes: 85, liked: false, comments: []},
-            {id: "p-r0PbAMslc", title: "Kommeyi saqla", channel: "Kommen", likes: 230, liked: false, comments: ["Super"]},
-            {id: "E6kRWWu-HtU", title: "Zufarr M", channel: "OCTAGON", likes: 94, liked: false, comments: []},
-            {id: "oYDt8cj3X2g", title: "Yangi Shorts 1", channel: "Shoxruz_Uz", likes: 45, liked: false, comments: []},
-            {id: "v6GSKQSeVHo", title: "Yangi Shorts 2", channel: "UzMobile", likes: 60, liked: false, comments: []}
-        ];
-        
-        let activeShortIndex = 0;
+        let bet1Active = false;
+        let bet2Active = false;
+        let bet1Amount = 1.00;
+        let bet2Amount = 0.50;
 
-        document.getElementById('prof-name').innerHTML = myChannelNik + ' <span class="verified-badge">✓</span>';
-        document.getElementById('prof-subs').innerText = subscriberCount + " obunachi";
-        if(isSubscribed) {
-            let btn = document.getElementById('sub-action-btn');
-            btn.innerText = "Obuna bo'lingan";
-            btn.classList.add('subscribed');
+        function saveBalance() {
+            localStorage.setItem('aviator_balance', userBalance.toFixed(2));
+            document.getElementById('balance').innerText = userBalance.toFixed(2) + " TON";
         }
 
-        function switchPage(pageName) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById(pageName + '-page').classList.add('active');
-            event.currentTarget.classList.add('active');
+        function setBet(box, val) {
+            document.getElementById('bet' + box).value = val.toFixed(2);
+            if(box === 1) bet1Amount = val;
+            else bet2Amount = val;
+            updateButton(box);
         }
 
-        function updateNik() {
-            let nik = document.getElementById('new-nik-input').value.trim();
-            if(!nik.startsWith('@') || !nik.endsWith('.uz')) {
-                alert("Xato! Nik '@' bilan boshlanishi va oxiri '.uz' bilan tugashi shart! (Masalan: @shoxruz.uz)");
-                return;
-            }
-            myChannelNik = nik;
-            localStorage.setItem('myNik', myChannelNik);
-            document.getElementById('prof-name').innerHTML = myChannelNik + ' <span class="verified-badge">✓</span>';
-            alert("Nik muvaffaqiyatli o'zgartirildi!");
-            document.getElementById('new-nik-input').value = "";
+        function changeBet(box, delta) {
+            let input = document.getElementById('bet' + box);
+            let val = parseFloat(input.value) + delta;
+            if(val < 0.1) val = 0.1;
+            input.value = val.toFixed(2);
+            if(box === 1) bet1Amount = val;
+            else bet2Amount = val;
+            updateButton(box);
         }
 
-        let selectedVideoUrl = "";
-        function handleFileSelect(input) {
-            if (input.files && input.files[0]) {
-                let file = input.files[0];
-                selectedVideoUrl = URL.createObjectURL(file);
-                document.getElementById('file-label-text').innerText = "✅ Tanlandi: " + file.name;
+        function updateButton(box) {
+            let val = document.getElementById('bet' + box).value;
+            let btn = document.getElementById('btn' + box);
+            if(!((box === 1 && bet1Active) || (box === 2 && bet2Active))) {
+                btn.innerHTML = `BET<br><span style="font-size:11px">${val} TON</span>`;
             }
         }
 
-        function uploadVideo() {
-            let title = document.getElementById('v-title').value;
-            if(!title || !selectedVideoUrl) {
-                alert("Video nomi va galereyadan video tanlanishi shart!");
-                return;
+        function handleBet(box) {
+            let val = parseFloat(document.getElementById('bet' + box).value);
+            let btn = document.getElementById('btn' + box);
+
+            if(box === 1) {
+                if(!bet1Active) {
+                    if(userBalance < val) { alert("Balansda yetarli mablag' yo'q!"); return; }
+                    userBalance -= val;
+                    saveBalance();
+                    bet1Amount = val;
+                    bet1Active = true;
+                    btn.style.background = "#ff334b";
+                    btn.style.color = "white";
+                    btn.innerHTML = `CASH OUT<br><span style="font-size:11px">${val.toFixed(2)} TON</span>`;
+                } else {
+                    // Cash out 1
+                    if(gameState === 'playing') {
+                        let win = bet1Amount * currentMultiplier;
+                        userBalance += win;
+                        saveBalance();
+                        alert(`Tabriklayman! ${win.toFixed(2)} TON yutib oldingiz!`);
+                    }
+                    bet1Active = false;
+                    btn.style.background = "#ffcc00";
+                    btn.style.color = "#000";
+                    updateButton(1);
+                }
+            } else {
+                if(!bet2Active) {
+                    if(userBalance < val) { alert("Balansda yetarli mablag' yo'q!"); return; }
+                    userBalance -= val;
+                    saveBalance();
+                    bet2Amount = val;
+                    bet2Active = true;
+                    btn.style.background = "#ff334b";
+                    btn.style.color = "white";
+                    btn.innerHTML = `CASH OUT<br><span style="font-size:11px">${val.toFixed(2)} TON</span>`;
+                } else {
+                    // Cash out 2
+                    if(gameState === 'playing') {
+                        let win = bet2Amount * currentMultiplier;
+                        userBalance += win;
+                        saveBalance();
+                        alert(`Tabriklayman! ${win.toFixed(2)} TON yutib oldingiz!`);
+                    }
+                    bet2Active = false;
+                    btn.style.background = "#ffcc00";
+                    btn.style.color = "#000";
+                    updateButton(2);
+                }
             }
-
-            let newVideo = {title: title, channel: myChannelNik, url: selectedVideoUrl, time: "Yangi"};
-            videos.unshift(newVideo);
-            localStorage.setItem('videos', JSON.stringify(videos));
-
-            alert("Video muvaffaqiyatli joylandi!");
-            document.getElementById('v-title').value = "";
-            document.getElementById('file-label-text').innerText = "📁 Galereyadan video tanlash";
-            selectedVideoUrl = "";
-
-            renderFeed();
-            renderProfileVideos();
-            switchPage('home');
         }
 
-        function renderFeed() {
-            let feed = document.getElementById('video-feed');
-            if (videos.length === 0) {
-                feed.innerHTML = `<p style="text-align: center; color: var(--secondary-text); margin-top: 40px;">Hozircha videolar yo'k. 'Yuklash' bo'limidan video qo'shing!</p>`;
-                return;
-            }
-            feed.innerHTML = "";
-            videos.forEach(v => {
-                feed.innerHTML += `
-                    <div class="video-card">
-                        <video controls src="${v.url}"></video>
-                        <div class="video-details">
-                            <div class="channel-avatar">${v.channel.charAt(1).toUpperCase()}</div>
-                            <div class="video-meta">
-                                <h3>${v.title}</h3>
-                                <p>${v.channel} <span class="verified-badge">✓</span> • ${v.time}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function renderProfileVideos() {
-            let pVideos = document.getElementById('profile-videos');
-            let myVideos = videos.filter(v => v.channel === myChannelNik);
-            if (myVideos.length === 0) {
-                pVideos.innerHTML = `<p style="color: var(--secondary-text);">Bu kanalda videolar yo'q.</p>`;
-                return;
-            }
-            pVideos.innerHTML = "";
-            myVideos.forEach(v => {
-                pVideos.innerHTML += `
-                    <div class="video-card">
-                        <video controls src="${v.url}"></video>
-                        <div class="video-details">
-                            <div class="video-meta">
-                                <h3>${v.title}</h3>
-                                <p>${v.time}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function renderShorts() {
-            let grid = document.getElementById('shorts-grid-container');
-            grid.innerHTML = "";
-            shortsVideos.forEach((s, index) => {
-                grid.innerHTML += `
-                    <div class="short-card" onclick="openShortsModal(${index})">
-                        <iframe src="https://www.youtube.com/embed/${s.id}"></iframe>
-                        <div class="short-overlay">
-                            <b>${s.title}</b><br><span style="color:#aaa;">${s.channel}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function openShortsModal(index) {
-            activeShortIndex = index;
-            let s = shortsVideos[index];
-            document.getElementById('shorts-iframe').src = `https://www.youtube.com/embed/${s.id}?autoplay=1`;
-            document.getElementById('shorts-title-top').innerText = s.title;
-            document.getElementById('like-count').innerText = s.likes;
+        // Real Aviator Game Loop with random crash up to 6000x and strict 1.00x chances
+        function startWaitingPeriod() {
+            gameState = 'waiting';
+            currentMultiplier = 1.00;
+            document.getElementById('multiplier').innerText = "1.00x";
+            document.getElementById('multiplier').style.color = "#fff";
+            document.getElementById('status-text').innerText = "KEYINGI O'YIN BOSHLANISHIGA...";
             
-            let btn = document.getElementById('like-btn');
-            btn.style.background = s.liked ? '#ff0000' : '#272727';
-
-            renderComments();
-            document.getElementById('shorts-modal').style.display = 'flex';
+            let countdown = 5;
+            let cdInterval = setInterval(() => {
+                document.getElementById('status-text').innerText = `KEYINGI O'YIN: ${countdown}s`;
+                countdown--;
+                if(countdown < 0) {
+                    clearInterval(cdInterval);
+                    startFlight();
+                }
+            }, 1000);
         }
 
-        function closeShortsModal() {
-            document.getElementById('shorts-iframe').src = "";
-            document.getElementById('shorts-modal').style.display = 'none';
-        }
-
-        function toggleShortsLike() {
-            let s = shortsVideos[activeShortIndex];
-            s.liked = !s.liked;
-            s.likes += s.liked ? 1 : -1;
-            document.getElementById('like-count').innerText = s.likes;
-            document.getElementById('like-btn').style.background = s.liked ? '#ff0000' : '#272727';
-        }
-
-        function toggleShortsSubscribe() {
-            alert("Kanalga obuna bo'lindi!");
-        }
-
-        function renderComments() {
-            let cList = document.getElementById('comments-list');
-            let s = shortsVideos[activeShortIndex];
-            if(s.comments.length === 0) {
-                cList.innerHTML = `<p style="color:var(--secondary-text); font-size:13px;">Hozircha izohlar yo'q.</p>`;
-                return;
-            }
-            cList.innerHTML = "";
-            s.comments.forEach(c => {
-                cList.innerHTML += `<div style="background:#212121; padding:6px 10px; border-radius:6px; margin-bottom:5px; font-size:13px;">${c}</div>`;
-            });
-        }
-
-        function addComment() {
-            let input = document.getElementById('comment-input');
-            let text = input.value.trim();
-            if(!text) return;
-            shortsVideos[activeShortIndex].comments.push(text);
-            input.value = "";
-            renderComments();
-        }
-
-        function toggleSubscribe() {
-            isSubscribed = !isSubscribed;
-            subscriberCount += isSubscribed ? 1 : -1;
-            localStorage.setItem('subCount', subscriberCount);
-            localStorage.setItem('isSub', isSubscribed);
-
-            let btn = document.getElementById('sub-action-btn');
-            let subList = document.getElementById('subscriptions-list');
-
-            if (isSubscribed) {
-                btn.innerText = "Obuna bo'lingan";
-                btn.classList.add('subscribed');
-                subscriptions.push({name: myChannelNik});
+        function startFlight() {
+            gameState = 'playing';
+            document.getElementById('status-text').innerText = "UCHOQ UCHMOQDA...";
+            
+            // Generate realistic crash point (1.00x to 6000x, highly weighted towards lower numbers)
+            let rand = Math.random();
+            if(rand < 0.08) {
+                crashPoint = 1.00; // Immediate 1.00x crash
             } else {
-                btn.innerText = "Obuna bo'lish";
-                btn.classList.remove('subscribed');
-                subscriptions = subscriptions.filter(sub => sub.name !== myChannelNik);
+                // Exponential random distribution up to 6000x
+                crashPoint = parseFloat((1.01 + Math.pow(Math.random(), 4) * 5999).toFixed(2));
+                if(crashPoint > 6000) crashPoint = 6000.00;
             }
-            localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
-            document.getElementById('prof-subs').innerText = subscriberCount + " obunachi";
-            renderSubscriptions();
+
+            gameInterval = setInterval(() => {
+                // Increment multiplier smoothly
+                currentMultiplier += 0.01 + (currentMultiplier * 0.03);
+                if(currentMultiplier >= crashPoint) {
+                    currentMultiplier = crashPoint;
+                    clearInterval(gameInterval);
+                    triggerCrash();
+                }
+                
+                document.getElementById('multiplier').innerText = currentMultiplier.toFixed(2) + "x";
+
+                // Update active cash out buttons text with live winnings
+                if(bet1Active) {
+                    document.getElementById('btn1').innerHTML = `CASH OUT<br><span style="font-size:11px">${(bet1Amount * currentMultiplier).toFixed(2)} TON</span>`;
+                }
+                if(bet2Active) {
+                    document.getElementById('btn2').innerHTML = `CASH OUT<br><span style="font-size:11px">${(bet2Amount * currentMultiplier).toFixed(2)} TON</span>`;
+                }
+            }, 100);
         }
 
-        function renderSubscriptions() {
-            let subList = document.getElementById('subscriptions-list');
-            if (subscriptions.length === 0) {
-                subList.innerHTML = `<p style="color: var(--secondary-text);">Siz hali hech kimga obuna bo'lmadingiz.</p>`;
-                return;
+        function triggerCrash() {
+            gameState = 'crashed';
+            document.getElementById('multiplier').style.color = "#ff334b";
+            document.getElementById('status-text').innerText = "UCHIB KETDI! (" + currentMultiplier.toFixed(2) + "x)";
+
+            // Auto-fail active bets if not cashed out
+            if(bet1Active) {
+                bet1Active = false;
+                let btn1 = document.getElementById('btn1');
+                btn1.style.background = "#ffcc00";
+                btn1.style.color = "#000";
+                updateButton(1);
             }
-            subList.innerHTML = "";
-            subscriptions.forEach(sub => {
-                subList.innerHTML += `
-                    <div style="background:#212121; padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <span><b>${sub.name}</b> <span class="verified-badge">✓</span></span>
-                        <span style="color:var(--secondary-text); font-size:13px;">Obunadasiz</span>
-                    </div>
-                `;
-            });
+            if(bet2Active) {
+                bet2Active = false;
+                let btn2 = document.getElementById('btn2');
+                btn2.style.background = "#ffcc00";
+                btn2.style.color = "#000";
+                updateButton(2);
+            }
+
+            // Add to history bar
+            let hBar = document.getElementById('history-bar');
+            let cssClass = currentMultiplier > 10 ? "h-purple" : (currentMultiplier > 2 ? "h-blue" : "h-red");
+            hBar.insertAdjacentHTML('afterbegin', `<span class="hist-item ${cssClass}">${currentMultiplier.toFixed(2)}x</span>`);
+
+            setTimeout(startWaitingPeriod, 3000);
         }
 
-        function openSearch() {
-            document.getElementById('search-modal').style.display = 'block';
-        }
-        function closeSearch() {
-            document.getElementById('search-modal').style.display = 'none';
-        }
-
-        function searchUser(query) {
-            let resDiv = document.getElementById('search-results');
-            query = query.trim();
-            if(!query) {
-                resDiv.innerHTML = "";
-                return;
-            }
-            if(myChannelNik.toLowerCase().includes(query.toLowerCase()) || query === "@shoxruz") {
-                resDiv.innerHTML = `
-                    <div style="background:#212121; padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <b>${myChannelNik}</b> <span class="verified-badge">✓</span><br>
-                            <small style="color:var(--secondary-text);">${subscriberCount} obunachi</small>
-                        </div>
-                        <button onclick="switchPage('profil'); closeSearch();" style="background:white; color:black; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer;">Kanalga o'tish</button>
-                    </div>
-                `;
-            } else {
-                resDiv.innerHTML = `<p style="color:var(--secondary-text);">Bunday foydalanuvchi topilmadi.</p>`;
-            }
-        }
-
-        renderFeed();
-        renderProfileVideos();
-        renderShorts();
-        renderSubscriptions();
+        // Start the game loop
+        setTimeout(startWaitingPeriod, 1500);
     </script>
 </body>
 </html>
