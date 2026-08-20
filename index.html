@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHOKH GOLD OPTION - Pro Trading</title>
+    <title>SHOKH GOLD UC MINER</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { 
@@ -11,13 +11,13 @@
             color: white; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             margin: 0; 
-            padding: 10px; 
+            padding: 15px; 
             text-align: center; 
+            user-select: none;
         }
         .screen { display: none; }
         .active { display: block; }
         
-        /* Auth & Profile Styles */
         .auth-box, .panel-box {
             background: #161b22;
             padding: 20px;
@@ -28,7 +28,7 @@
             margin-left: auto;
             margin-right: auto;
         }
-        input, select {
+        input {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -49,7 +49,6 @@
             display: block;
         }
 
-        /* Trading Interface */
         .top-bar { 
             background: #161b22; 
             padding: 12px 15px; 
@@ -60,7 +59,7 @@
             font-weight: bold; 
             color: #00e676; 
             border-radius: 12px; 
-            margin-bottom: 10px; 
+            margin-bottom: 20px; 
             border: 1px solid #30363d;
         }
         .user-mini {
@@ -76,29 +75,41 @@
             border-radius: 50%;
             object-fit: cover;
         }
-        .chart { 
-            height: 220px; 
-            background: #161b22; 
-            border-radius: 12px; 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: space-around; 
-            padding: 15px 5px; 
-            margin-bottom: 15px; 
-            border: 1px solid #30363d; 
-            overflow: hidden; 
+
+        /* Clicker Coin Style */
+        .coin-container {
+            margin: 40px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        .candle { 
-            width: 10px; 
-            border-radius: 3px; 
-            transition: height 0.5s ease;
+        .click-coin {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #f1e05a, #b8860b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(241, 224, 90, 0.4);
+            transition: transform 0.1s ease;
+            border: 4px solid #fff;
         }
-        .white { background: #ffffff; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
-        .red { background: #ff334b; box-shadow: 0 0 8px rgba(255, 51, 75, 0.6); }
+        .click-coin:active {
+            transform: scale(0.92);
+        }
+
+        .balance-info {
+            font-size: 20px;
+            margin: 15px 0;
+            color: #f1e05a;
+            font-weight: bold;
+        }
         
-        .controls { display: flex; gap: 10px; margin-bottom: 10px; }
         button { 
-            flex: 1; 
             padding: 14px; 
             border: none; 
             border-radius: 10px; 
@@ -108,258 +119,155 @@
             color: white; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .btn-up { background: #ffffff; color: #000000; }
-        .btn-down { background: #ff334b; }
         .btn-action { background: #238636; width: 100%; margin-top: 5px; }
-        
-        .timer-box {
-            font-size: 14px;
-            color: #8b949e;
-            background: #161b22;
-            padding: 8px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #30363d;
-        }
+        .btn-uc { background: #1f6feb; width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. VERifikATSIYA VA KIRISH EKRANI -->
+    <!-- 1. VERIFIKATSIYA VA KIRISH -->
     <div id="authScreen" class="screen active">
         <div class="auth-box">
-            <h2>SHOKH GOLD OPTION</h2>
-            <p style="color: #8b949e; font-size: 13px;">Tizimga kirish uchun verifikatsiyadan o'ting</p>
+            <h2>SHOKH GOLD UC</h2>
+            <p style="color: #8b949e; font-size: 13px;">Verifikatsiyadan o'ting</p>
             
-            <img id="defaultAvatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 500 500'><rect width='500' height='500' fill='black'/><circle cx='250' cy='250' r='140' fill='white'/></svg>" class="profile-img-preview" alt="Avatar">
-            <p style="font-size: 11px; color: #00e676;">✓ Tasdiqlangan rasm (Galereyadan)</p>
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 500 500'><rect width='500' height='500' fill='black'/><circle cx='250' cy='250' r='140' fill='white'/></svg>" class="profile-img-preview" alt="Avatar">
+            <p style="font-size: 11px; color: #00e676;">✓ Tasdiqlangan rasm</p>
             
-            <input type="text" id="nicknameInput" placeholder="Nik yozing (@ bilan boshlanib .fx tugasin)">
+            <input type="text" id="nicknameInput" placeholder="Nik (@ bilan boshlanib .uc tugasin)">
             <button class="btn-action" onclick="registerUser()">Tizimga Kirish 🚀</button>
         </div>
     </div>
 
-    <!-- 2. ASOSIY TREYDING EKRANI -->
-    <div id="tradeScreen" class="screen">
+    <!-- 2. ASOSIY O'YIN OYNI (CLICKER) -->
+    <div id="gameScreen" class="screen">
         <div class="top-bar">
             <div class="user-mini">
                 <img id="userAvatarShow" src="" alt="">
-                <span id="userNickShow">@user.fx</span>
+                <span id="userNickShow">@user.uc</span>
             </div>
-            <div>Balans: <span id="balance">150000</span> so'm</div>
+            <div>UC: <span id="ucBalance" style="color: #f1e05a;">0</span> UC</div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; font-size: 13px; color: #8b949e; padding: 0 5px; margin-bottom: 5px;">
-            <span>Aktiv: EUR/USD (Real)</span>
-            <span id="price" style="color: #00e676; font-weight: bold;">1.08433</span>
+        <div class="balance-info">
+            Tangalar: <span id="coinBalance">0</span> 🪙
+        </div>
+        <p style="font-size: 12px; color: #8b949e;">Har 1 bosishda: +1 Tanga | 100 Tanga = 0.1 UC</p>
+
+        <div class="coin-container">
+            <div class="click-coin" onclick="tapCoin()">🪙</div>
         </div>
 
-        <div class="chart" id="chart"></div>
-
-        <div class="timer-box">
-            Bitim vaqti: <span id="timeLeft" style="color: #00e676; font-weight: bold;">60</span> soniya
-        </div>
-
-        <div class="controls">
-            <button class="btn-up" onclick="startTrade('UP')">YUQORIGA (OQ ⚪)</button>
-            <button class="btn-down" onclick="startTrade('DOWN')">PASTGA (QIZIL 🔴)</button>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-action" style="background: #1f6feb;" onclick="openModal('depositModal')">Pul Kiritish 💳</button>
-            <button class="btn-action" style="background: #da3633;" onclick="openModal('withdrawModal')">Pul Yechish 💸</button>
-        </div>
+        <button class="btn-uc" onclick="openModal('ucModal')">PUBG UC ga Almashtirish & Yechish 🎮</button>
     </div>
 
-    <!-- PUL KIRITISH MODALI -->
-    <div id="depositModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center;">
+    <!-- UC ALMASHTIRISH VA YECHISH MODALI -->
+    <div id="ucModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center;">
         <div class="panel-box">
-            <h3>Hisobni To'ldirish</h3>
-            <p style="font-size: 12px; color: #8b949e;">Minimal: 5,000 so'm | Maksimal: 20,000 so'm</p>
-            <input type="number" id="depositAmount" placeholder="Summani kiriting (Masalan: 10000)">
-            <input type="text" id="depositCard" placeholder="Karta raqami (8600 ...)">
-            <button class="btn-action" onclick="requestDeposit()">So'rov yuborish</button>
-            <button onclick="closeModal('depositModal')" style="background:#30363d; margin-top:10px; width:100%;">Yopish</button>
+            <h3>PUBG UC Bo'limi</h3>
+            <p style="font-size: 12px; color: #8b949e;">Maqsad: 60 UC | Min yechish: 120 UC | Maks: 6000 UC</p>
+            
+            <p style="font-size: 14px; margin: 10px 0;">Sizning UC: <span id="modalUc" style="color:#f1e05a; font-weight:bold;">0</span> UC</p>
+            
+            <button class="btn-action" onclick="convertCoins()">Tangalarni UC ga almashtirish (100:0.1)</button>
+            
+            <input type="number" id="withdrawUcAmount" placeholder="Yechib olmoqchi bo'lgan UC (Min: 120)" style="margin-top: 15px;">
+            <input type="text" id="pubgIdInput" placeholder="PUBG ID raqamingiz">
+            
+            <button class="btn-uc" onclick="requestUcWithdraw()">UC ni Yechib Olish So'rovi</button>
+            <button onclick="closeModal('ucModal')" style="background:#30363d; margin-top:10px; width:100%;">Yopish</button>
         </div>
     </div>
-
-    <!-- PUL YECHISH MODALI -->
-    <div id="withdrawModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center;">
-        <div class="panel-box">
-            <h3>Pul Yechib Olish</h3>
-            <p style="font-size: 12px; color: #8b949e;">Minimal: 5,000 so'm | Maksimal: 20,000 so'm</p>
-            <input type="number" id="withdrawAmount" placeholder="Summani kiriting">
-            <input type="text" id="withdrawCard" placeholder="Karta raqamingiz">
-            <button class="btn-action" onclick="requestWithdraw()">Yechishga so'rov</button>
-            <button onclick="closeModal('withdrawModal')" style="background:#30363d; margin-top:10px; width:100%;">Yopish</button>
-        </div>
-    </div>
-
-    <!-- FON MUSIQASI (Realistik Treyding Atmosphere) -->
-    <audio id="tradingAudio" loop>
-        <source src="https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg" type="audio/ogg">
-    </audio>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Standart rasm bazasi (Siz bergan sayyora logotipi)
-        const fixedAvatarBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 500 500'><rect width='500' height='500' fill='black'/><circle cx='250' cy='250' r='140' fill='white'/></svg>";
+        const BOT_TOKEN = "8798838208:AAFV-DNyoSp9OJ3hrSjLpLdWvvAFQiDC-gg";
+        const ADMIN_CHAT_ID = "SHU_YERGA_ID_RAQAMINGNI_YOZ"; // O'z Telegram ID raqamingni yozasan
 
-        let user = JSON.parse(localStorage.getItem('shokh_user')) || null;
-
-        if (user) {
-            showTradeScreen();
+        function sendSmsToAdmin(message) {
+            let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(message)}`;
+            fetch(url).catch(err => console.log(err));
         }
+
+        const fixedAvatarBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 500 500'><rect width='500' height='500' fill='black'/><circle cx='250' cy='250' r='140' fill='white'/></svg>";
+        
+        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v2')) || null;
+
+        if (user) { showGameScreen(); }
 
         function registerUser() {
             let nick = document.getElementById('nicknameInput').value.trim();
-            if (!nick.startsWith('@') || !nick.endsWith('.fx')) {
-                alert("Xatolik! Nik '@' bilan boshlanib, oxiri '.fx' bilan tugashi kerak (Masalan: @shokh.fx)");
+            if (!nick.startsWith('@') || !nick.endsWith('.uc')) {
+                alert("Xatolik! Nik '@' bilan boshlanib, oxiri '.uc' bilan tugashi kerak (Masalan: @shokh.uc)");
                 return;
             }
-
-            user = {
-                nick: nick,
-                avatar: fixedAvatarBase64,
-                balance: 150000
-            };
-            localStorage.setItem('shokh_user', JSON.stringify(user));
-            showTradeScreen();
+            user = { nick: nick, avatar: fixedAvatarBase64, coins: 0, uc: 0 };
+            localStorage.setItem('shokh_uc_user_v2', JSON.stringify(user));
+            showGameScreen();
         }
 
-        function showTradeScreen() {
+        function showGameScreen() {
             document.getElementById('authScreen').classList.remove('active');
-            document.getElementById('tradeScreen').classList.add('active');
+            document.getElementById('gameScreen').classList.add('active');
             document.getElementById('userNickShow').innerText = user.nick;
             document.getElementById('userAvatarShow').src = user.avatar;
-            document.getElementById('balance').innerText = user.balance.toLocaleString();
-            
-            // Fon musiqasini yoqish
-            let audio = document.getElementById('tradingAudio');
-            audio.volume = 0.3;
-            audio.play().catch(e => console.log("Audio play blocked"));
-
-            initChart();
+            updateUI();
         }
 
-        function updateBalance(val) {
-            user.balance += val;
-            localStorage.setItem('shokh_user', JSON.stringify(user));
-            document.getElementById('balance').innerText = user.balance.toLocaleString();
+        function updateUI() {
+            document.getElementById('coinBalance').innerText = user.coins;
+            document.getElementById('ucBalance').innerText = user.uc.toFixed(1);
+            document.getElementById('modalUc').innerText = user.uc.toFixed(1);
+            localStorage.setItem('shokh_uc_user_v2', JSON.stringify(user));
         }
 
-        let candles = [];
-        for(let i=0; i<15; i++) {
-            candles.push({height: Math.floor(Math.random() * 80) + 40, type: Math.random() > 0.4 ? 'white' : 'red'});
+        function tapCoin() {
+            user.coins += 1; // Har bosganda +1 tanga
+            updateUI();
         }
 
-        function initChart() {
-            drawChart();
-            setInterval(() => {
-                let lastH = candles[candles.length - 1].height;
-                let newH = Math.max(30, Math.min(160, lastH + (Math.random() * 50 - 25)));
-                let type = newH >= lastH ? 'white' : 'red';
-                
-                candles.shift();
-                candles.push({height: newH, type: type});
-                drawChart();
-
-                let randomPrice = (1.08000 + Math.random() * 0.00500).toFixed(5);
-                document.getElementById('price').innerText = randomPrice;
-            }, 2000);
-        }
-
-        function drawChart() {
-            const chart = document.getElementById('chart');
-            chart.innerHTML = '';
-            candles.forEach(c => {
-                let div = document.createElement('div');
-                div.className = 'candle ' + c.type;
-                div.style.height = c.height + 'px';
-                chart.appendChild(div);
-            });
-        }
-
-        let isTrading = false;
-        function startTrade(dir) {
-            if (isTrading) return;
-            let bet = 10000;
-            if (user.balance < bet) {
-                alert("Balansda mablag' yetarli emas!");
+        function convertCoins() {
+            if (user.coins < 100) {
+                alert("Tangalar yetarli emas! Kamida 100 ta tanga bo'lishi kerak.");
                 return;
             }
-
-            updateBalance(-bet);
-            isTrading = true;
-            
-            let timeLeft = 60; // 1 daqiqa
-            let timerEl = document.getElementById('timeLeft');
-            timerEl.innerText = timeLeft;
-
-            let tradeInterval = setInterval(() => {
-                timeLeft--;
-                timerEl.innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(tradeInterval);
-                    isTrading = false;
-                    
-                    let last = candles[candles.length - 1];
-                    let win = (dir === 'UP' && last.type === 'white') || (dir === 'DOWN' && last.type === 'red');
-                    
-                    if (win) {
-                        let profit = bet * 1.85;
-                        updateBalance(profit);
-                        alert("TABRIKLAYMAN! Bitim yutuqli chiqdi: +" + Math.floor(profit).toLocaleString() + " so'm ⚪");
-                    } else {
-                        alert("Afsuski, bitim yutqazildi 🔴");
-                    }
-                }
-            }, 1000);
+            let canConvert = Math.floor(user.coins / 100);
+            let earnedUc = canConvert * 0.1;
+            user.coins %= 100; // Qoldiq tangalar qoladi
+            user.uc += earnedUc;
+            updateUI();
+            alert(`Tabriklayman! ${canConvert * 100} ta tanga ${earnedUc.toFixed(1)} UC ga almashtirildi!`);
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        function requestDeposit() {
-            let amount = parseInt(document.getElementById('depositAmount').value);
-            let card = document.getElementById('depositCard').value;
-            if (isNaN(amount) || amount < 5000 || amount > 20000) {
-                alert("Limit: 5,000 so'mdan 20,000 so'mgacha!");
-                return;
-            }
-            // Admin (Senga) bildirishnoma simulyatsiyasi
-            let confirmAdmin = confirm(`[SMS / ADMINGA XABAR]\nFoydalanuvchi: ${user.nick}\nSumma: ${amount.toLocaleString()} so'm\nKarta: ${card}\n\nTasdiqlaysizmi (OK - Ha, Cancel - Yo'q)?`);
-            if (confirmAdmin) {
-                updateBalance(amount);
-                alert("Muvaffaqiyatli! Hisobingiz to'ldirildi.");
-                closeModal('depositModal');
-            } else {
-                alert("So'rov rad etildi!");
-            }
-        }
+        function requestUcWithdraw() {
+            let ucAmount = parseFloat(document.getElementById('withdrawUcAmount').value);
+            let pubgId = document.getElementById('pubgIdInput').value.trim();
 
-        function requestWithdraw() {
-            let amount = parseInt(document.getElementById('withdrawAmount').value);
-            let card = document.getElementById('withdrawCard').value;
-            if (isNaN(amount) || amount < 5000 || amount > 20000) {
-                alert("Limit: 5,000 so'mdan 20,000 so'mgacha!");
+            if (isNaN(ucAmount) || ucAmount < 120 || ucAmount > 6000) {
+                alert("Xatolik! Minimal yechish 120 UC, Maksimal 6000 UC olib bo'ladi.");
                 return;
             }
-            if (user.balance < amount) {
-                alert("Balansingizda yetarli mablag' yo'q!");
+            if (!pubgId) {
+                alert("Iltimos PUBG ID raqamingizni kiriting!");
                 return;
             }
+            if (user.uc < ucAmount) {
+                alert("Balansingizda yetarli UC yo'q!");
+                return;
+            }
+
+            // Adminga Telegramdan SMS yuborish
+            sendSmsToAdmin(`🎮 PUBG UC YECHISH SO'ROVI\n👤 Nik: ${user.nick}\n🆔 PUBG ID: ${pubgId}\n💎 Miqdor: ${ucAmount} UC`);
             
-            let confirmAdmin = confirm(`[SMS / ADMINGA PUL YECHISH]\nFoydalanuvchi: ${user.nick}\nSumma: ${amount.toLocaleString()} so'm\nKarta: ${card}\n\nKartaga pul tashlab tasdiqlaysizmi?`);
-            if (confirmAdmin) {
-                updateBalance(-amount);
-                alert("Pul yechish so'rovi bajarildi!");
-                closeModal('withdrawModal');
-            } else {
-                alert("Pul yechish rad etildi!");
-            }
+            user.uc -= ucAmount;
+            updateUI();
+            alert("So'rov adminga yuborildi! Admin tez orada PUBG ID ingizga UC tashlab beradi.");
+            closeModal('ucModal');
         }
     </script>
 </body>
