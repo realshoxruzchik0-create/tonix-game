@@ -105,7 +105,6 @@
             margin: 10px 0;
         }
         
-        /* Ventilyator rasmi yoki animatsiyasi */
         .miner-fan {
             width: 210px;
             height: 210px;
@@ -113,12 +112,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background: radial-gradient(circle, rgba(255,77,77,0.15) 0%, rgba(11,14,20,0) 70%);
+            border-radius: 50%;
         }
+        
+        /* Ishlaydigan va aylanadigan logotip animatsiyasi */
         .fan-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(255, 77, 77, 0.4));
+            width: 120px;
+            height: 120px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Tron_logo.svg/1200px-Tron_logo.svg.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 0 15px rgba(255, 77, 77, 0.8));
+            animation: spin 6s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
 
         .nav-bar {
@@ -230,8 +241,7 @@
 
         <div class="miner-container">
             <div class="miner-fan">
-                <!-- Ventilyator 3D qizil rasm (asl nusxadagidek) -->
-                <img src="https://i.ibb.co/689L668/trx-fan.png" alt="Mining Fan" class="fan-image" id="fanImg">
+                <div class="fan-image"></div>
             </div>
             <div style="font-size: 22px; font-weight: bold; margin-top: 10px; letter-spacing: 0.5px;" id="minedTron">0.0030337700 TRON</div>
             <div style="font-size: 12px; color: #8b949e; margin-top: 4px; display: flex; align-items: center; gap: 5px;">
