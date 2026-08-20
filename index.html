@@ -20,23 +20,40 @@
 
         .balance-card {
             background: #161b22;
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-radius: 14px;
             border: 1px solid #30363d;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
-        .balance-info { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 15px; }
+        .balance-info { display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 15px; }
+        
+        .coin-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .tron-bg { background: #ff4d4d; }
+        .usdt-bg { background: #26a69a; }
+
         .wallet-icon-btn {
             background: #1f6feb;
             border: none;
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-radius: 10px;
             cursor: pointer;
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .wallet-icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
         .btn-main {
             background: #1f6feb;
@@ -48,8 +65,12 @@
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
-            margin: 10px 0;
-            box-shadow: 0 4px 15px rgba(31, 111, 235, 0.4);
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(31, 111, 235, 0.3);
         }
         .btn-secondary {
             background: #21262d;
@@ -72,8 +93,8 @@
             border-radius: 8px;
             font-size: 12px;
             cursor: pointer;
-            margin-bottom: 15px;
-            box-shadow: 0 0 8px rgba(255, 235, 59, 0.3);
+            margin-bottom: 12px;
+            box-shadow: 0 0 8px rgba(255, 235, 59, 0.2);
         }
 
         .miner-container {
@@ -81,30 +102,23 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 20px 0;
+            margin: 10px 0;
         }
+        
+        /* Ventilyator rasmi yoki animatsiyasi */
         .miner-fan {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, #3a1111, #150505);
-            border-radius: 50%;
+            width: 210px;
+            height: 210px;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 5px solid #ff4d4d;
-            box-shadow: 0 0 30px rgba(255, 77, 77, 0.4);
         }
-        .miner-inner-logo {
-            width: 60px;
-            height: 60px;
-            background: #ff4d4d;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 24px;
-            box-shadow: 0 0 15px rgba(255, 77, 77, 0.8);
+        .fan-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 77, 77, 0.4));
         }
 
         .nav-bar {
@@ -188,37 +202,52 @@
 
         <div class="balance-card">
             <div class="balance-info">
-                <span>🔴</span>
+                <div class="coin-icon tron-bg">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 19.5h5L12 11l5 8.5h5L12 2z"/></svg>
+                </div>
                 <div>
-                    <div style="font-size: 12px; color: #8b949e; font-weight: normal;">Balance</div>
+                    <div style="font-size: 11px; color: #8b949e; font-weight: normal;">Balance</div>
                     <span id="trxBalanceText">0.0929</span> TRON
                 </div>
             </div>
-            <button class="wallet-icon-btn" onclick="openModal('withdrawModal')">💳</button>
+            <button class="wallet-icon-btn" onclick="openModal('withdrawModal')">
+                <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </button>
         </div>
 
         <div class="balance-card">
             <div class="balance-info">
-                <span>🟢</span>
+                <div class="coin-icon usdt-bg">T</div>
                 <div>
-                    <div style="font-size: 12px; color: #8b949e; font-weight: normal;">Balance</div>
+                    <div style="font-size: 11px; color: #8b949e; font-weight: normal;">Balance</div>
                     <span id="usdtBalanceText">6.6</span> USDT
                 </div>
             </div>
-            <button class="wallet-icon-btn" onclick="openModal('withdrawModal')">💳</button>
+            <button class="wallet-icon-btn" onclick="openModal('withdrawModal')">
+                <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </button>
         </div>
 
         <div class="miner-container">
             <div class="miner-fan">
-                <div class="miner-inner-logo">💎</div>
+                <!-- Ventilyator 3D qizil rasm (asl nusxadagidek) -->
+                <img src="https://i.ibb.co/689L668/trx-fan.png" alt="Mining Fan" class="fan-image" id="fanImg">
             </div>
-            <div style="font-size: 22px; font-weight: bold; margin-top: 15px;" id="minedTron">0.00000000 TRON</div>
-            <div style="font-size: 13px; color: #8b949e; margin-top: 5px;">⚡ Har 10 sekunda +100 (0.0001 TRON)</div>
+            <div style="font-size: 22px; font-weight: bold; margin-top: 10px; letter-spacing: 0.5px;" id="minedTron">0.0030337700 TRON</div>
+            <div style="font-size: 12px; color: #8b949e; margin-top: 4px; display: flex; align-items: center; gap: 5px;">
+                <span>ℹ️</span> <span>64.5 GH/s</span> <span>⚡</span>
+            </div>
         </div>
 
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-main" onclick="openModal('withdrawModal')" style="margin:0;">Claim / Withdraw</button>
-            <button class="btn-main" onclick="openModal('boostModal')" style="background: #21262d; border: 1px solid #30363d; margin:0;">Boost</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="btn-main" onclick="openModal('withdrawModal')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                Claim
+            </button>
+            <button class="btn-main" onclick="openModal('boostModal')" style="background: #1f6feb;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                Boost
+            </button>
         </div>
     </div>
 
@@ -270,23 +299,19 @@
         <div class="list-item"><span>💬 Contact Support</span> <span style="color: #8b949e;">@Admin</span></div>
     </div>
 
-    <!-- WITHDRAW (YECHIB OLISH) MODALI - SKRINSHOTDAGIDEK -->
+    <!-- WITHDRAW MODALI -->
     <div id="withdrawModal" class="modal">
         <div class="modal-box">
             <h3 style="margin-top: 5px;">Enter your personal address</h3>
             <p style="font-size: 12px; color: #8b949e;" id="minLimitText">Minimum send amount is 50 TRON</p>
 
-            <!-- Valyuta tanlash (TRON yoki USDT) -->
             <select id="currencySelect" onchange="updateWithdrawLimits()">
                 <option value="TRON">TRON</option>
                 <option value="USDT">USDT</option>
             </select>
 
             <input type="text" id="walletAddressInput" placeholder="Your wallet address">
-            
-            <div style="position: relative;">
-                <input type="number" id="amountInput" placeholder="Amount">
-            </div>
+            <input type="number" id="amountInput" placeholder="Amount">
 
             <p style="font-size: 11px; color: #8b949e; text-align: left; margin: 5px 0;">Network fee: 0 | Receive amount: <span id="receiveAmount">0</span></p>
 
@@ -355,7 +380,7 @@
             }
         }
 
-        let minedAmount = parseFloat(localStorage.getItem('shoxruz_mined_trx')) || 0.000000;
+        let minedAmount = parseFloat(localStorage.getItem('shoxruz_mined_trx')) || 0.00303377;
         let lastTime = parseInt(localStorage.getItem('shoxruz_last_time')) || Date.now();
 
         let now = Date.now();
