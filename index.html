@@ -167,23 +167,23 @@
 </head>
 <body>
 
-    <!-- 1. KIM KIRSA HAM FAQAT SENING PROFILING VA ISMING CHIQADIGAN EKRAN -->
+    <!-- 1. KIM KIRSA, 1-BO‘LIB EKRANDA O‘ZINING PROFIL RASMI BILAN CHIQADIGAN YUKLANISH EKRANI -->
     <div id="splashScreen" class="screen active">
         <div>
             <h3 style="color: #f1e05a; margin-bottom: 20px; letter-spacing: 1px;">SHOKH GOLD UC</h3>
             
-            <!-- SHU YERGA O'ZINGNING PROFIL RATING LINKINI (YOKI RASMINING LINKINI) QO'YASAN -->
-            <img src="https://via.placeholder.com/120" id="myProfileImg" class="splash-avatar" alt="Shoxruz Profil">
+            <!-- Foydalanuvchining shaxsiy Telegram rasmi -->
+            <img id="splashAvatar" src="" class="splash-avatar" alt="Profil">
             
-            <!-- SENING ISMING -->
-            <h2 style="color: #00e676; margin: 10px 0;">Janob Shoxruz</h2>
-            <p style="color: #8b949e; font-size: 13px;">Rasmiy Bot Tizimi...</p>
+            <!-- Foydalanuvchining Telegram ismi -->
+            <h2 id="splashName" style="color: #00e676; margin: 10px 0;">Yuklanmoqda...</h2>
+            <p style="color: #8b949e; font-size: 13px;">Profil tasdiqlanmoqda...</p>
             
             <div class="loading-spinner"></div>
         </div>
     </div>
 
-    <!-- 2. RO'YXATDAN O'TISH QISMI -->
+    <!-- 2. AGAR BIRINCHI MARTA KIRGAN BO'LSA - NIK YYOZISH QISMI -->
     <div id="authScreen" class="screen">
         <div class="panel-box">
             <h2>Ro'yxatdan o'tish</h2>
@@ -248,9 +248,22 @@
             fetch(url).catch(err => console.log(err));
         }
 
-        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v8')) || null;
+        // Telegram foydalanuvchi ma'lumotlarini olish
+        let tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+        let defaultUser = {
+            first_name: "Shoxruz",
+            username: "shokh.uc",
+            photo_url: "https://via.placeholder.com/120"
+        };
+        let currentUser = tgUser || defaultUser;
 
-        // 2 soniya davomida ekranda FAQAT SENING PROFILING turadi, keyin o'yinga o'tadi
+        // 1-qadam: Darhol SplashScreen da foydalanuvchining o'z rasmi va ismini chiqaramiz
+        document.getElementById('splashAvatar').src = currentUser.photo_url || "https://via.placeholder.com/120";
+        document.getElementById('splashName').innerText = currentUser.first_name;
+
+        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v7')) || null;
+
+        // 2 soniya davomida o'sha profil rasmli yuklanish ekrani turadi, keyin o'yin yoki ro'yxatga o'tadi
         setTimeout(() => {
             document.getElementById('splashScreen').classList.remove('active');
             
@@ -258,7 +271,11 @@
                 showGameScreen();
             } else {
                 document.getElementById('authScreen').classList.add('active');
-                document.getElementById('nicknameInput').value = "@shokh.uc";
+                if (currentUser.username) {
+                    document.getElementById('nicknameInput').value = "@" + currentUser.username.replace('@', '');
+                } else {
+                    document.getElementById('nicknameInput').value = "@shokh.uc";
+                }
             }
         }, 2000);
 
@@ -268,12 +285,10 @@
                 alert("Xatolik! Nik '@' bilan boshlanib, oxiri '.uc' bilan tugashi kerak (Masalan: @shokh.uc)");
                 return;
             }
+            let userAvatar = currentUser.photo_url || "https://via.placeholder.com/120";
             
-            // O'yin ichidagi kichik rasm ham sening rasming bo'lib turadi
-            let myAvatar = document.getElementById('myProfileImg').src;
-            
-            user = { nick: nick, avatar: myAvatar, coins: 0, uc: 0 };
-            localStorage.setItem('shokh_uc_user_v8', JSON.stringify(user));
+            user = { nick: nick, avatar: userAvatar, coins: 0, uc: 0 };
+            localStorage.setItem('shokh_uc_user_v7', JSON.stringify(user));
             
             document.getElementById('authScreen').classList.remove('active');
             showGameScreen();
@@ -290,7 +305,7 @@
             document.getElementById('coinBalance').innerText = user.coins;
             document.getElementById('ucBalance').innerText = user.uc.toFixed(1);
             document.getElementById('modalUc').innerText = user.uc.toFixed(1);
-            localStorage.setItem('shokh_uc_user_v8', JSON.stringify(user));
+            localStorage.setItem('shokh_uc_user_v7', JSON.stringify(user));
         }
 
         function tapCoin() {
@@ -311,13 +326,12 @@
             alert(`Tabriklayman! ${canConvert * 100} ta tanga ${earnedUc.toFixed(1)} UC ga almashtirildi!`);
         }
 
-        button onclick="openModal('ucModal')"
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         function requestUcWithdraw() {
-            let ucAmount = parseFloat(document.getElementById('withdrawUcAmount'].value);
-            let pubgId = document.getElementById('pubgIdInput'].value.trim();
+            let ucAmount = parseFloat(document.getElementById('withdrawUcAmount').value);
+            let pubgId = document.getElementById('pubgIdInput').value.trim();
 
             if (isNaN(ucAmount) || ucAmount < 120 || ucAmount > 6000) {
                 alert("Xatolik! Minimal yechish 120 UC, Maksimal 6000 UC olib bo'ladi.");
@@ -328,7 +342,6 @@
                 return;
             }
             if (user.uc < ucAmount) {
-                uploadCheck();
                 alert("Balansingizda yetarli UC yo'q!");
                 return;
             }
