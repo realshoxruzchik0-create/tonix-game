@@ -61,7 +61,7 @@
             color: #ffffff; 
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
             border-radius: 12px; 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
             border: 1px solid #30363d;
         }
         .user-mini {
@@ -81,7 +81,17 @@
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
         }
 
-        /* Yaltiroq va qalin oq matn stili */
+        .music-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #ffeb3b;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255, 235, 59, 0.4);
+        }
+
         .glowing-text {
             color: #ffffff;
             font-weight: 700;
@@ -91,16 +101,14 @@
             letter-spacing: 0.5px;
         }
 
-        /* Yaltiroq sariq tangalar stili */
         .glowing-yellow {
             color: #ffeb3b;
             font-weight: 800;
             text-shadow: 0 0 12px rgba(255, 235, 59, 0.9), 0 0 25px rgba(255, 193, 7, 0.6);
         }
 
-        /* Clicker tugmasi */
         .coin-container {
-            margin: 30px auto;
+            margin: 20px auto;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -122,7 +130,6 @@
         .click-coin:active {
             transform: scale(0.92);
         }
-        /* Doira ichidagi rasm olib tashlandi, faqat toza yaltiroq doira qoldi */
 
         .balance-info {
             font-size: 22px;
@@ -147,6 +154,11 @@
 </head>
 <body>
 
+    <!-- MUSIQA LINKINI SHU YERGA QO'YASAN (.mp3 havolasi) -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
     <!-- 1. KIRISH OYNI -->
     <div id="authScreen" class="screen active">
         <div class="auth-box">
@@ -168,7 +180,11 @@
                 <img id="userAvatarShow" src="" alt="">
                 <span id="userNickShow">@shokh.uc</span>
             </div>
-            <div>Balans: <span id="ucBalance" class="glowing-yellow">0.0</span> UC</div>
+            <button class="music-btn" onclick="toggleMusic()" id="musicToggleBtn">🎵 Musiqa: O'chiq</button>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            Balans: <span id="ucBalance" class="glowing-yellow">0.0</span> UC
         </div>
 
         <div class="balance-info glowing-text">
@@ -209,7 +225,7 @@
     <div id="aiModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center;">
         <div class="panel-box" style="width: 90%; max-height: 80vh; display: flex; flex-direction: column;">
             <h3 class="glowing-text">🤖 Bot AI Yordamchisi</h3>
-            <div id="aiChatBox" style="background: #0b0e14; border: 1px solid #30363d; border-radius: 8px; height: 200px; overflow-y: auto; padding: 10px; text-align: left; font-size: 13px; margin: 10px 0;">
+            <div id="aiChatBox" style="background: #0b0e14; border: 1px solid #30363d; border-radius: 8px; height: 180px; overflow-y: auto; padding: 10px; text-align: left; font-size: 13px; margin: 10px 0;">
                 <p style="color: #00e676; text-shadow: 0 0 5px rgba(0,230,118,0.5);">Salom! Men ushbu botning sun'iy intellekt yordamchisiman. Bot haqida istalgan savolingizni berishingiz mumkin!</p>
             </div>
             <input type="text" id="aiQuestionInput" placeholder="Savolingizni yozing...">
@@ -230,6 +246,25 @@
             fetch(url).catch(err => console.log(err));
         }
 
+        let bgMusic = document.getElementById('bgMusic');
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            let btn = document.getElementById('musicToggleBtn');
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicPlaying = false;
+                btn.innerText = "🎵 Musiqa: O'chiq";
+            } else {
+                bgMusic.play().then(() => {
+                    musicPlaying = true;
+                    btn.innerText = "🔊 Musiqa: Yoqiq";
+                }).catch(e => {
+                    alert("Brauzer musiqani avtomatik ochishga ruxsat bermadi, ekranni yana bir marta bosing!");
+                });
+            }
+        }
+
         let tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
         let defaultUser = {
             first_name: "Shoxruz",
@@ -238,7 +273,7 @@
         };
         let currentUser = tgUser || defaultUser;
 
-        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v6')) || null;
+        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v7')) || null;
 
         if (user) {
             showGameScreen();
@@ -263,7 +298,7 @@
             let userAvatar = currentUser.photo_url || "https://via.placeholder.com/90";
             
             user = { nick: nick, avatar: userAvatar, coins: 0, uc: 0 };
-            localStorage.setItem('shokh_uc_user_v6', JSON.stringify(user));
+            localStorage.setItem('shokh_uc_user_v7', JSON.stringify(user));
             showGameScreen();
         }
 
@@ -279,7 +314,7 @@
             document.getElementById('coinBalance').innerText = user.coins;
             document.getElementById('ucBalance').innerText = user.uc.toFixed(1);
             document.getElementById('modalUc').innerText = user.uc.toFixed(1);
-            localStorage.setItem('shokh_uc_user_v6', JSON.stringify(user));
+            localStorage.setItem('shokh_uc_user_v7', JSON.stringify(user));
         }
 
         function tapCoin() {
@@ -328,7 +363,6 @@
             closeModal('ucModal');
         }
 
-        // Bot haqidagi savollarga javob beruvchi AI funksiyasi
         function askAiBot() {
             let inputField = document.getElementById('aiQuestionInput');
             let question = inputField.value.trim().toLowerCase();
@@ -342,14 +376,11 @@
 
             if (question.includes("tanga") || question.includes("qanday") || question.includes("ishlash")) {
                 answer = "Tangalarni ekrandagi doirani bosish (tap qilish) orqali 1 tadan yig'asiz. Har 100 ta tanga 0.1 UC ga teng!";
-            } else href = "";
-            if (question.includes("yechish") || question.includes("chiqarish") || question.includes("min")) {
+            } else if (question.includes("yechish") || question.includes("chiqarish") || question.includes("min")) {
                 answer = "Minimal yechib olish miqdori 120 UC ni tashkil qiladi. Balansingiz yetgandan keyin PUBG ID raqamingizni kiritib so'rov yuborishingiz mumkin.";
-            }
-            if (question.includes("nik") || question.includes("ism") || question.includes("shart")) {
+            } else if (question.includes("nik") || question.includes("ism") || question.includes("shart")) {
                 answer = "Nik '@' belgisi bilan boshlanib, oxiri '.uc' bilan tugashi shart (Masalan: @shokh.uc).";
-            }
-            if (question.includes("admin") || question.includes("kim yaratgan")) {
+            } else if (question.includes("admin") || question.includes("kim yaratgan")) {
                 answer = "Bu bot rasmiy tizim asosida ishlaydi, barcha so'rovlar to'g'ridan-to'g'ri adminga yuboriladi.";
             }
 
