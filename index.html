@@ -28,7 +28,7 @@
             margin-left: auto;
             margin-right: auto;
         }
-        input {
+        input, textarea {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -44,7 +44,8 @@
             height: 90px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #00e676;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
             margin: 10px auto;
             display: block;
         }
@@ -57,7 +58,8 @@
             align-items: center;
             font-size: 15px; 
             font-weight: bold; 
-            color: #00e676; 
+            color: #ffffff; 
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
             border-radius: 12px; 
             margin-bottom: 20px; 
             border: 1px solid #30363d;
@@ -67,26 +69,36 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            color: #c9d1d9;
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
         }
         .user-mini img {
             width: 30px;
             height: 30px;
             border-radius: 50%;
             object-fit: cover;
+            border: 1px solid #ffffff;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
         }
 
-        /* Nurli va qalin oq matn stili */
+        /* Yaltiroq va qalin oq matn stili */
         .glowing-text {
             color: #ffffff;
             font-weight: 700;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 230, 118, 0.4);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.4);
             font-size: 13px;
             margin: 10px 0;
             letter-spacing: 0.5px;
         }
 
-        /* Real PUBG UC Clicker Button Style */
+        /* Yaltiroq sariq tangalar stili */
+        .glowing-yellow {
+            color: #ffeb3b;
+            font-weight: 800;
+            text-shadow: 0 0 12px rgba(255, 235, 59, 0.9), 0 0 25px rgba(255, 193, 7, 0.6);
+        }
+
+        /* Clicker tugmasi */
         .coin-container {
             margin: 30px auto;
             display: flex;
@@ -103,25 +115,18 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 0 35px rgba(31, 111, 235, 0.5);
+            box-shadow: 0 0 35px rgba(255, 235, 59, 0.4);
             transition: transform 0.1s ease;
-            border: 4px solid #f1e05a;
+            border: 4px solid #ffeb3b;
         }
         .click-coin:active {
             transform: scale(0.92);
         }
-        .click-coin img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            pointer-events: none;
-        }
+        /* Doira ichidagi rasm olib tashlandi, faqat toza yaltiroq doira qoldi */
 
         .balance-info {
             font-size: 22px;
             margin: 10px 0;
-            color: #f1e05a;
-            font-weight: bold;
         }
         
         button { 
@@ -131,62 +136,64 @@
             font-weight: bold; 
             font-size: 14px; 
             cursor: pointer; 
-            color: white; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            color: #ffffff; 
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .btn-action { background: #238636; width: 100%; margin-top: 5px; }
-        .btn-uc { background: #1f6feb; width: 100%; margin-top: 15px; }
+        .btn-action { background: #238636; width: 100%; margin-top: 5px; border: 1px solid #2ea043; }
+        .btn-uc { background: #1f6feb; width: 100%; margin-top: 15px; border: 1px solid #388bfd; box-shadow: 0 0 15px rgba(31, 111, 235, 0.6); }
+        .btn-ai { background: #8957e5; width: 100%; margin-top: 10px; border: 1px solid #a371f7; box-shadow: 0 0 15px rgba(137, 87, 229, 0.6); }
     </style>
 </head>
 <body>
 
-    <!-- 1. TELEGRAM PROFIL BILAN KIRISH OYNI -->
+    <!-- 1. KIRISH OYNI -->
     <div id="authScreen" class="screen active">
         <div class="auth-box">
-            <h2>SHOKH GOLD UC</h2>
-            <p style="color: #8b949e; font-size: 13px;">Telegram profilingiz aniqlandi</p>
+            <h2 class="glowing-text" style="font-size: 18px;">SHOKH GOLD UC</h2>
+            <p style="color: #ffffff; font-size: 13px; text-shadow: 0 0 5px rgba(255,255,255,0.5);">Telegram profilingiz aniqlandi</p>
             
             <img id="authProfileImg" src="" class="profile-img-preview" alt="Profil">
-            <h3 id="authName" style="margin: 10px 0; color: #00e676;">Yuklanmoqda...</h3>
+            <h3 id="authName" style="margin: 10px 0; color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.8);">Yuklanmoqda...</h3>
             
             <input type="text" id="nicknameInput" placeholder="Nikingiz (@ bilan boshlanib .uc tugasin)">
             <button class="btn-action" onclick="registerUser()">Botga Kirish 🚀</button>
         </div>
     </div>
 
-    <!-- 2. ASOSIY O'YIN OYNI (CLICKER) -->
+    <!-- 2. ASOSIY O'YIN OYNI -->
     <div id="gameScreen" class="screen">
         <div class="top-bar">
             <div class="user-mini">
                 <img id="userAvatarShow" src="" alt="">
                 <span id="userNickShow">@shokh.uc</span>
             </div>
-            <div>Balans: <span id="ucBalance" style="color: #f1e05a;">0.0</span> UC</div>
+            <div>Balans: <span id="ucBalance" class="glowing-yellow">0.0</span> UC</div>
         </div>
 
-        <div class="balance-info">
-            Tangalar: <span id="coinBalance">0</span> 🪙
+        <div class="balance-info glowing-text">
+            Tangalar: <span id="coinBalance" class="glowing-yellow">0</span> 🪙
         </div>
         
         <div class="glowing-text">Har 1 bosishda: +1 Tanga | 100 Tanga = 0.1 UC</div>
 
         <div class="coin-container">
             <div class="click-coin" onclick="tapCoin()">
-                <!-- Haqiqiy PUBG UC Ikonkasi -->
-                <img src="https://seeklogo.com/images/P/pubg-uc-logo-599C8FEFE0-seeklogo.com.png" alt="PUBG UC">
+                <span class="glowing-yellow" style="font-size: 28px;">🪙 TAP</span>
             </div>
         </div>
 
-        <button class="btn-uc" onclick="openModal('ucModal')">PUBG UC ga Almashtirish & Yechish 🎮</button>
+        <button class="btn-uc glowing-text" onclick="openModal('ucModal')">UC ga Almashtirish & Yechish 🎮</button>
+        <button class="btn-ai glowing-text" onclick="openModal('aiModal')">🤖 Bot Yordamchisi (AI)</button>
     </div>
 
     <!-- UC ALMASHTIRISH VA YECHISH MODALI -->
-    <div id="ucModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center;">
+    <div id="ucModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center;">
         <div class="panel-box">
-            <h3>PUBG UC Bo'limi</h3>
+            <h3 class="glowing-text">UC Bo'limi</h3>
             <div class="glowing-text">Maqsad: 60 UC | Min yechish: 120 UC | Maks: 6000 UC</div>
             
-            <p style="font-size: 14px; margin: 10px 0;">Sizning UC: <span id="modalUc" style="color:#f1e05a; font-weight:bold;">0.0</span> UC</p>
+            <p style="font-size: 14px; margin: 10px 0;" class="glowing-text">Sizning UC: <span id="modalUc" class="glowing-yellow">0.0</span> UC</p>
             
             <button class="btn-action" onclick="convertCoins()">Tangalarni UC ga almashtirish (100:0.1)</button>
             
@@ -194,7 +201,20 @@
             <input type="text" id="pubgIdInput" placeholder="PUBG ID raqamingiz">
             
             <button class="btn-uc" onclick="requestUcWithdraw()">UC ni Yechib Olish So'rovi</button>
-            <button onclick="closeModal('ucModal')" style="background:#30363d; margin-top:10px; width:100%;">Yopish</button>
+            <button onclick="closeModal('ucModal')" style="background:#30363d; margin-top:10px; width:100%; border: 1px solid #484f58;">Yopish</button>
+        </div>
+    </div>
+
+    <!-- AI YORDAMCHI MODALI -->
+    <div id="aiModal" class="screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center;">
+        <div class="panel-box" style="width: 90%; max-height: 80vh; display: flex; flex-direction: column;">
+            <h3 class="glowing-text">🤖 Bot AI Yordamchisi</h3>
+            <div id="aiChatBox" style="background: #0b0e14; border: 1px solid #30363d; border-radius: 8px; height: 200px; overflow-y: auto; padding: 10px; text-align: left; font-size: 13px; margin: 10px 0;">
+                <p style="color: #00e676; text-shadow: 0 0 5px rgba(0,230,118,0.5);">Salom! Men ushbu botning sun'iy intellekt yordamchisiman. Bot haqida istalgan savolingizni berishingiz mumkin!</p>
+            </div>
+            <input type="text" id="aiQuestionInput" placeholder="Savolingizni yozing...">
+            <button class="btn-ai" onclick="askAiBot()">Javob olish 🔍</button>
+            <button onclick="closeModal('aiModal')" style="background:#30363d; margin-top:10px; width:100%; border: 1px solid #484f58;">Yopish</button>
         </div>
     </div>
 
@@ -203,17 +223,14 @@
         tg.expand();
 
         const BOT_TOKEN = "8798838208:AAFV-DNyoSp9OJ3hrSjLpLdWvvAFQiDC-gg";
-        const ADMIN_CHAT_ID = "SHU_YERGA_ID_RAQAMINGNI_YOZ"; // O'z Telegram ID raqamingni yozasan
+        const ADMIN_CHAT_ID = "SHU_YERGA_ID_RAQAMINGNI_YOZ"; 
 
         function sendSmsToAdmin(message) {
             let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(message)}`;
             fetch(url).catch(err => console.log(err));
         }
 
-        // Telegram foydalanuvchi ma'lumotlarini olish
         let tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-        
-        // Agar Telegramdan ochilmagan bo'lsa (brauzerda test uchun standart qiymat)
         let defaultUser = {
             first_name: "Shoxruz",
             username: "shokh.uc",
@@ -221,13 +238,11 @@
         };
         let currentUser = tgUser || defaultUser;
 
-        // Oldindan saqlangan ma'lumotni tekshiramiz
-        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v5')) || null;
+        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v6')) || null;
 
         if (user) {
             showGameScreen();
         } else {
-            // Avt</h4>matik Telegram profil ma'lumotlarini chiqaramiz
             document.getElementById('authName').innerText = currentUser.first_name;
             if (currentUser.photo_url) {
                 document.getElementById('authProfileImg').src = currentUser.photo_url;
@@ -248,7 +263,7 @@
             let userAvatar = currentUser.photo_url || "https://via.placeholder.com/90";
             
             user = { nick: nick, avatar: userAvatar, coins: 0, uc: 0 };
-            localStorage.setItem('shokh_uc_user_v5', JSON.stringify(user));
+            localStorage.setItem('shokh_uc_user_v6', JSON.stringify(user));
             showGameScreen();
         }
 
@@ -264,11 +279,11 @@
             document.getElementById('coinBalance').innerText = user.coins;
             document.getElementById('ucBalance').innerText = user.uc.toFixed(1);
             document.getElementById('modalUc').innerText = user.uc.toFixed(1);
-            localStorage.setItem('shokh_uc_user_v5', JSON.stringify(user));
+            localStorage.setItem('shokh_uc_user_v6', JSON.stringify(user));
         }
 
         function tapCoin() {
-            user.coins += 1; // Har bosganda +1 tanga
+            user.coins += 1;
             updateUI();
         }
 
@@ -279,7 +294,7 @@
             }
             let canConvert = Math.floor(user.coins / 100);
             let earnedUc = canConvert * 0.1;
-            user.coins %= 100; // Qoldiq tangalar saqlanadi
+            user.coins %= 100;
             user.uc += earnedUc;
             updateUI();
             alert(`Tabriklayman! ${canConvert * 100} ta tanga ${earnedUc.toFixed(1)} UC ga almashtirildi!`);
@@ -305,13 +320,45 @@
                 return;
             }
 
-            // Adminga Telegramdan xabar yuborish
             sendSmsToAdmin(`🎮 PUBG UC YECHISH SO'ROVI\n👤 Nik: ${user.nick}\n🆔 PUBG ID: ${pubgId}\n💎 Miqdor: ${ucAmount} UC`);
             
             user.uc -= ucAmount;
             updateUI();
             alert("So'rov adminga yuborildi! Admin tez orada PUBG ID ingizga UC tashlab beradi.");
             closeModal('ucModal');
+        }
+
+        // Bot haqidagi savollarga javob beruvchi AI funksiyasi
+        function askAiBot() {
+            let inputField = document.getElementById('aiQuestionInput');
+            let question = inputField.value.trim().toLowerCase();
+            let chatBox = document.getElementById('aiChatBox');
+
+            if (!question) return;
+
+            chatBox.innerHTML += `<p style="color: #ffffff; margin: 5px 0;"><b>Siz:</b> ${inputField.value}</p>`;
+            
+            let answer = "Kechirasiz, bu savolga tushunmadim. Bu bot orqali siz tanga yig'ib, ularni UC ga almashtirishingiz va chiqarib olishingiz mumkin!";
+
+            if (question.includes("tanga") || question.includes("qanday") || question.includes("ishlash")) {
+                answer = "Tangalarni ekrandagi doirani bosish (tap qilish) orqali 1 tadan yig'asiz. Har 100 ta tanga 0.1 UC ga teng!";
+            } else href = "";
+            if (question.includes("yechish") || question.includes("chiqarish") || question.includes("min")) {
+                answer = "Minimal yechib olish miqdori 120 UC ni tashkil qiladi. Balansingiz yetgandan keyin PUBG ID raqamingizni kiritib so'rov yuborishingiz mumkin.";
+            }
+            if (question.includes("nik") || question.includes("ism") || question.includes("shart")) {
+                answer = "Nik '@' belgisi bilan boshlanib, oxiri '.uc' bilan tugashi shart (Masalan: @shokh.uc).";
+            }
+            if (question.includes("admin") || question.includes("kim yaratgan")) {
+                answer = "Bu bot rasmiy tizim asosida ishlaydi, barcha so'rovlar to'g'ridan-to'g'ri adminga yuboriladi.";
+            }
+
+            setTimeout(() => {
+                chatBox.innerHTML += `<p style="color: #00ffcc; margin: 5px 0; text-shadow: 0 0 5px rgba(0,255,204,0.4);"><b>AI Bot:</b> ${answer}</p>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 500);
+
+            inputField.value = "";
         }
     </script>
 </body>
