@@ -18,45 +18,7 @@
         .screen { display: none; }
         .active { display: block; }
         
-        /* 1. BIRINCHI CHIQADIGAN YUKLANISH (SPLASH) EKRANI STILI */
-        #splashScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 90vh;
-            text-align: center;
-        }
-        .splash-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #00e676;
-            box-shadow: 0 0 30px rgba(0, 230, 118, 0.6);
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(0, 230, 118, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
-        }
-        .loading-spinner {
-            width: 35px;
-            height: 35px;
-            border: 4px solid #30363d;
-            border-top: 4px solid #00e676;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto 10px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .panel-box {
+        .auth-box, .panel-box {
             background: #161b22;
             padding: 20px;
             border-radius: 16px;
@@ -76,6 +38,15 @@
             color: white;
             box-sizing: border-box;
             font-size: 14px;
+        }
+        .profile-img-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #00e676;
+            margin: 10px auto;
+            display: block;
         }
 
         .top-bar { 
@@ -105,6 +76,7 @@
             object-fit: cover;
         }
 
+        /* Nurli va qalin oq matn stili */
         .glowing-text {
             color: #ffffff;
             font-weight: 700;
@@ -114,6 +86,7 @@
             letter-spacing: 0.5px;
         }
 
+        /* Real PUBG UC Clicker Button Style */
         .coin-container {
             margin: 30px auto;
             display: flex;
@@ -167,33 +140,21 @@
 </head>
 <body>
 
-    <!-- 1. KIM KIRSA, 1-BO‘LIB EKRANDA O‘ZINING PROFIL RASMI BILAN CHIQADIGAN YUKLANISH EKRANI -->
-    <div id="splashScreen" class="screen active">
-        <div>
-            <h3 style="color: #f1e05a; margin-bottom: 20px; letter-spacing: 1px;">SHOKH GOLD UC</h3>
+    <!-- 1. TELEGRAM PROFIL BILAN KIRISH OYNI -->
+    <div id="authScreen" class="screen active">
+        <div class="auth-box">
+            <h2>SHOKH GOLD UC</h2>
+            <p style="color: #8b949e; font-size: 13px;">Telegram profilingiz aniqlandi</p>
             
-            <!-- Foydalanuvchining shaxsiy Telegram rasmi -->
-            <img id="splashAvatar" src="" class="splash-avatar" alt="Profil">
+            <img id="authProfileImg" src="" class="profile-img-preview" alt="Profil">
+            <h3 id="authName" style="margin: 10px 0; color: #00e676;">Yuklanmoqda...</h3>
             
-            <!-- Foydalanuvchining Telegram ismi -->
-            <h2 id="splashName" style="color: #00e676; margin: 10px 0;">Yuklanmoqda...</h2>
-            <p style="color: #8b949e; font-size: 13px;">Profil tasdiqlanmoqda...</p>
-            
-            <div class="loading-spinner"></div>
+            <input type="text" id="nicknameInput" placeholder="Nikingiz (@ bilan boshlanib .uc tugasin)">
+            <button class="btn-action" onclick="registerUser()">Botga Kirish 🚀</button>
         </div>
     </div>
 
-    <!-- 2. AGAR BIRINCHI MARTA KIRGAN BO'LSA - NIK YYOZISH QISMI -->
-    <div id="authScreen" class="screen">
-        <div class="panel-box">
-            <h2>Ro'yxatdan o'tish</h2>
-            <p style="color: #8b949e; font-size: 13px;">Nikingiz oxiri .uc bilan tugashi shart</p>
-            <input type="text" id="nicknameInput" placeholder="Nikingiz (@shokh.uc)">
-            <button class="btn-action" onclick="registerUser()">Davom etish 🚀</button>
-        </div>
-    </div>
-
-    <!-- 3. ASOSIY O'YIN OYNI (CLICKER) -->
+    <!-- 2. ASOSIY O'YIN OYNI (CLICKER) -->
     <div id="gameScreen" class="screen">
         <div class="top-bar">
             <div class="user-mini">
@@ -211,6 +172,7 @@
 
         <div class="coin-container">
             <div class="click-coin" onclick="tapCoin()">
+                <!-- Haqiqiy PUBG UC Ikonkasi -->
                 <img src="https://seeklogo.com/images/P/pubg-uc-logo-599C8FEFE0-seeklogo.com.png" alt="PUBG UC">
             </div>
         </div>
@@ -250,34 +212,32 @@
 
         // Telegram foydalanuvchi ma'lumotlarini olish
         let tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+        
+        // Agar Telegramdan ochilmagan bo'lsa (brauzerda test uchun standart qiymat)
         let defaultUser = {
             first_name: "Shoxruz",
             username: "shokh.uc",
-            photo_url: "https://via.placeholder.com/120"
+            photo_url: "https://via.placeholder.com/90"
         };
         let currentUser = tgUser || defaultUser;
 
-        // 1-qadam: Darhol SplashScreen da foydalanuvchining o'z rasmi va ismini chiqaramiz
-        document.getElementById('splashAvatar').src = currentUser.photo_url || "https://via.placeholder.com/120";
-        document.getElementById('splashName').innerText = currentUser.first_name;
+        // Oldindan saqlangan ma'lumotni tekshiramiz
+        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v5')) || null;
 
-        let user = JSON.parse(localStorage.getItem('shokh_uc_user_v7')) || null;
-
-        // 2 soniya davomida o'sha profil rasmli yuklanish ekrani turadi, keyin o'yin yoki ro'yxatga o'tadi
-        setTimeout(() => {
-            document.getElementById('splashScreen').classList.remove('active');
-            
-            if (user) {
-                showGameScreen();
-            } else {
-                document.getElementById('authScreen').classList.add('active');
-                if (currentUser.username) {
-                    document.getElementById('nicknameInput').value = "@" + currentUser.username.replace('@', '');
-                } else {
-                    document.getElementById('nicknameInput').value = "@shokh.uc";
-                }
+        if (user) {
+            showGameScreen();
+        } else {
+            // Avt</h4>matik Telegram profil ma'lumotlarini chiqaramiz
+            document.getElementById('authName').innerText = currentUser.first_name;
+            if (currentUser.photo_url) {
+                document.getElementById('authProfileImg').src = currentUser.photo_url;
             }
-        }, 2000);
+            if (currentUser.username) {
+                document.getElementById('nicknameInput').value = "@" + currentUser.username.replace('@', '');
+            } else {
+                document.getElementById('nicknameInput').value = "@shokh.uc";
+            }
+        }
 
         function registerUser() {
             let nick = document.getElementById('nicknameInput').value.trim();
@@ -285,16 +245,15 @@
                 alert("Xatolik! Nik '@' bilan boshlanib, oxiri '.uc' bilan tugashi kerak (Masalan: @shokh.uc)");
                 return;
             }
-            let userAvatar = currentUser.photo_url || "https://via.placeholder.com/120";
+            let userAvatar = currentUser.photo_url || "https://via.placeholder.com/90";
             
             user = { nick: nick, avatar: userAvatar, coins: 0, uc: 0 };
-            localStorage.setItem('shokh_uc_user_v7', JSON.stringify(user));
-            
-            document.getElementById('authScreen').classList.remove('active');
+            localStorage.setItem('shokh_uc_user_v5', JSON.stringify(user));
             showGameScreen();
         }
 
         function showGameScreen() {
+            document.getElementById('authScreen').classList.remove('active');
             document.getElementById('gameScreen').classList.add('active');
             document.getElementById('userNickShow').innerText = user.nick;
             document.getElementById('userAvatarShow').src = user.avatar;
@@ -305,11 +264,11 @@
             document.getElementById('coinBalance').innerText = user.coins;
             document.getElementById('ucBalance').innerText = user.uc.toFixed(1);
             document.getElementById('modalUc').innerText = user.uc.toFixed(1);
-            localStorage.setItem('shokh_uc_user_v7', JSON.stringify(user));
+            localStorage.setItem('shokh_uc_user_v5', JSON.stringify(user));
         }
 
         function tapCoin() {
-            user.coins += 1;
+            user.coins += 1; // Har bosganda +1 tanga
             updateUI();
         }
 
@@ -320,7 +279,7 @@
             }
             let canConvert = Math.floor(user.coins / 100);
             let earnedUc = canConvert * 0.1;
-            user.coins %= 100;
+            user.coins %= 100; // Qoldiq tangalar saqlanadi
             user.uc += earnedUc;
             updateUI();
             alert(`Tabriklayman! ${canConvert * 100} ta tanga ${earnedUc.toFixed(1)} UC ga almashtirildi!`);
@@ -346,6 +305,7 @@
                 return;
             }
 
+            // Adminga Telegramdan xabar yuborish
             sendSmsToAdmin(`🎮 PUBG UC YECHISH SO'ROVI\n👤 Nik: ${user.nick}\n🆔 PUBG ID: ${pubgId}\n💎 Miqdor: ${ucAmount} UC`);
             
             user.uc -= ucAmount;
