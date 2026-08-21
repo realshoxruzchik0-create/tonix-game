@@ -3,383 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ko'cha Hayoti - Street RPG</title>
+    <title>AFTARITET 26</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            background: #0d1117;
-            color: #f0f6fc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 15px;
-            padding-bottom: 90px;
-            text-align: center;
-            user-select: none;
-        }
-        .screen { display: none; }
-        .active { display: block; }
-
-        /* Obunani tekshirish oynasi (Modal) */
-        #subModal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(13, 17, 23, 0.98);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .top-panel {
-            background: #161b22;
-            border: 1px solid #30363d;
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-        .top-panel span { font-weight: bold; color: #ff5555; }
-
-        .music-btn {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #ffeb3b;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .avatar-box {
-            width: 180px;
-            height: 180px;
-            margin: 20px auto;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,85,85,0.2) 0%, rgba(13,17,23,0) 70%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed #ff5555;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .avatar-box:active { transform: scale(0.95); }
-        .avatar-box img { width: 100px; height: 100px; }
-
-        .btn-main {
-            background: #ff5555;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            margin: 8px 0;
-            box-shadow: 0 4px 15px rgba(255, 85, 85, 0.3);
-        }
-        .btn-secondary {
-            background: #21262d;
-            color: white;
-            border: 1px solid #30363d;
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 5px 0;
-            text-decoration: none;
-            display: block;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        .card-item {
-            background: #161b22;
-            border: 1px solid #30363d;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #161b22;
-            border-top: 1px solid #30363d;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 100;
-        }
-        .nav-item {
-            background: none;
-            border: none;
-            color: #8b949e;
-            font-size: 11px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
-        .nav-item.active-nav { color: #ff5555; font-weight: bold; }
+        body { background: #09090b; color: #e4e4e7; font-family: 'Arial', sans-serif; margin: 0; padding-bottom: 80px; text-align: center; }
+        .header { background: #18181b; padding: 20px; font-size: 24px; font-weight: bold; color: #f87171; border-bottom: 2px solid #3f3f46; }
+        .stats { display: flex; justify-content: space-around; padding: 15px; background: #18181b; margin: 10px; border-radius: 15px; }
+        .tap-area { width: 200px; height: 200px; background: #27272a; border-radius: 50%; margin: 30px auto; display: flex; align-items: center; justify-content: center; border: 4px solid #f87171; cursor: pointer; transition: 0.2s; }
+        .tap-area:active { transform: scale(0.9); }
+        .card { background: #18181b; padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid #3f3f46; text-align: left; }
+        .btn { background: #f87171; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: #18181b; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #3f3f46; }
+        .nav-btn { color: #a1a1aa; font-size: 24px; cursor: pointer; }
+        .nav-btn.active { color: #f87171; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- KANALGA MAJBURIY OBUNA OYNASI -->
-    <div id="subModal">
-        <h2 style="color: #ff5555; margin-bottom: 10px;">Diqqat Bratan! 🚨</h2>
-        <p style="font-size: 13px; color: #8b949e; margin-bottom: 20px;">O'yinga kirish uchun kanalimiz va YouTube sahifamizga obuna bo'ling!</p>
+    <!-- Kirish va Obuna qismi -->
+    <div id="subModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#09090b; z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <h1 style="color:#f87171;">AFTARITET 26</h1>
+        <p>O'yinni boshlash uchun obuna bo'ling:</p>
+        <a href="https://t.me/JanobAvtoritetGame" class="btn" target="_blank">📢 Telegram Kanal</a>
+        <a href="https://www.youtube.com/@JanobAvtoritetGame" class="btn" style="background:#ef4444;" target="_blank">▶️ YouTube Kanal</a>
+        <button onclick="enterGame()" class="btn" style="background:#22c55e; margin-top:20px;">Kirish ✅</button>
+    </div>
+
+    <!-- O'yin interfeysi -->
+    <div id="gameContent" class="hidden">
+        <div class="header">AFTARITET 26</div>
+        <div class="stats">
+            <div>Obro': <span id="tapCount">0</span>/1000</div>
+            <div>Cash: <span id="cashCount">0</span>$</div>
+        </div>
         
-        <a href="https://t.me/YANGILIK_AXBOROTI" target="_blank" class="btn-secondary">📢 Telegram Kanalga Obuna Bo'lish</a>
-        <a href="https://youtube.com/@JanobShoxruz26" target="_blank" class="btn-secondary" style="background: #b30000;">▶️ YouTube Kanalga Obuna Bo'lish</a>
-        
-        <button class="btn-main" onclick="checkSubscription()" style="margin-top: 20px;">Tekshirish va Kirish ✅</button>
-    </div>
-
-    <!-- AUDIO (Fon Musiqasi) -->
-    <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-    </audio>
-
-    <!-- 1. KABINET (HOME) -->
-    <div id="homeScreen" class="screen active">
-        <button class="music-btn" onclick="toggleMusic()" id="musicToggleBtn">🎵 Musiqa: O'chiq</button>
-
-        <div class="top-panel">
-            <div>Obro': <span id="obroText">0</span></div>
-            <div>Cash: <span id="cashText">100</span>$</div>
+        <div id="homeScreen">
+            <div class="tap-area" onclick="tap()"><h1>👊</h1></div>
         </div>
 
-        <div style="font-size: 13px; color: #8b949e;">Unvon: <b style="color:#ff5555;" id="rankText">Oddiy bola</b></div>
-        <div style="font-size: 11px; color: #8b949e; margin-top: 5px;">Sizning ID: <span id="myIdText" style="color: #58a6ff;">Yuklanmoqda...</span></div>
-
-        <div class="avatar-box" onclick="tapObro()">
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Bratan">
-        </div>
-        <div style="font-size: 12px; color: #8b949e;">Obro' olish uchun bratanga bos!</div>
-    </div>
-
-    <!-- 2. BRATCHARLAR (Afsonaviy Personajlar) -->
-    <div id="crewScreen" class="screen">
-        <h3>Afsonaviy Personajlar</h3>
-        <p style="font-size: 12px; color: #8b949e;">Olamga tanilgan avtoritetlarni yollang va passiv daromad oling!</p>
-        
-        <!-- 1. Rovşen Lankaranski -->
-        <div class="card-item">
-            <div style="text-align: left;">
-                <b>Rovşen Lankaranski</b>
-                <div style="font-size: 11px; color: #ff5555;">Daromad: +2 $/soniya</div>
+        <div id="crewScreen" class="hidden">
+            <div class="card">
+                <b>Rovşen Lankaranski</b><br>Narx: 200$ | Daromad: 5$/s
+                <button class="btn" onclick="buy(200, 5)">Yollash</button>
             </div>
-            <button class="btn-main" style="width: auto; padding: 8px 12px; margin:0;" onclick="buyWorker(50, 2)">Yollash (50$)</button>
+            <div class="card">
+                <b>Aslan Usoyax</b><br>Narx: 500$ | Daromad: 15$/s
+                <button class="btn" onclick="buy(500, 15)">Yollash</button>
+            </div>
         </div>
 
-        <!-- 2. Aslan Usoyax -->
-        <div class="card-item">
-            <div style="text-align: left;">
-                <b>Aslan Usoyax</b>
-                <div style="font-size: 11px; color: #ff5555;">Daromad: +10 $/soniya</div>
-            </div>
-            <button class="btn-main" style="width: auto; padding: 8px 12px; margin:0;" onclick="buyWorker(200, 10)">Yollash (200$)</button>
-        </div>
-
-        <!-- 3. Zap -->
-        <div class="card-item">
-            <div style="text-align: left;">
-                <b>Zap</b>
-                <div style="font-size: 11px; color: #ff5555;">Daromad: +25 $/soniya</div>
-            </div>
-            <button class="btn-main" style="width: auto; padding: 8px 12px; margin:0;" onclick="buyWorker(500, 25)">Yollash (500$)</button>
-        </div>
-
-        <!-- 4. Saidaziz Medgorodok -->
-        <div class="card-item">
-            <div style="text-align: left;">
-                <b>Saidaziz Medgorodok</b>
-                <div style="font-size: 11px; color: #ff5555;">Daromad: +60 $/soniya</div>
-            </div>
-            <button class="btn-main" style="width: auto; padding: 8px 12px; margin:0;" onclick="buyWorker(1200, 60)">Yollash (1200$)</button>
-        </div>
-
-        <!-- 5. Baxti Tashkentskiy -->
-        <div class="card-item">
-            <div style="text-align: left;">
-                <b>Baxti Tashkentskiy</b>
-                <div style="font-size: 11px; color: #ff5555;">Daromad: +150 $/soniya</div>
-            </div>
-            <button class="btn-main" style="width: auto; padding: 8px 12px; margin:0;" onclick="buyWorker(3000, 150)">Yollash (3000$)</button>
+        <div id="arenaScreen" class="hidden">
+            <h3>Rayonni egallash</h3>
+            <button class="btn" onclick="raid()">Rayonga hujum qilish ⚔️</button>
         </div>
     </div>
 
-    <!-- 3. ARENA -->
-    <div id="arenaScreen" class="screen">
-        <h3>Ko'cha Janglari & Druzya</h3>
-        <div style="background: #161b22; border: 1px solid #30363d; padding: 12px; border-radius: 12px; margin-bottom: 15px;">
-            <p style="font-size: 12px; color: #8b949e; margin-top:0;">Do'stingizni ID raqamini yozib druziya tashlang!</p>
-            <input type="text" id="friendIdInput" placeholder="Do'stining ID raqami">
-            <button class="btn-main" onclick="sendFriendRequest()">Druziya tashlash 🤝</button>
-        </div>
-        <button class="btn-main" style="background: #238636;" onclick="startFight()">Rayonda raqib bilan urishish 🤼‍♂️</button>
-    </div>
-
-    <!-- 4. ZONA -->
-    <div id="zoneScreen" class="screen">
-        <h3>Zona / Reyting</h3>
-        <div class="card-item">
-            <span>Sizning ID raqamingiz:</span>
-            <b id="zoneMyId" style="color: #58a6ff;">---</b>
-        </div>
-        <div class="card-item">
-            <span>Holat:</span>
-            <b style="color: #238636;">Ma'lumotlar saqlanmoqda ✅</b>
-        </div>
-    </div>
-
-    <!-- PASTKI NAVIGATSIYA -->
-    <div class="nav-bar">
-        <button class="nav-item active-nav" onclick="switchTab('homeScreen', this)">👑 Kabinet</button>
-        <button class="nav-item" onclick="switchTab('crewScreen', this)">👥 Bratcharlar</button>
-        <button class="nav-item" onclick="switchTab('arenaScreen', this)">⚔️ Arena</button>
-        <button class="nav-item" onclick="switchTab('zoneScreen', this)">🏢 Zona</button>
+    <div class="nav">
+        <div class="nav-btn" onclick="show('homeScreen')">🏠</div>
+        <div class="nav-btn" onclick="show('crewScreen')">👥</div>
+        <div class="nav-btn" onclick="show('arenaScreen')">⚔️</div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-
-        let isSubscribed = localStorage.getItem('shox_sub') === 'true';
-        if (isSubscribed) {
-            document.getElementById('subModal').style.display = 'none';
+        let taps = 0, cash = 0, income = 0;
+        function tap() {
+            taps++;
+            if(taps >= 1000) { taps = 0; cash += 1; }
+            updateUI();
         }
-
-        function checkSubscription() {
-            localStorage.setItem('shox_sub', 'true');
-            document.getElementById('subModal').style.display = 'none';
-            alert("Rahmat, bratan! O'yinga xush kelibsiz.");
+        function buy(price, inc) {
+            if(cash >= price) { cash -= price; income += inc; updateUI(); }
+            else alert("Pul yetmaydi, bratan!");
         }
-
-        let tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-        let myId = tgUser ? tgUser.id : Math.floor(100000 + Math.random() * 900000);
-        
-        document.getElementById('myIdText').innerText = myId;
-        document.getElementById('zoneMyId').innerText = myId;
-
-        // Ma'lumotlarni saqlash va yuklash
-        let obro = parseInt(localStorage.getItem('shox_obro')) || 0;
-        let cash = parseInt(localStorage.getItem('shox_cash')) || 100;
-        let passiveIncome = parseInt(localStorage.getItem('shox_passive')) || 0;
-
+        function raid() {
+            if(Math.random() > 0.5) { cash += 100; alert("Rayon seniki, brat!"); }
+            else alert("Rayonni himoya qilishdi!");
+            updateUI();
+        }
         function updateUI() {
-            document.getElementById('obroText').innerText = obro;
-            document.getElementById('cashText').innerText = cash;
-            
-            let rank = "Oddiy bola";
-            if(obro >= 100) rank = "Shustriy";
-            if(obro >= 500) rank = "Bratan";
-            if(obro >= 2000) rank = "Avtoritet";
-            if(obro >= 10000) rank = "Vor v zakon";
-            document.getElementById('rankText').innerText = rank;
-
-            localStorage.setItem('shox_obro', obro);
-            localStorage.setItem('shox_cash', cash);
-            localStorage.setItem('shox_passive', passiveIncome);
+            document.getElementById('tapCount').innerText = taps;
+            document.getElementById('cashCount').innerText = cash;
         }
-        updateUI();
-
-        function tapObro() {
-            obro += 1;
-            updateUI();
+        function show(id) {
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('crewScreen').classList.add('hidden');
+            document.getElementById('arenaScreen').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
         }
-
-        // Passiv daromad (Har soniyada Cash qo'shiladi)
-        setInterval(() => {
-            if(passiveIncome > 0) {
-                cash += passiveIncome;
-                updateUI();
-            }
-        }, 1000);
-
-        function buyWorker(price, incomeInc) {
-            if(cash >= price) {
-                cash -= price;
-                passiveIncome += incomeInc;
-                alert("Avtoritet jamoaga qo'shildi va passiv daromad oshdi!");
-                updateUI();
-            } else {
-                alert("Pulingiz yetmaydi, brat!");
-            }
-        }
-
-        function sendFriendRequest() {
-            let fId = document.getElementById('friendIdInput').value;
-            if(!fId) {
-                alert("ID kiriting!");
-                return;
-            }
-            alert(`ID: ${fId} ga druziya yuborildi!`);
-            document.getElementById('friendIdInput').value = "";
-        }
-
-        function startFight() {
-            let win = Math.random() >= 0.5;
-            if(win) {
-                cash += 50;
-                alert("Jangda yutdingiz! +50$");
-            } else {
-                alert("Yutqazdingiz, bratcharlarni kuchaytiring!");
-            }
-            updateUI();
-        }
-
-        let bgMusic = document.getElementById('bgMusic');
-        let musicPlaying = false;
-        function toggleMusic() {
-            let btn = document.getElementById('musicToggleBtn');
-            if (musicPlaying) {
-                bgMusic.pause();
-                musicPlaying = false;
-                btn.innerText = "🎵 Musiqa: O'chiq";
-            } else {
-                bgMusic.play().then(() => {
-                    musicPlaying = true;
-                    btn.innerText = "🔊 Musiqa: Yoqiq";
-                }).catch(e => {
-                    alert("Ekranni yana bosing!");
-                });
-            }
-        }
-
-        function switchTab(screenId, element) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active-nav'));
-            document.getElementById(screenId).classList.add('active');
-            element.classList.add('active-nav');
-        }
+        function enterGame() { document.getElementById('subModal').style.display = 'none'; document.getElementById('gameContent').classList.remove('hidden'); }
+        setInterval(() => { if(income > 0) { cash += income; updateUI(); } }, 1000);
     </script>
 </body>
 </html>
