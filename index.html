@@ -2,97 +2,57 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AFTARITET 26</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #09090b; color: #e4e4e7; font-family: 'Arial', sans-serif; margin: 0; padding-bottom: 80px; text-align: center; }
-        .header { background: #18181b; padding: 20px; font-size: 24px; font-weight: bold; color: #f87171; border-bottom: 2px solid #3f3f46; }
-        .stats { display: flex; justify-content: space-around; padding: 15px; background: #18181b; margin: 10px; border-radius: 15px; }
-        .tap-area { width: 200px; height: 200px; background: #27272a; border-radius: 50%; margin: 30px auto; display: flex; align-items: center; justify-content: center; border: 4px solid #f87171; cursor: pointer; transition: 0.2s; }
-        .tap-area:active { transform: scale(0.9); }
-        .card { background: #18181b; padding: 15px; margin: 10px; border-radius: 12px; border: 1px solid #3f3f46; text-align: left; }
-        .btn { background: #f87171; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: #18181b; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #3f3f46; }
-        .nav-btn { color: #a1a1aa; font-size: 24px; cursor: pointer; }
-        .nav-btn.active { color: #f87171; }
-        .hidden { display: none; }
+        body { background: #000; color: #fff; margin: 0; font-family: sans-serif; overflow: hidden; }
+        .screen { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; }
+        .active { display: flex; }
+        #tapCircle { width: 250px; height: 250px; background: radial-gradient(#333, #000); border-radius: 50%; border: 5px solid #ff4500; cursor: pointer; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: #1a1a1a; padding: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- Kirish va Obuna qismi -->
-    <div id="subModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#09090b; z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 style="color:#f87171;">AFTARITET 26</h1>
-        <p>O'yinni boshlash uchun obuna bo'ling:</p>
-        <a href="https://t.me/JanobAvtoritetGame" class="btn" target="_blank">📢 Telegram Kanal</a>
-        <a href="https://www.youtube.com/@JanobAvtoritetGame" class="btn" style="background:#ef4444;" target="_blank">▶️ YouTube Kanal</a>
-        <button onclick="enterGame()" class="btn" style="background:#22c55e; margin-top:20px;">Kirish ✅</button>
+<!-- 1. OBUNA OYNASI -->
+<div id="subScreen" class="screen active">
+    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="100">
+    <h2>AFTARITET 26 ga xush kelibsiz!</h2>
+    <a href="https://www.youtube.com/@JanobAvtoritetGame" class="btn">YouTube ga obuna bo'lish</a>
+    <button onclick="checkSub()">Tasdiqlash va Kirish</button>
+</div>
+
+<!-- 2. O'YIN HUDUDI -->
+<div id="gameScreen" class="screen">
+    <div id="tapCircle" onclick="tap()"></div>
+    <h2 id="cashDisplay">Cash: 0$</h2>
+    <div class="nav-bar">
+        <div onclick="show('market')">Market</div>
+        <div onclick="show('lobby')">Lobby</div>
+        <div onclick="show('battle')">Battle</div>
     </div>
+</div>
 
-    <!-- O'yin interfeysi -->
-    <div id="gameContent" class="hidden">
-        <div class="header">AFTARITET 26</div>
-        <div class="stats">
-            <div>Obro': <span id="tapCount">0</span>/1000</div>
-            <div>Cash: <span id="cashCount">0</span>$</div>
-        </div>
-        
-        <div id="homeScreen">
-            <div class="tap-area" onclick="tap()"><h1>👊</h1></div>
-        </div>
+<script>
+    let cash = 0, isSubscribed = false;
+    const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
 
-        <div id="crewScreen" class="hidden">
-            <div class="card">
-                <b>Rovşen Lankaranski</b><br>Narx: 200$ | Daromad: 5$/s
-                <button class="btn" onclick="buy(200, 5)">Yollash</button>
-            </div>
-            <div class="card">
-                <b>Aslan Usoyax</b><br>Narx: 500$ | Daromad: 15$/s
-                <button class="btn" onclick="buy(500, 15)">Yollash</button>
-            </div>
-        </div>
+    function checkSub() {
+        // Bu yerda obuna tekshiruv logikasi bo'ladi
+        isSubscribed = true; 
+        document.getElementById('subScreen').classList.remove('active');
+        document.getElementById('gameScreen').classList.add('active');
+    }
 
-        <div id="arenaScreen" class="hidden">
-            <h3>Rayonni egallash</h3>
-            <button class="btn" onclick="raid()">Rayonga hujum qilish ⚔️</button>
-        </div>
-    </div>
+    function tap() {
+        clickSound.play();
+        cash += 1;
+        document.getElementById('cashDisplay').innerText = "Cash: " + cash + "$";
+    }
 
-    <div class="nav">
-        <div class="nav-btn" onclick="show('homeScreen')">🏠</div>
-        <div class="nav-btn" onclick="show('crewScreen')">👥</div>
-        <div class="nav-btn" onclick="show('arenaScreen')">⚔️</div>
-    </div>
-
-    <script>
-        let taps = 0, cash = 0, income = 0;
-        function tap() {
-            taps++;
-            if(taps >= 1000) { taps = 0; cash += 1; }
-            updateUI();
-        }
-        function buy(price, inc) {
-            if(cash >= price) { cash -= price; income += inc; updateUI(); }
-            else alert("Pul yetmaydi, bratan!");
-        }
-        function raid() {
-            if(Math.random() > 0.5) { cash += 100; alert("Rayon seniki, brat!"); }
-            else alert("Rayonni himoya qilishdi!");
-            updateUI();
-        }
-        function updateUI() {
-            document.getElementById('tapCount').innerText = taps;
-            document.getElementById('cashCount').innerText = cash;
-        }
-        function show(id) {
-            document.getElementById('homeScreen').classList.add('hidden');
-            document.getElementById('crewScreen').classList.add('hidden');
-            document.getElementById('arenaScreen').classList.add('hidden');
-            document.getElementById(id).classList.remove('hidden');
-        }
-        function enterGame() { document.getElementById('subModal').style.display = 'none'; document.getElementById('gameContent').classList.remove('hidden'); }
-        setInterval(() => { if(income > 0) { cash += income; updateUI(); } }, 1000);
-    </script>
+    function show(tab) {
+        // Market, Lobby va Battle bo'limlari uchun kod
+        alert(tab + " bo'limi hali tayyorlanmoqda!");
+    }
+</script>
 </body>
 </html>
