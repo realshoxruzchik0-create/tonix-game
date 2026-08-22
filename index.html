@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinCepar TapTap</title>
-    <!-- Telegram WebApp uchun skript -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -14,92 +13,85 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
             margin: 0;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 94vh;
+            height: 95vh;
             user-select: none;
+            overflow: hidden;
         }
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(255, 255, 255, 0.08);
-            padding: 8px 12px;
-            border-radius: 16px;
+            padding: 6px 12px;
+            border-radius: 14px;
             backdrop-filter: blur(10px);
         }
         .user-info {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .wallet-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: #facc15;
-            padding: 6px 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
         }
         .score-section {
-            margin: 5px 0;
+            margin: 2px 0;
         }
         .score {
-            font-size: 38px;
+            font-size: 34px;
             font-weight: 800;
             color: #ffffff;
-            letter-spacing: 1px;
         }
         .league {
-            font-size: 14px;
+            font-size: 13px;
             color: #c084fc;
             font-weight: 600;
-            margin-top: -2px;
+        }
+        .game-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
         }
         .coin-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-grow: 1;
         }
         .coin {
-            width: 210px;
-            height: 210px;
-            background: #ffffff;
+            width: 190px;
+            height: 190px;
+            background: #000000;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 0 35px rgba(168, 85, 247, 0.4);
-            transition: transform 0.08s ease;
+            box-shadow: 0 0 35px rgba(168, 85, 247, 0.5);
+            transition: transform 0.06s ease;
             overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.2);
         }
         .coin img {
-            width: 95%;
-            height: 95%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             pointer-events: none;
         }
         .coin:active {
-            transform: scale(0.92);
+            transform: scale(0.90);
         }
         .bottom-section {
             background: rgba(255, 255, 255, 0.06);
-            padding: 12px;
-            border-radius: 16px;
+            padding: 10px;
+            border-radius: 14px;
             backdrop-filter: blur(10px);
         }
         .energy-box {
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 13px;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
             color: #e2e8f0;
@@ -108,9 +100,9 @@
             width: 100%;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            height: 10px;
+            height: 8px;
             overflow: hidden;
-            margin-top: 4px;
+            margin-bottom: 10px;
         }
         .energy-bar {
             height: 100%;
@@ -119,47 +111,198 @@
             transition: width 0.2s;
             border-radius: 10px;
         }
-        .shop {
+        /* Pastdagi 4 ta ikonka menyusi */
+        .nav-menu {
             display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .shop-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px;
+            justify-content: space-around;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 8px 4px;
             border-radius: 12px;
-            cursor: pointer;
-            font-size: 11px;
-            flex: 1;
-            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .shop-btn span {
+        .nav-item {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-weight: 600;
+        }
+        .nav-item span {
+            font-size: 18px;
+        }
+        .nav-item:active {
             color: #facc15;
+        }
+
+        /* Modal oyna dizayni */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: #180536;
+            border: 2px solid #7c3aed;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: left;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 25px rgba(124, 58, 237, 0.5);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 18px;
             font-weight: bold;
+            color: #facc15;
+        }
+        .close-btn {
+            background: #ef4444;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .modal-section-title {
+            font-size: 14px;
+            color: #c084fc;
+            margin: 12px 0 6px 0;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 4px;
+        }
+        .boost-card, .wallet-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        .boost-card button, .wallet-card button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        /* Aviator o'yini ichki dizayni */
+        .aviator-box {
+            background: #450a0a;
+            border: 2px solid #ef4444;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .aviator-screen {
+            height: 140px;
+            background: linear-gradient(to top, #7f1d1d, #220202);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .aviator-plane {
+            font-size: 40px;
+            transition: transform 0.1s;
+        }
+        .multiplier {
+            font-size: 32px;
+            font-weight: 900;
+            color: #facc15;
+            position: absolute;
+        }
+        .aviator-inputs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .aviator-input {
+            flex: 1;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #ef4444;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .bet-btn {
+            width: 100%;
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .p2p-input {
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #7c3aed;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Fon musiqasi -->
     <audio id="bgMusic" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
     </audio>
 
     <div class="top-bar">
-        <div class="user-info" id="userName">Foydalanuvchi ✅</div>
-        <button class="wallet-btn" onclick="openWallet()">💳 Hamyon</button>
+        <div class="user-info" id="userName">Shoxruz ✅</div>
+        <div style="font-size: 12px; color: #facc15;">🔒 Xavfsiz</div>
     </div>
 
-    <div class="score-section">
-        <div class="score" id="score">0</div>
-        <div class="league">🏆 Degens</div>
-    </div>
+    <div class="game-screen">
+        <div class="score-section">
+            <div class="score" id="score">0</div>
+            <div class="league">🏆 Degens</div>
+        </div>
 
-    <div class="coin-container">
-        <div class="coin" id="tapBtn">
-            <img src="https://t.me/uzebdiodn/2" alt="Burgut Logo">
+        <div class="coin-container">
+            <div class="coin" id="tapBtn">
+                <img src="https://t.me/uzebdiodn/2" alt="Burgut Logo" onerror="this.src='https://i.ibb.co/6P87W6w/placeholder.png'">
+            </div>
         </div>
     </div>
 
@@ -172,13 +315,83 @@
             <div class="energy-bar" id="energyBar"></div>
         </div>
 
-        <div class="shop">
-            <button class="shop-btn" onclick="upgradeClick()">
-                🚀 <b>Tap Kuchaytir</b><br>+<span id="clickPower">1</span> | <span><span id="clickPrice">5000</span> so'm</span>
-            </button>
-            <button class="shop-btn" onclick="upgradeEnergy()">
-                ⚡ <b>Energiya Max</b><br>Max: <span id="maxEnergyText">100</span> | <span><span id="energyPrice">10000</span> so'm</span>
-            </button>
+        <!-- 4 ta Asosiy Ikonka Menyusi -->
+        <div class="nav-menu">
+            <button class="nav-item" onclick="openModal('boostModal')"><span>🚀</span>Boost</button>
+            <button class="nav-item" onclick="openModal('aviatorModal')"><span>✈️</span>Aviator</button>
+            <button class="nav-item" onclick="openModal('p2pModal')"><span>🪙</span>CoinCepar</button>
+            <button class="nav-item" onclick="openModal('walletModal')"><span>💰</span>Wallet</button>
+        </div>
+    </div>
+
+    <!-- 1. BOOST MODALI -->
+    <div id="boostModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><span>🚀 Kuchaytirish & Boost</span><button class="close-btn" onclick="closeModal('boostModal')">X</button></div>
+            
+            <div class="modal-section-title">⚡ Energiya Paketlari</div>
+            <div class="boost-card"><div><b>1,000 ta Energetic</b><br>💰 1,000 CoinCepar</div><button onclick="buyEnergyPack(1000, 1000)">Olish</button></div>
+            <div class="boost-card"><div><b>4,000 ta Energetic</b><br>💰 10,000 CoinCepar</div><button onclick="buyEnergyPack(4000, 10000)">Olish</button></div>
+            <div class="boost-card"><div><b>6,000 ta Energetic</b><br>💰 30,000 CoinCepar</div><button onclick="buyEnergyPack(6000, 30000)">Olish</button></div>
+            <div class="boost-card"><div><b>50,000 ta Energetic</b><br>💰 230,000 CoinCepar</div><button onclick="buyEnergyPack(50000, 230000)">Olish</button></div>
+
+            <div class="modal-section-title">👆 Tap Multitap (Bosish kuchi)</div>
+            <div class="boost-card"><div><b>♻️ 2+ TapTap</b><br>💰 1,000 CoinCepar</div><button onclick="buyTapPower(2, 1000)">Olish</button></div>
+            <div class="boost-card"><div><b>♻️ 5+ TapTap</b><br>💰 5,600 CoinCepar</div><button onclick="buyTapPower(5, 5600)">Olish</button></div>
+            <div class="boost-card"><div><b>♻️ 13+ TapTap</b><br>💰 23,000 CoinCepar</div><button onclick="buyTapPower(13, 23000)">Olish</button></div>
+            <div class="boost-card"><div><b>♻️ 25+ TapTap</b><br>💰 60,000 CoinCepar</div><button onclick="buyTapPower(25, 60000)">Olish</button></div>
+        </div>
+    </div>
+
+    <!-- 2. AVIATOR MODALI -->
+    <div id="aviatorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><span>✈️ CoinCepar Aviator</span><button class="close-btn" onclick="closeModal('aviatorModal')">X</button></div>
+            <div class="aviator-box">
+                <div class="aviator-screen">
+                    <div class="multiplier" id="avMultiplier">1.00x</div>
+                    <div class="aviator-plane" id="avPlane" style="transform: translate(0px, 0px);">🪙</div>
+                </div>
+                <div class="aviator-inputs">
+                    <input type="number" id="betAmount1" class="aviator-input" placeholder="1-Stavka (min 1000)" value="1000">
+                    <input type="number" id="betAmount2" class="aviator-input" placeholder="2-Stavka (min 1000)" value="1000">
+                </div>
+                <button class="bet-btn" id="aviatorBtn" onclick="startAviator()">STAVKA QO'YISH (Tikish)</button>
+            </div>
+            <div style="font-size: 11px; color: #f87171; margin-top: 8px; text-align: center;">Diqqat: Haqiqiy Aviator kabi o'ta qiyin! Omadingiz kelmasa yutqazib qo'yasiz! (Min: 1,000 | Max: 50,000 CoinCepar)</div>
+        </div>
+    </div>
+
+    <!-- 3. P2P COINCEPAR O'TKAZMA MODALI -->
+    <div id="p2pModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><span>🪙 CoinCepar O'tkazish</span><button class="close-btn" onclick="closeModal('p2pModal')">X</button></div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px;">Do'stingizga ID orqali CoinCepar o'tkazing yoki boshliqlarga soting! (Chegara: bir martada maksimal 800,000 CoinCepar).</div>
+            <input type="text" id="recipientId" class="p2p-input" placeholder="Qabul qiluvchi ID raqami (Masalan: 7112)">
+            <input type="number" id="transferAmount" class="p2p-input" placeholder="Miqdori (CoinCepar)">
+            <button class="bet-btn" onclick="transferCoins()">O'TKAZISH / SOTISH</button>
+        </div>
+    </div>
+
+    <!-- 4. WALLET & BIRJA MODALI -->
+    <div id="walletModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><span>💰 Wallet & Birja</span><button class="close-btn" onclick="closeModal('walletModal')">X</button></div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.4;">
+                🚀 <b>Biz 2 oy ichida Crypto Birjalar bilan Hamkorlik Tuzamiz HUDO hohlasa!</b><br>
+                Sizlar ungacha yigʻib turinglar CoinCepar, sababi CoinCepar narxi juda arzon, ko'p pul topish qiyin.
+            </div>
+            <div class="modal-section-title">📊 Sotib olish / Kurs narxlari</div>
+            <div class="wallet-card"><span>100,000 CoinCepar</span><b>10,000 so'm</b></div>
+            <div class="wallet-card"><span>200,000 CoinCepar</span><b>23,000 so'm</b></div>
+            <div class="wallet-card"><span>300,000 CoinCepar</span><b>32,000 so'm</b></div>
+            <div class="wallet-card"><span>400,000 CoinCepar</span><b>57,000 so'm</b></div>
+            <div class="wallet-card"><span>500,000 CoinCepar</span><b>89,000 so'm</b></div>
+            
+            <div class="modal-section-title">💳 Yechib olish tizimlari</div>
+            <div style="font-size: 12px; color: #facc15; text-align: center; margin-top: 8px;">
+                《 Humo 》 ‖ 《 Uzcard 》 ‖ 《 Visa 》<br>《 TON 》 ‖ 《 USDT 》<br><span style="color: #4ade80;">orqali tez kunda yechib olsa bo'ladi!</span>
+            </div>
         </div>
     </div>
 
@@ -188,29 +401,19 @@
         
         const userNameEl = document.getElementById('userName');
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            let firstName = tg.initDataUnsafe.user.first_name || "O'yinchi";
-            userNameEl.innerText = firstName + " ✅";
-        } else {
-            userNameEl.innerText = "Shoxruz ✅";
+            userNameEl.innerText = (tg.initDataUnsafe.user.first_name || "Shoxruz") + " ✅";
         }
 
         let score = parseInt(localStorage.getItem('cc_score')) || 0;
         let maxEnergy = parseInt(localStorage.getItem('cc_maxEnergy')) || 100;
         let energy = parseInt(localStorage.getItem('cc_energy')) || maxEnergy;
         let clickPower = parseInt(localStorage.getItem('cc_clickPower')) || 1;
-        
-        let clickPrice = parseInt(localStorage.getItem('cc_clickPrice')) || 5000;
-        let energyPrice = parseInt(localStorage.getItem('cc_energyPrice')) || 10000;
 
         const scoreEl = document.getElementById('score');
         const energyEl = document.getElementById('energy');
         const maxEnergyLabel = document.getElementById('maxEnergyLabel');
-        const maxEnergyText = document.getElementById('maxEnergyText');
         const energyBar = document.getElementById('energyBar');
         const tapBtn = document.getElementById('tapBtn');
-        const clickPowerEl = document.getElementById('clickPower');
-        const clickPriceEl = document.getElementById('clickPrice');
-        const energyPriceEl = document.getElementById('energyPrice');
         const bgMusic = document.getElementById('bgMusic');
 
         updateUI();
@@ -225,15 +428,10 @@
             if (energy >= clickPower) {
                 score += clickPower;
                 energy -= clickPower;
-                
                 updateUI();
                 saveData();
             }
         });
-
-        function openWallet() {
-            alert("🚀 Tez kunda! Hozircha biz rivojlanish bosqichidamiz. Tez orada katta toifalar va hamyonga chiqarish imkoniyati ochiladi! Sabr bilan tanga yig'ishda davom eting! 🔥");
-        }
 
         setInterval(() => {
             if (energy < maxEnergy) {
@@ -244,40 +442,10 @@
             }
         }, 1000);
 
-        function upgradeClick() {
-            if (score >= clickPrice) {
-                score -= clickPrice;
-                clickPower += 1;
-                clickPrice = Math.floor(clickPrice * 3.5);
-                updateUI();
-                saveData();
-            } else {
-                alert("Tangangiz yetarli emas! Ko'proq tanga yig'ing.");
-            }
-        }
-
-        function upgradeEnergy() {
-            if (score >= energyPrice && maxEnergy < 70000) {
-                score -= energyPrice;
-                maxEnergy += 500;
-                energy = maxEnergy;
-                energyPrice = Math.floor(energyPrice * 3.0);
-                updateUI();
-                saveData();
-            } else {
-                alert("Yo yetarli tanga yo'q, yoki energiya limiti oxiriga (70,000) yetdi!");
-            }
-        }
-
         function updateUI() {
             scoreEl.innerText = score;
             energyEl.innerText = energy;
             maxEnergyLabel.innerText = maxEnergy;
-            maxEnergyText.innerText = maxEnergy;
-            clickPowerEl.innerText = clickPower;
-            clickPriceEl.innerText = clickPrice;
-            energyPriceEl.innerText = energyPrice;
-
             let percent = (energy / maxEnergy) * 100;
             energyBar.style.width = percent + '%';
         }
@@ -287,8 +455,117 @@
             localStorage.setItem('cc_energy', energy);
             localStorage.setItem('cc_maxEnergy', maxEnergy);
             localStorage.setItem('cc_clickPower', clickPower);
-            localStorage.setItem('cc_clickPrice', clickPrice);
-            localStorage.setItem('cc_energyPrice', energyPrice);
+        }
+
+        // Modal oynalarni boshqarish
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Boost: Energiya sotib olish
+        function buyEnergyPack(enAmount, cost) {
+            if (score >= cost) {
+                score -= cost;
+                maxEnergy += enAmount;
+                energy = maxEnergy;
+                updateUI();
+                saveData();
+                alert("Tabriklayman! Energiya paketi muvaffaqiyatli qo'shildi! 🚀");
+                closeModal('boostModal');
+            } else {
+                alert("Tangangiz yetarli emas, Shoxruz! Ko'proq tanga yig'ing.");
+            }
+        }
+
+        // Boost: Tap quvvatini sotib olish
+        function buyTapPower(power, cost) {
+            if (score >= cost) {
+                score -= cost;
+                clickPower = power;
+                updateUI();
+                saveData();
+                alert("Tap quvvati oshirildi! Endi har bir bosishda +" + power + " tushadi! 🔥");
+                closeModal('boostModal');
+            } else {
+                alert("Tangangiz yetarli emas!");
+            }
+        }
+
+        // P2P o'tkazma
+        function transferCoins() {
+            let id = document.getElementById('recipientId').value;
+            let amount = parseInt(document.getElementById('transferAmount').value);
+            if (!id || !amount) {
+                alert("Iltimos, ID va miqdorni to'liq kiriting!");
+                return;
+            }
+            if (amount > 800000) {
+                alert("Xatolik! Bir martalik o'tkazma chegarasi 800,000 CoinCepar dan oshmasligi kerak.");
+                return;
+            }
+            if (score >= amount) {
+                score -= amount;
+                updateUI();
+                saveData();
+                alert(amount + " CoinCepar muvaffaqiyatli " + id + "-ID ga o'tkazildi / sotildi!");
+                closeModal('p2pModal');
+            } else {
+                alert("Hisobingizda yetarli CoinCepar yo'q!");
+            }
+        }
+
+        // Aviator O'yini (Haqiqiy kabi qiyin va yutqazish ehtimoli yuqori)
+        let aviatorInterval = null;
+        function startAviator() {
+            let b1 = parseInt(document.getElementById('betAmount1').value) || 0;
+            let b2 = parseInt(document.getElementById('betAmount2').value) || 0;
+            let totalBet = b1 + b2;
+
+            if (totalBet < 1000 || totalBet > 100000) {
+                alert("Minimal stavka 1,000, Maksimal 50,000 (ikkala stavka birga)!");
+                return;
+            }
+            if (score < totalBet) {
+                alert("Hisobingizda stavka uchun tanga yetarli emas!");
+                return;
+            }
+
+            score -= totalBet;
+            updateUI();
+            saveData();
+
+            let mult = 1.00;
+            const multEl = document.getElementById('avMultiplier');
+            const planeEl = document.getElementById('avPlane');
+            const btn = document.getElementById('aviatorBtn');
+            btn.disabled = true;
+            btn.innerText = "UCHMOQDA...";
+
+            // Qiyin algoritm: ko'p hollarda 1.00x - 1.20x da darhol uchib ketib qoladi (odamlar yutqazishi uchun)
+            let crashAt = (Math.random() < 0.7) ? (1.01 + Math.random() * 0.25) : (1.2 + Math.random() * 15.0);
+
+            aviatorInterval = setInterval(() => {
+                mult += 0.03;
+                multEl.innerText = mult.toFixed(2) + "x";
+                
+                // Samolyot (tanga) harakati
+                let moveY = (mult - 1) * 30;
+                planeEl.style.transform = `translate(${moveY * 1.5}px, -${moveY}px)`;
+
+                if (mult >= crashAt) {
+                    clearInterval(aviatorInterval);
+                    multEl.innerText = "FLY AWAY! 💥";
+                    planeEl.style.transform = "translate(0px, 0px)";
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerText = "STAVKA QO'YISH (Tikish)";
+                        multEl.innerText = "1.00x";
+                    }, 2000);
+                }
+            }, 100);
         }
     </script>
 </body>
