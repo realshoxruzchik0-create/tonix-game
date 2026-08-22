@@ -3,468 +3,767 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoinCepar</title>
+    <title>Lavpin Shop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { 
-            background-color: #0b0b10; 
-            color: #ffffff; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 12px; 
-            height: 94vh; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            overflow: hidden; 
-            user-select: none;
+        :root {
+            --bg-color: #0d111c;
+            --text-color: #ffffff;
+            --card-bg: #151c2e;
+            --border-color: #1f2a44;
+            --sub-text: #8a99ad;
         }
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-size: 14px; 
-            font-weight: bold; 
-            color: #e2e8f0; 
-            margin-bottom: 10px; 
+        .light-theme {
+            --bg-color: #f4f6f9;
+            --text-color: #111827;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --sub-text: #6b7280;
         }
-        .user-id-badge { 
-            background: rgba(255, 255, 255, 0.08); 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            font-size: 12px; 
-            color: #94a3b8; 
-            border: 1px solid rgba(255,255,255,0.05);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background 0.3s, color 0.3s;
         }
-        .page { 
-            display: none; 
-            flex-direction: column; 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            padding-bottom: 10px; 
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 70px;
         }
-        .page.active { 
-            display: flex; 
-        }
-        .tap-content { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            flex-grow: 1; 
-        }
-        .coin-circle { 
-            width: 190px; 
-            height: 190px; 
-            background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=500&auto=format&fit=crop'); 
-            background-size: cover; 
-            background-position: center; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            border: 4px solid rgba(255,255,255,0.2); 
-            box-shadow: 0 0 30px rgba(0, 114, 255, 0.3);
-            transition: transform 0.05s ease; 
-        }
-        .coin-circle:active { 
-            transform: scale(0.92); 
-        }
-        .balance-num { 
-            font-size: 38px; 
-            font-weight: 800; 
-            margin-bottom: 2px; 
-        }
-        .energy-bar-bg { 
-            width: 100%; 
-            background: rgba(255, 255, 255, 0.1); 
-            height: 6px; 
-            border-radius: 4px; 
-            margin-bottom: 10px; 
-            overflow: hidden;
-        }
-        .energy-bar-fill { 
-            height: 100%; 
-            background: #00d2ff; 
-            width: 100%; 
-            transition: width 0.2s; 
-        }
-        .card-box { 
-            background: #14141f; 
-            border-radius: 16px; 
-            padding: 14px; 
-            margin-bottom: 12px; 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-        }
-        .action-btn { 
-            width: 100%; 
-            background: #fbbf24; 
-            color: #0b0b10; 
-            border: none; 
-            padding: 12px; 
-            border-radius: 12px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 8px; 
-            font-size: 13px;
+        /* Splash Screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0d111c;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
-        .action-btn span {
-            font-size: 11px;
-            color: #4b3600;
+        #splashScreen img {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        #splashScreen h2 {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+        }
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .user-name {
+            font-size: 15px;
             font-weight: 600;
         }
-        .input-field {
-            width: 100%; 
-            box-sizing: border-box; 
-            padding: 12px; 
-            margin-top: 8px; 
-            background: #0b0b10; 
-            color: white; 
-            border: 1px solid rgba(255,255,255,0.1); 
+        .user-support {
+            font-size: 12px;
+            color: var(--sub-text);
+        }
+        .coin-balance {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #2540ff, #1a2bbd);
+            margin: 15px;
+            padding: 20px;
+            border-radius: 20px;
+            color: white;
+        }
+        .balance-title {
+            font-size: 13px;
+            color: #d0d7de;
+            margin-bottom: 5px;
+        }
+        .balance-amount {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .balance-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .b-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.12);
+            border: none;
+            padding: 10px 5px;
+            border-radius: 12px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+        }
+        .card img {
+            width: 100%;
+            height: 75px;
+            object-fit: cover;
+        }
+        .card-title {
+            padding: 8px 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #2563eb;
+            color: white;
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .page {
+            display: none;
+            padding: 15px;
+        }
+        .page.active {
+            display: block;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .game-header {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .game-header img {
+            width: 50px;
+            height: 50px;
             border-radius: 10px;
+        }
+        .input-group {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .input-group label {
+            font-size: 11px;
+            color: var(--sub-text);
+            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        .input-row input {
+            flex: 1;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            color: var(--text-color);
             font-size: 14px;
         }
-        .nav-bar { 
-            display: flex; 
-            justify-content: space-around; 
-            background: #14141f; 
-            padding: 8px 4px; 
-            border-radius: 16px; 
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .check-btn {
+            background: #1d35cc;
+            border: none;
+            color: white;
+            padding: 0 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
         }
-        .nav-btn { 
-            background: none; 
-            border: none; 
-            color: #64748b; 
-            font-size: 11px; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 3px;
-            font-weight: 600; 
-            flex: 1;
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        .nav-btn span { 
-            font-size: 18px; 
+        .p-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
         }
-        .nav-btn.active { 
-            color: #fbbf24; 
+        .p-card.selected {
+            border-color: #2563eb;
+            background: var(--card-bg);
+        }
+        .p-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .p-price {
+            font-size: 12px;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        .buy-action-btn {
+            width: 100%;
+            background: #2238ef;
+            border: none;
+            padding: 15px;
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        
+        /* Bankomat to'lov tugmasi */
+        .bankomat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            display: inline-block;
+            width: 100%;
+            max-width: 160px;
+            margin: 0 auto;
+        }
+        .bankomat-card img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 8px;
+        }
+
+        /* Tarix va Sozlamalar */
+        .history-tabs, .sub-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .h-tab, .s-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: var(--sub-text);
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .h-tab.active, .s-tab.active {
+            background: #2238ef;
+            color: white;
+            border-color: #2238ef;
+        }
+        .empty-history {
+            text-align: center;
+            color: var(--sub-text);
+            margin-top: 50px;
+            font-size: 14px;
+        }
+        
+        /* Sozlamalar menyusi elementlari */
+        .setting-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        .setting-info h4 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .setting-info p {
+            font-size: 11px;
+            color: var(--sub-text);
+        }
+
+        /* Switch tugma */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #374151;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2238ef;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Pastki menyu */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 100;
+        }
+        .nav-item {
+            text-align: center;
+            color: var(--sub-text);
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: #3b82f6;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div id="userNickname">Janob Shoxruz</div>
-        <div class="user-id-badge" id="userIdBadge">ID: 326376</div>
+    <!-- SPLASH SCREEN -->
+    <div id="splashScreen">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" alt="Lavpin">
+        <h2>Lavpin</h2>
     </div>
 
-    <!-- 1. TAP PAGE -->
-    <div id="page-tap" class="page active">
-        <div class="tap-content">
-            <div class="balance-num" id="balanceNum">0</div>
-            <div style="font-size: 14px; color: #fbbf24; margin-bottom: 20px;">🪙 CoinCepar</div>
-            <div class="coin-circle" id="tapCoin"></div>
-            <div style="margin-top: 15px; color: #94a3b8; font-size: 12px;">Tap Power: +<span id="tapPowerDisplay">1</span></div>
-        </div>
-        <div>
-            <div style="display:flex; justify-content:space-between; font-size:12px; color:#94a3b8; margin-bottom:4px;">
-                <span>⚡ Energiya</span>
-                <span><span id="energyVal">1000</span> / <span id="maxEnergyVal">1000</span></span>
+    <!-- ASOSIY SAHIFA -->
+    <div id="homePage" class="page active">
+        <div class="header">
+            <div class="user-box">
+                <div class="user-avatar" id="userAvatar">JS</div>
+                <div>
+                    <div class="user-name" id="userName">Janob Shoxruz</div>
+                    <div class="user-support">@lavpin_support</div>
+                </div>
             </div>
-            <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyBar"></div></div>
+            <div class="coin-balance">🟡 <span id="coinVal">0</span></div>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-title">Balans</div>
+            <div class="balance-amount"><span id="balanceVal">0</span> so'm</div>
+            <div class="balance-buttons">
+                <button class="b-btn" onclick="openPage('topupPage')">💳 Hisobni to'ldirish</button>
+                <button class="b-btn" onclick="openPage('bonusPage')">🎁 Bonus kodlar</button>
+                <a href="https://t.me/lavpin_support" target="_blank" class="b-btn">💬 Qo'llab-quvvatlash</a>
+            </div>
+        </div>
+
+        <div style="padding: 0 15px; margin-bottom: 10px; font-weight: bold; font-size: 15px;">O'yinlar va Xizmatlar</div>
+
+        <div class="grid-container">
+            <div class="card" onclick="openGame('pubg')">
+                <span class="badge">Global</span>
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300">
+                <div class="card-title">PUBG MOBILE</div>
+            </div>
+            <div class="card" onclick="openGame('freefire')">
+                <span class="badge" style="background:#d97706;">SNG</span>
+                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300">
+                <div class="card-title">FREE FIRE</div>
+            </div>
+            <div class="card" onclick="openGame('mlbb')">
+                <span class="badge">Global</span>
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300">
+                <div class="card-title">MOBILE LEGENDS</div>
+            </div>
+            <div class="card" onclick="openGame('stars')">
+                <span class="badge" style="background:#7c3aed;">AVTO</span>
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300">
+                <div class="card-title">TG STARS</div>
+            </div>
+            <div class="card" onclick="openGame('premium')">
+                <span class="badge" style="background:#7c3aed;">AVTO</span>
+                <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=300">
+                <div class="card-title">TG PREMIUM</div>
+            </div>
+            <div class="card" onclick="openGame('gifts')">
+                <span class="badge" style="background:#059669;">GIFTS</span>
+                <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=300">
+                <div class="card-title">Telegram Sovg'alar</div>
+            </div>
+            <div class="card" onclick="openGame('steam')">
+                <span class="badge" style="background:#d97706;">SNG</span>
+                <img src="https://images.unsplash.com/photo-1612287233202-b51c3ed61f0d?w=300">
+                <div class="card-title">STEAM</div>
+            </div>
         </div>
     </div>
 
-    <!-- 2. BOOST & MARKET PAGE -->
-    <div id="page-boost" class="page">
-        <h3 style="color: #fbbf24; margin-top: 0; font-size: 16px;">🚀 Boost & Market</h3>
+    <!-- TARIX SAHIFASI -->
+    <div id="historyPage" class="page">
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Tarix</div>
+        <div class="history-tabs">
+            <div class="h-tab active" onclick="switchHistoryTab(this)">Buyurtmalar</div>
+            <div class="h-tab" onclick="switchHistoryTab(this)">Moliya</div>
+        </div>
+        <div class="sub-tabs">
+            <div class="s-tab active" onclick="switchSubTab(this)">Barchasi</div>
+            <div class="s-tab" onclick="switchSubTab(this)">Bajarildi</div>
+            <div class="s-tab" onclick="switchSubTab(this)">Kutilmoqda</div>
+            <div class="s-tab" onclick="switchSubTab(this)">Bekor qilingan</div>
+        </div>
+        <div class="empty-history">Tranzaksiyalar yo'q</div>
+    </div>
+
+    <!-- SOZLAMALAR SAHIFASI -->
+    <div id="settingsPage" class="page">
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Sozlamalar</div>
         
-        <div class="card-box">
-            <b style="font-size: 14px;">⚡ Energiya Paketlari</b>
-            <button class="action-btn" onclick="buyEnergy(1000, 1000)">🚀 1,000 ta energetic<span>1,000 CoinCepar 🪙</span></button>
-            <button class="action-btn" onclick="buyEnergy(4000, 10000)">🚀 4,000 ta energetic<span>10,000 CoinCepar 🪙</span></button>
-            <button class="action-btn" onclick="buyEnergy(6000, 30000)">🚀 6,000 ta energetic<span>30,000 CoinCepar 🪙</span></button>
-            <button class="action-btn" onclick="buyEnergy(50000, 230000)">🚀 50,000 ta energetic<span>230,000 CoinCepar 🪙</span></button>
+        <div class="setting-item" onclick="openPage('referralPage')">
+            <div class="setting-info">
+                <h4>Do'stlarni taklif qilish</h4>
+                <p>Do'stlaringizni taklif qilib bonus tangalar yutib oling</p>
+            </div>
+            <span>➔</span>
         </div>
 
-        <div class="card-box">
-            <b style="font-size: 14px;">♻️ Tap-Tap Darajalari</b>
-            <button class="action-btn" onclick="buyTapPower(2, 1000)">♻️ 2+ TapTap 👆<span>1,000 CoinCepar 🪙</span></button>
-            <button class="action-btn" onclick="buyTapPower(5, 5600)">♻️ 5+ TapTap 👆<span>5,600 CoinCepar 🪙</span></button>
-            <button class="action-btn" onclick="buyTapPower(13, 23000)">♻️ 13+ TapTap 👆<span>23,000 CoinCepar 🪙</span></button>
-            <button class="action-btn" onclick="buyTapPower(25, 60000)">♻️ 25+ TapTap 👆<span>60,000 CoinCepar 🪙</span></button>
+        <div class="setting-item" onclick="openPage('discountPage')">
+            <div class="setting-info">
+                <h4>Chegirma kodlar</h4>
+                <p>Kashbek sarflab chegirma kodi yarating</p>
+            </div>
+            <span>➔</span>
+        </div>
+
+        <a href="https://t.me/lavpin_support" target="_blank" class="setting-item">
+            <div class="setting-info">
+                <h4>Qo'llab-quvvatlash</h4>
+                <p>Savollar bo'yicha 24/7 yordam chati orqali bog'laning</p>
+            </div>
+            <span>➔</span>
+        </a>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <h4>Tungi rejim</h4>
+                <p>Yorug' va qorong'u rejimni o'zgartirish</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
         </div>
     </div>
 
-    <!-- 3. TRANSFER PAGE -->
-    <div id="page-transfer" class="page">
-        <h3 style="margin: 0 0 10px 0; color: #fbbf24; font-size: 16px;">⇄ Transfer</h3>
-        <div class="card-box" style="background: #181826;">
-            <div style="font-size: 11px; color: #94a3b8;">AVAILABLE BALANCE</div>
-            <div style="font-size: 20px; font-weight: bold; margin-top: 4px;" id="transferBalance">🪙 0</div>
-        </div>
-
-        <div class="card-box">
-            <div style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">O'tkazma qilish</div>
-            <input type="number" id="targetId" class="input-field" placeholder="Qabul qiluvchi ID si (masalan: 69658)">
-            <input type="number" id="transferAmount" class="input-field" placeholder="Coin miqdori">
-            <button class="action-btn" style="margin-top: 12px; background: #fbbf24;" onclick="sendCoins()">Yuborish</button>
+    <!-- DO'STLARNI TAKLIF QILISH -->
+    <div id="referralPage" class="page">
+        <button class="back-btn" onclick="openPage('settingsPage')">⬅ Orqaga</button>
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Do'stlarni taklif qilish</div>
+        <div class="input-group">
+            <label>Referal havolasi</label>
+            <input type="text" id="refLink" value="https://t.me/buypinbot?start=ref" readonly style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); padding:10px; border-radius:10px; color:var(--text-color); margin-bottom:10px;">
+            <div style="display:flex; gap:10px;">
+                <button class="b-btn" style="background:#2238ef; padding:12px;" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value); alert('Nusxalandi!');">Nusxalash</button>
+                <button class="b-btn" style="background:#2563eb; padding:12px;" onclick="shareRef()">Ulashish</button>
+            </div>
         </div>
     </div>
 
-    <!-- 4. TOP REYTING PAGE -->
-    <div id="page-top" class="page">
-        <h3 style="color: #fbbf24; margin-top: 0; font-size: 16px;">🏆 Top Reyting</h3>
-        <div id="leaderboardList"></div>
+    <!-- CHEGIRMA KODLAR -->
+    <div id="discountPage" class="page">
+        <button class="back-btn" onclick="openPage('settingsPage')">⬅ Orqaga</button>
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Chegirma kodlar</div>
+        <div class="balance-card" style="margin:0 0 15px 0;">
+            <div class="balance-title">SIZNING KASHBEKINGIZ</div>
+            <div class="balance-amount">0</div>
+        </div>
+        <div style="font-size: 12px; color: var(--sub-text); margin-bottom: 15px;">Kashbek sarflab chegirma kodi yarating va keyingi xaridda foydalaning</div>
+        <div class="empty-history" style="margin-top:20px;">Hali kod yo'q</div>
     </div>
 
-    <!-- 5. WALLET PAGE -->
-    <div id="page-wallet" class="page">
-        <h3 style="color: #fbbf24; margin-top: 0; font-size: 16px;">👛 Wallet (Pul yechish)</h3>
+    <!-- HISOBNI TO'LDIRISH (BANKOMAT) -->
+    <div id="topupPage" class="page">
+        <button class="back-btn" onclick="goHome()">⬅ Orqaga</button>
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Hisobni to'ldirish</div>
+        <div style="font-size: 12px; color: var(--sub-text); margin-bottom: 15px;">To'lov usulini tanlang</div>
         
-        <div class="card-box">
-            <div style="font-size: 11px; color: #94a3b8;">JAMI BALANS</div>
-            <div style="font-size: 24px; font-weight: bold; margin-bottom: 12px;" id="walletBalance">0 🪙</div>
-            
-            <label style="font-size: 12px; color: #fbbf24;">ONE Bank karta raqami:</label>
-            <input type="text" id="cardNum" class="input-field" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCard(this)">
-            
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="expiry" class="input-field" placeholder="MM/YY" maxlength="5">
-                <input type="password" id="cvv" class="input-field" placeholder="CVV" maxlength="3">
-            </div>
-            
-            <input type="number" id="euroAmount" class="input-field" placeholder="Yevro miqdori (€)">
-            
-            <button class="action-btn" style="background: #22c55e; color: white; margin-top: 15px;" onclick="checkAndWithdraw()">Yevroga yechish (€)</button>
-            
-            <div style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; text-align: center;">
-                <p style="font-size: 12px; color: #94a3b8; margin: 0 0 5px 0;">Kartangiz yo'qmi?</p>
-                <a href="https://t.me/CoinCepar" target="_blank" style="color: #fbbf24; text-decoration: none; font-weight: bold;">Support: @CoinCepar</a>
-                <p style="font-size: 10px; color: #64748b; margin-top: 5px;">Biz sizga bank karta ochib beramiz va pulingizni yechishda yordam qilamiz!</p>
-            </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="https://t.me/lavpin_support?text=Salom%2C%20BANKOMAT%20hisobimni%20to%27ldirmoqchiman%20qaysi%20kartaga%20to%27lov%20qilishim%20kerak%3F" target="_blank" class="bankomat-card">
+                <img src="https://img.icons8.com/color/96/ATM.png" alt="Bankomat">
+                <div style="font-size: 12px; font-weight: bold;">BANKOMAT</div>
+            </a>
         </div>
     </div>
 
-    <!-- 5 TA ASOSIY IKONKA MENYU -->
-    <div class="nav-bar">
-        <button class="nav-btn active" onclick="switchPage('tap', this)"><span>⛏️</span>Tap</button>
-        <button class="nav-btn" onclick="switchPage('boost', this)"><span>🚀</span>Boost</button>
-        <button class="nav-btn" onclick="switchPage('transfer', this)"><span>⇄</span>Transfer</button>
-        <button class="nav-btn" onclick="switchPage('top', this)"><span>🏆</span>Top</button>
-        <button class="nav-btn" onclick="switchPage('wallet', this)"><span>👛</span>Wallet</button>
+    <!-- O'YIN / MAHSULOT SAHIFASI -->
+    <div id="gamePage" class="page">
+        <button class="back-btn" onclick="goHome()">⬅ Orqaga</button>
+        <div class="game-header">
+            <img id="gameImg" src="" alt="">
+            <div>
+                <div id="gameTitle" style="font-weight: bold; font-size: 16px;">O'YIN</div>
+                <div style="font-size: 12px; color: var(--sub-text);" id="gameSub">Rasmiy do'kon</div>
+            </div>
+        </div>
+        <div class="input-group">
+            <label id="idLabel">O'yinchi ID</label>
+            <div class="input-row">
+                <input type="text" id="playerIdInput" placeholder="ID kiriting...">
+                <button class="check-btn" onclick="alert('ID tekshirildi: Faol!')">Tekshirish</button>
+            </div>
+        </div>
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Mahsulotni tanlang</div>
+        <div class="products-grid" id="productsList"></div>
+        <button class="buy-action-btn" onclick="makePurchase()">Sotib olish</button>
+    </div>
+
+    <!-- BONUS KODLAR -->
+    <div id="bonusPage" class="page">
+        <button class="back-btn" onclick="goHome()">⬅ Orqaga</button>
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Bonus kodi</div>
+        <div class="input-group" style="text-align: center; padding: 30px 15px;">
+            <div style="font-size: 35px; margin-bottom: 15px;">🎟️</div>
+            <input type="text" placeholder="KODNI KIRITING" style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); padding:12px; border-radius:10px; color:var(--text-color); text-align:center; font-weight:bold; margin-bottom:15px;">
+            <button class="buy-action-btn" style="margin-bottom:0;" onclick="alert('Kod yaroqsiz!')">Faollashtirish</button>
+        </div>
+    </div>
+
+    <!-- PASTKI MENYU -->
+    <div class="footer-nav">
+        <div class="nav-item active" onclick="switchNav('homePage', this)">
+            <div>🏠</div>Bosh sahifa
+        </div>
+        <div class="nav-item" onclick="switchNav('historyPage', this)">
+            <div>📋</div>Tarix
+        </div>
+        <div class="nav-item" onclick="switchNav('settingsPage', this)">
+            <div>⚙️</div>Sozlamalar
+        </div>
+        <div class="nav-item" onclick="window.open('https://t.me/lavpin_support', '_blank')">
+            <div>🟡</div>Ijaraga
+        </div>
     </div>
 
     <script>
-        let myId = "326376";
-        let balance = parseInt(localStorage.getItem('cc_balance')) || 50000;
-        let energy = parseInt(localStorage.getItem('cc_energy')) || 1000;
-        let maxEnergy = parseInt(localStorage.getItem('cc_maxEnergy')) || 1000;
-        let tapPower = parseInt(localStorage.getItem('cc_tapPower')) || 1;
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-        let players = [
-            { id: "326376", name: "Janob Shoxruz", balance: balance },
-            { id: "69658",  name: "Do'st", balance: 120000 },
-            { id: "123456", name: "Admin", balance: 5000 },
-            { id: "777777", name: "Player_777", balance: 450000 }
-        ];
+        // Splash screen'ni yo'qotish
+        setTimeout(() => {
+            let splash = document.getElementById('splashScreen');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 500);
+        }, 1500);
 
-        updateUI();
-        updateLeaderboard();
+        let balance = localStorage.getItem('lavpin_balance') ? parseInt(localStorage.getItem('lavpin_balance')) : 0;
+        updateBalanceUI();
 
-        document.getElementById('tapCoin').addEventListener('click', () => {
-            if (energy >= tapPower) {
-                balance += tapPower;
-                energy -= tapPower;
-                let me = players.find(p => p.id === myId);
-                if(me) me.balance = balance;
-                updateUI();
-                updateLeaderboard();
-                saveData();
-            }
-        });
-
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 1;
-                updateUI();
-                saveData();
-            }
-        }, 1000);
-
-        function updateUI() {
-            document.getElementById('balanceNum').innerText = balance;
-            document.getElementById('transferBalance').innerText = "🪙 " + balance;
-            document.getElementById('walletBalance').innerText = balance + " 🪙";
-            document.getElementById('energyVal').innerText = energy;
-            document.getElementById('maxEnergyVal').innerText = maxEnergy;
-            document.getElementById('tapPowerDisplay').innerText = tapPower;
-            document.getElementById('energyBar').style.width = Math.min((energy / maxEnergy) * 100, 100) + '%';
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            let user = tg.initDataUnsafe.user;
+            document.getElementById('userName').innerText = user.first_name;
+            document.getElementById('userAvatar').innerText = user.first_name[0];
+            document.getElementById('refLink').value = "https://t.me/buypinbot?start=" + user.id;
         }
 
-        function updateLeaderboard() {
-            players.sort((a, b) => b.balance - a.balance);
-            let container = document.getElementById('leaderboardList');
-            container.innerHTML = '';
-
-            players.forEach((player, index) => {
-                let card = document.createElement('div');
-                card.className = 'card-box';
-                card.style.display = 'flex';
-                card.style.justifyContent = 'space-between';
-                card.style.alignItems = 'center';
-                
-                let rankDisplay = `${index + 1}. ${player.name}`;
-                if(index === 0) {
-                    rankDisplay = `👑 1st. ${player.name}`;
-                }
-
-                card.innerHTML = `
-                    <span style="font-weight: ${index === 0 ? 'bold' : 'normal'}; color: ${index === 0 ? '#fbbf24' : '#fff'}">${rankDisplay}</span>
-                    <b style="color: ${index === 0 ? '#fbbf24' : '#94a3b8'}">${player.balance.toLocaleString()} 🪙</b>
-                `;
-                container.appendChild(card);
-            });
+        function updateBalanceUI() {
+            document.getElementById('balanceVal').innerText = balance.toLocaleString();
+            document.getElementById('coinVal').innerText = balance;
+            localStorage.setItem('lavpin_balance', balance);
         }
 
-        function saveData() {
-            localStorage.setItem('cc_balance', balance);
-            localStorage.setItem('cc_energy', energy);
-            localStorage.setItem('cc_maxEnergy', maxEnergy);
-            localStorage.setItem('cc_tapPower', tapPower);
-        }
-
-        function switchPage(pageName, btnElement) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageName).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
-        }
-
-        function buyEnergy(addEnergy, cost) {
-            if (balance >= cost) {
-                balance -= cost;
-                maxEnergy += addEnergy;
-                energy = maxEnergy;
-                let me = players.find(p => p.id === myId);
-                if(me) me.balance = balance;
-                updateUI();
-                updateLeaderboard();
-                saveData();
-                alert("Energiya paketi muvaffaqiyatli xarid qilindi! 🚀");
+        // Tungi rejim
+        function toggleTheme() {
+            if(document.getElementById('themeToggle').checked) {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('lavpin_theme', 'light');
             } else {
-                alert("Hisobingizda CoinCepar yetarli emas! ❌");
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('lavpin_theme', 'dark');
             }
         }
 
-        function buyTapPower(newPower, cost) {
-            if (balance >= cost) {
-                balance -= cost;
-                tapPower = newPower;
-                let me = players.find(p => p.id === myId);
-                if(me) me.balance = balance;
-                updateUI();
-                updateLeaderboard();
-                saveData();
-                alert("Tap-Tap darajasi muvaffaqiyatli oshirildi! ⭐");
+        if(localStorage.getItem('lavpin_theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeToggle').checked = true;
+        }
+
+        function shareRef() {
+            let link = document.getElementById('refLink').value;
+            if (navigator.share) {
+                navigator.share({ title: 'Lavpin Shop', url: link });
             } else {
-                alert("Hisobingizda CoinCepar yetarli emas! ❌");
+                window.open('https://t.me/share/url?url=' + encodeURIComponent(link));
             }
         }
 
-        function sendCoins() {
-            let targetId = document.getElementById('targetId').value.trim();
-            let amount = parseInt(document.getElementById('transferAmount').value);
+        const gameData = {
+            pubg: { title: "PUBG MOBILE", sub: "UC", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300", label: "Player ID", items: [{ name: "60 UC", price: 12225 }, { name: "325 UC", price: 61200 }] },
+            freefire: { title: "FREE FIRE", sub: "Olmoslar", img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300", label: "O'yinchi ID", items: [{ name: "110 Olmos", price: 10700 }, { name: "341 Olmos", price: 32500 }] },
+            mlbb: { title: "MOBILE LEGENDS", sub: "Olmoslar", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300", label: "O'yinchi ID", items: [{ name: "55 Olmos", price: 10000 }, { name: "165 Olmos", price: 30500 }] },
+            stars: { title: "TG STARS", sub: "Telegram Yulduzlar", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300", label: "@USERNAME", items: [{ name: "50 Stars", price: 11000 }, { name: "100 Stars", price: 22000 }] },
+            premium: { title: "TG PREMIUM", sub: "Telegram Premium", img: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=300", label: "@USERNAME", items: [{ name: "3 Oylik", price: 169000 }, { name: "6 Oylik", price: 225000 }] },
+            gifts: { title: "Telegram Sovg'alar", sub: "Limited & Oddiy", img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=300", label: "@USERNAME", items: [{ name: "Bomb Bear", price: 14000 }, { name: "Yurak", price: 4000 }] },
+            steam: { title: "STEAM", sub: "Balans ($)", img: "https://images.unsplash.com/photo-1612287233202-b51c3ed61f0d?w=300", label: "STEAM LOGIN", items: [{ name: "1 $", price: 13100 }, { name: "5 $", price: 65500 }] }
+        };
 
-            if (!targetId || !amount) {
-                alert("Barcha maydonlarni to'ldiring!");
-                return;
-            }
+        let selectedPrice = 0;
 
-            let targetPlayer = players.find(p => p.id === targetId);
-            if (!targetPlayer) {
-                alert("Xatolik: Bunday ID raqamli foydalanuvchi topilmadi! ❌");
-                return;
-            }
-
-            if (targetId === myId) {
-                alert("O'zingizga coin yubora olmaysiz!");
-                return;
-            }
-
-            if (balance < amount) {
-                alert("Hisobingizda yetarli coin yo'q!");
-                return;
-            }
-
-            balance -= amount;
-            targetPlayer.balance += amount;
-
-            let me = players.find(p => p.id === myId);
-            if(me) me.balance = balance;
-
-            updateUI();
-            updateLeaderboard();
-            saveData();
+        function openGame(key) {
+            let g = gameData[key];
+            document.getElementById('gameTitle').innerText = g.title;
+            document.getElementById('gameSub').innerText = g.sub;
+            document.getElementById('gameImg').src = g.img;
+            document.getElementById('idLabel').innerText = g.label;
             
-            alert(`Muvaffaqiyatli yuborildi! ✅\n${targetPlayer.name} (ID: ${targetId}) ga ${amount} CoinCepar o'tkazildi.`);
-            document.getElementById('targetId').value = '';
-            document.getElementById('transferAmount').value = '';
+            let list = document.getElementById('productsList');
+            list.innerHTML = "";
+            g.items.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = "p-card" + (index === 0 ? " selected" : "");
+                div.innerHTML = `<div class="p-title">${item.name}</div><div class="p-price">${item.price.toLocaleString()} so'm</div>`;
+                if(index === 0) selectedPrice = item.price;
+                
+                div.onclick = function() {
+                    document.querySelectorAll('.p-card').forEach(c => c.classList.remove('selected'));
+                    div.classList.add('selected');
+                    selectedPrice = item.price;
+                };
+                list.appendChild(div);
+            });
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('gamePage').classList.add('active');
         }
 
-        // Karta raqamini formatlash (0000 0000 0000 0000)
-        function formatCard(input) {
-            let v = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-            let parts = [];
-            for (let i = 0; i < v.length; i += 4) {
-                parts.push(v.substring(i, i + 4));
+        function makePurchase() {
+            if(balance >= selectedPrice) {
+                balance -= selectedPrice;
+                updateBalanceUI();
+                alert("Buyurtma muvaffaqiyatli qabul qilindi!");
+                goHome();
+            } else {
+                alert("Balansingizda mablag' yetarli emas!");
             }
-            input.value = parts.join(' ');
         }
 
-        // Karta haqiqiyligini Luhn algoritmi orqali tekshirish
-        function isLuhnValid(number) {
-            let n = number.replace(/\s/g, '');
-            let sum = 0;
-            for (let i = 0; i < n.length; i++) {
-                let digit = parseInt(n[n.length - 1 - i]);
-                if (i % 2 === 1) {
-                    digit *= 2;
-                    if (digit > 9) digit -= 9;
-                }
-                sum += digit;
-            }
-            return sum % 10 === 0;
+        function openPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
         }
 
-        function checkAndWithdraw() {
-            let card = document.getElementById('cardNum').value.replace(/\s/g, '');
-            let expiry = document.getElementById('expiry').value;
-            let cvv = document.getElementById('cvv').value;
-            let amount = document.getElementById('euroAmount').value;
+        function goHome() {
+            openPage('homePage');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+        }
 
-            if (card.length !== 16 || !isLuhnValid(card)) {
-                alert("❌ ONE Bank karta raqami yaroqsiz yoki noto'g'ri!");
-                return;
-            }
-            if (!expiry || expiry.length < 5) {
-                alert("❌ Amal qilish sanasini (MM/YY) to'g'ri kiriting!");
-                return;
-            }
-            if (cvv.length !== 3) {
-                alert("❌ CVV kod noto'g'ri!");
-                return;
-            }
-            if (!amount || amount <= 0) {
-                alert("❌ Yevro miqdorini kiriting!");
-                return;
-            }
+        function switchNav(pageId, element) {
+            openPage(pageId);
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-            alert("✅ Tabriklaymiz! " + amount + " € ONE Bank kartangizga o'tkazilmoqda...");
+        function switchHistoryTab(el) {
+            document.querySelectorAll('.h-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function switchSubTab(el) {
+            document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
         }
     </script>
 </body>
