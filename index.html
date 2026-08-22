@@ -30,7 +30,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding-bottom: 70px;
+            padding-bottom: 90px;
         }
         /* Splash Screen */
         #splashScreen {
@@ -76,12 +76,19 @@
         .user-avatar {
             width: 40px;
             height: 40px;
-            background: var(--border-color);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            overflow: hidden;
+        }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .user-name {
             font-size: 15px;
@@ -126,16 +133,19 @@
         .b-btn {
             flex: 1;
             background: rgba(255, 255, 255, 0.12);
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 10px 5px;
-            border-radius: 12px;
+            border-radius: 14px;
             color: white;
             font-size: 11px;
             font-weight: 600;
             text-align: center;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
         .grid-container {
             display: grid;
@@ -207,6 +217,7 @@
             width: 50px;
             height: 50px;
             border-radius: 10px;
+            object-fit: cover;
         }
         .input-group {
             background: var(--card-bg);
@@ -250,6 +261,9 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-bottom: 20px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
         .p-card {
             background: var(--card-bg);
@@ -286,7 +300,6 @@
             margin-bottom: 30px;
         }
         
-        /* Bankomat to'lov tugmasi */
         .bankomat-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -306,7 +319,6 @@
             margin-bottom: 8px;
         }
 
-        /* Tarix va Sozlamalar */
         .history-tabs, .sub-tabs {
             display: flex;
             gap: 10px;
@@ -334,7 +346,6 @@
             font-size: 14px;
         }
         
-        /* Sozlamalar menyusi elementlari */
         .setting-item {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -358,7 +369,6 @@
             color: var(--sub-text);
         }
 
-        /* Switch tugma */
         .switch {
             position: relative;
             display: inline-block;
@@ -396,27 +406,52 @@
             transform: translateX(20px);
         }
 
-        /* Pastki menyu */
+        /* 2-rasmdagidek Zamonaviy Floating Menyu Dizayni */
         .footer-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--bg-color);
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 420px;
+            background: #111726;
+            border: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid var(--border-color);
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            border-radius: 35px;
             z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
         .nav-item {
+            flex: 1;
             text-align: center;
             color: var(--sub-text);
             font-size: 11px;
             cursor: pointer;
+            padding: 8px 4px;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            transition: 0.3s;
+        }
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
         }
         .nav-item.active {
-            color: #3b82f6;
+            background: #2238ef;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(34, 56, 239, 0.4);
+        }
+        .nav-item.special-jarima {
+            background: #192238;
+            border: 1px solid #2a3859;
+            color: #facc15;
         }
     </style>
 </head>
@@ -445,9 +480,18 @@
             <div class="balance-title">Balans</div>
             <div class="balance-amount"><span id="balanceVal">0</span> so'm</div>
             <div class="balance-buttons">
-                <button class="b-btn" onclick="openPage('topupPage')">💳 Hisobni to'ldirish</button>
-                <button class="b-btn" onclick="openPage('bonusPage')">🎁 Bonus kodlar</button>
-                <a href="https://t.me/lavpin_support" target="_blank" class="b-btn">💬 Qo'llab-quvvatlash</a>
+                <button class="b-btn" onclick="openPage('topupPage')">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                    Hisobni to'ldirish
+                </button>
+                <button class="b-btn" onclick="openPage('bonusPage')">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.33 8.67 12 12 8.5 15.33 12 17 10.33 14.92 8H20v6z"/></svg>
+                    Bonus kodlar
+                </button>
+                <a href="https://t.me/lavpin_support" target="_blank" class="b-btn">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                    Qo'llab-quvvatlash
+                </a>
             </div>
         </div>
 
@@ -456,37 +500,37 @@
         <div class="grid-container">
             <div class="card" onclick="openGame('pubg')">
                 <span class="badge">Global</span>
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300" alt="PUBG">
                 <div class="card-title">PUBG MOBILE</div>
             </div>
             <div class="card" onclick="openGame('freefire')">
                 <span class="badge" style="background:#d97706;">SNG</span>
-                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300">
+                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300" alt="Free Fire">
                 <div class="card-title">FREE FIRE</div>
             </div>
             <div class="card" onclick="openGame('mlbb')">
                 <span class="badge">Global</span>
-                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300">
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300" alt="MLBB">
                 <div class="card-title">MOBILE LEGENDS</div>
             </div>
             <div class="card" onclick="openGame('stars')">
                 <span class="badge" style="background:#7c3aed;">AVTO</span>
-                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300">
+                <img src="https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=300" alt="Stars">
                 <div class="card-title">TG STARS</div>
             </div>
             <div class="card" onclick="openGame('premium')">
                 <span class="badge" style="background:#7c3aed;">AVTO</span>
-                <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=300">
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" alt="Premium">
                 <div class="card-title">TG PREMIUM</div>
             </div>
             <div class="card" onclick="openGame('gifts')">
                 <span class="badge" style="background:#059669;">GIFTS</span>
-                <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=300">
+                <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300" alt="Gifts">
                 <div class="card-title">Telegram Sovg'alar</div>
             </div>
             <div class="card" onclick="openGame('steam')">
                 <span class="badge" style="background:#d97706;">SNG</span>
-                <img src="https://images.unsplash.com/photo-1612287233202-b51c3ed61f0d?w=300">
+                <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300" alt="Steam">
                 <div class="card-title">STEAM</div>
             </div>
         </div>
@@ -556,8 +600,8 @@
             <label>Referal havolasi</label>
             <input type="text" id="refLink" value="https://t.me/buypinbot?start=ref" readonly style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); padding:10px; border-radius:10px; color:var(--text-color); margin-bottom:10px;">
             <div style="display:flex; gap:10px;">
-                <button class="b-btn" style="background:#2238ef; padding:12px;" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value); alert('Nusxalandi!');">Nusxalash</button>
-                <button class="b-btn" style="background:#2563eb; padding:12px;" onclick="shareRef()">Ulashish</button>
+                <button class="b-btn" style="background:#2238ef; padding:12px; flex:1;" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value); alert('Nusxalandi!');">Nusxalash</button>
+                <button class="b-btn" style="background:#2563eb; padding:12px; flex:1;" onclick="shareRef()">Ulashish</button>
             </div>
         </div>
     </div>
@@ -621,19 +665,23 @@
         </div>
     </div>
 
-    <!-- PASTKI MENYU -->
+    <!-- ZAMONAVIY PASTKI MENYU (2-rasm uslubida) -->
     <div class="footer-nav">
         <div class="nav-item active" onclick="switchNav('homePage', this)">
-            <div>🏠</div>Bosh sahifa
+            <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            Bosh sahifa
         </div>
         <div class="nav-item" onclick="switchNav('historyPage', this)">
-            <div>📋</div>Tarix
+            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            Tarix
         </div>
         <div class="nav-item" onclick="switchNav('settingsPage', this)">
-            <div>⚙️</div>Sozlamalar
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            Sozlamalar
         </div>
-        <div class="nav-item" onclick="window.open('https://t.me/lavpin_support', '_blank')">
-            <div>🟡</div>Ijaraga
+        <div class="nav-item special-jarima" onclick="window.open('https://t.me/lavpin_support', '_blank')">
+            <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2H6v2zm3 0h2v-2H9v2zm3 0h2v-2h-2v2z"/></svg>
+            Ijaraga
         </div>
     </div>
 
@@ -641,7 +689,6 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Splash screen'ni yo'qotish
         setTimeout(() => {
             let splash = document.getElementById('splashScreen');
             splash.style.opacity = '0';
@@ -664,7 +711,6 @@
             localStorage.setItem('lavpin_balance', balance);
         }
 
-        // Tungi rejim
         function toggleTheme() {
             if(document.getElementById('themeToggle').checked) {
                 document.body.classList.add('light-theme');
@@ -690,13 +736,86 @@
         }
 
         const gameData = {
-            pubg: { title: "PUBG MOBILE", sub: "UC", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300", label: "Player ID", items: [{ name: "60 UC", price: 12225 }, { name: "325 UC", price: 61200 }] },
-            freefire: { title: "FREE FIRE", sub: "Olmoslar", img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300", label: "O'yinchi ID", items: [{ name: "110 Olmos", price: 10700 }, { name: "341 Olmos", price: 32500 }] },
-            mlbb: { title: "MOBILE LEGENDS", sub: "Olmoslar", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300", label: "O'yinchi ID", items: [{ name: "55 Olmos", price: 10000 }, { name: "165 Olmos", price: 30500 }] },
-            stars: { title: "TG STARS", sub: "Telegram Yulduzlar", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300", label: "@USERNAME", items: [{ name: "50 Stars", price: 11000 }, { name: "100 Stars", price: 22000 }] },
-            premium: { title: "TG PREMIUM", sub: "Telegram Premium", img: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=300", label: "@USERNAME", items: [{ name: "3 Oylik", price: 169000 }, { name: "6 Oylik", price: 225000 }] },
-            gifts: { title: "Telegram Sovg'alar", sub: "Limited & Oddiy", img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=300", label: "@USERNAME", items: [{ name: "Bomb Bear", price: 14000 }, { name: "Yurak", price: 4000 }] },
-            steam: { title: "STEAM", sub: "Balans ($)", img: "https://images.unsplash.com/photo-1612287233202-b51c3ed61f0d?w=300", label: "STEAM LOGIN", items: [{ name: "1 $", price: 13100 }, { name: "5 $", price: 65500 }] }
+            pubg: { 
+                title: "PUBG MOBILE", 
+                sub: "UC", 
+                img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300", 
+                label: "Player ID", 
+                items: [
+                    { name: "60 UC", price: 12225 },
+                    { name: "325 UC", price: 61200 },
+                    { name: "660 UC", price: 122000 },
+                    { name: "1800 UC", price: 325000 },
+                    { name: "3850 UC", price: 650000 },
+                    { name: "8100 UC", price: 1320000 },
+                    { name: "8700 UC", price: 1410000 }
+                ] 
+            },
+            freefire: { 
+                title: "FREE FIRE", 
+                sub: "Olmoslar", 
+                img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300", 
+                label: "O'yinchi ID", 
+                items: [
+                    { name: "110 Olmos", price: 10700 },
+                    { name: "341 Olmos", price: 32500 },
+                    { name: "572 Olmos", price: 53000 },
+                    { name: "1060 Olmos", price: 98000 },
+                    { name: "2200 Olmos", price: 198000 },
+                    { name: "5080 Olmos", price: 445000 },
+                    { name: "7800 Olmos", price: 680000 }
+                ] 
+            },
+            mlbb: { 
+                title: "MOBILE LEGENDS", 
+                sub: "Olmoslar", 
+                img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300", 
+                label: "O'yinchi ID", 
+                items: [
+                    { name: "55 Olmos", price: 10000 }, 
+                    { name: "165 Olmos", price: 30500 }
+                ] 
+            },
+            stars: { 
+                title: "TG STARS", 
+                sub: "Telegram Yulduzlar", 
+                img: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=300", 
+                label: "@USERNAME", 
+                items: [
+                    { name: "50 Stars", price: 11000 }, 
+                    { name: "100 Stars", price: 22000 }
+                ] 
+            },
+            premium: { 
+                title: "TG PREMIUM", 
+                sub: "Telegram Premium", 
+                img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300", 
+                label: "@USERNAME", 
+                items: [
+                    { name: "3 Oylik", price: 169000 }, 
+                    { name: "6 Oylik", price: 225000 }
+                ] 
+            },
+            gifts: { 
+                title: "Telegram Sovg'alar", 
+                sub: "Limited & Oddiy", 
+                img: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300", 
+                label: "@USERNAME", 
+                items: [
+                    { name: "Bomb Bear", price: 14000 }, 
+                    { name: "Yurak", price: 4000 }
+                ] 
+            },
+            steam: { 
+                title: "STEAM", 
+                sub: "Balans ($)", 
+                img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300", 
+                label: "STEAM LOGIN", 
+                items: [
+                    { name: "1 $", price: 13100 }, 
+                    { name: "5 $", price: 65500 }
+                ] 
+            }
         };
 
         let selectedPrice = 0;
