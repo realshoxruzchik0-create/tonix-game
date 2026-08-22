@@ -309,14 +309,16 @@
             cursor: pointer;
             display: inline-block;
             width: 100%;
-            max-width: 160px;
+            max-width: 180px;
             margin: 0 auto;
+            text-decoration: none;
+            color: var(--text-color);
         }
-        .bankomat-card img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            margin-bottom: 8px;
+        .bankomat-card svg {
+            width: 48px;
+            height: 48px;
+            fill: #3b82f6;
+            margin-bottom: 10px;
         }
 
         .history-tabs, .sub-tabs {
@@ -406,7 +408,7 @@
             transform: translateX(20px);
         }
 
-        /* 2-rasmdagidek Zamonaviy Floating Menyu Dizayni */
+        /* Zamonaviy Floating Menyu Dizayni */
         .footer-nav {
             position: fixed;
             bottom: 12px;
@@ -498,14 +500,16 @@
         <div style="padding: 0 15px; margin-bottom: 10px; font-weight: bold; font-size: 15px;">O'yinlar va Xizmatlar</div>
 
         <div class="grid-container">
+            <!-- PUBG MOBILE -->
             <div class="card" onclick="openGame('pubg')">
                 <span class="badge">Global</span>
                 <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300" alt="PUBG">
                 <div class="card-title">PUBG MOBILE</div>
             </div>
+            <!-- FREE FIRE - Yangi yuborgan rasm bilan -->
             <div class="card" onclick="openGame('freefire')">
                 <span class="badge" style="background:#d97706;">SNG</span>
-                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300" alt="Free Fire">
+                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300" alt="Free Fire" id="ffImgCustom">
                 <div class="card-title">FREE FIRE</div>
             </div>
             <div class="card" onclick="openGame('mlbb')">
@@ -578,7 +582,7 @@
                 <p>Savollar bo'yicha 24/7 yordam chati orqali bog'laning</p>
             </div>
             <span>➔</span>
-        </a>
+        </div>
 
         <div class="setting-item">
             <div class="setting-info">
@@ -625,9 +629,11 @@
         <div style="font-size: 12px; color: var(--sub-text); margin-bottom: 15px;">To'lov usulini tanlang</div>
         
         <div style="text-align: center; margin-top: 30px;">
-            <a href="https://t.me/lavpin_support?text=Salom%2C%20BANKOMAT%20hisobimni%20to%27ldirmoqchiman%20qaysi%20kartaga%20to%27lov%20qilishim%20kerak%3F" target="_blank" class="bankomat-card">
-                <img src="https://img.icons8.com/color/96/ATM.png" alt="Bankomat">
-                <div style="font-size: 12px; font-weight: bold;">BANKOMAT</div>
+            <a href="https://t.me/lavpin_support?text=Assalomu%20Alaykum%20qaysi%20bank%20kartaga%20pul%20tashashim%20kerak%3F" target="_blank" class="bankomat-card">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 10h16v2H4zm0 4h16v2H4zm5-8h6v2H9zm11-4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 16H4V4h16v14z"/>
+                </svg>
+                <div style="font-size: 13px; font-weight: bold; letter-spacing: 0.5px;">BANKOMAT</div>
             </a>
         </div>
     </div>
@@ -665,7 +671,7 @@
         </div>
     </div>
 
-    <!-- ZAMONAVIY PASTKI MENYU (2-rasm uslubida) -->
+    <!-- ZAMONAVIY PASTKI MENYU -->
     <div class="footer-nav">
         <div class="nav-item active" onclick="switchNav('homePage', this)">
             <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
