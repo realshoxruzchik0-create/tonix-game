@@ -2,894 +2,282 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lavpin Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Crypto Tap Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #0d111c;
-            --text-color: #ffffff;
-            --card-bg: #151c2e;
-            --border-color: #1f2a44;
-            --sub-text: #8a99ad;
-        }
-        .light-theme {
-            --bg-color: #f4f6f9;
-            --text-color: #111827;
-            --card-bg: #ffffff;
-            --border-color: #e5e7eb;
-            --sub-text: #6b7280;
-        }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background 0.3s, color 0.3s;
+            user-select: none;
+            -webkit-user-select: none;
         }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: 90px;
-        }
-        /* Splash Screen */
-        #splashScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0d111c;
+            background-color: #000;
+            background-image: radial-gradient(circle, #051c0d 0%, #000000 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+        }
+        .header {
+            text-align: center;
+            padding-top: 25px;
+        }
+        .balance-container {
+            font-size: 42px;
+            font-weight: bold;
+            color: #00ff66;
+            text-shadow: 0 0 15px rgba(0, 255, 102, 0.5);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
+            gap: 10px;
         }
-        #splashScreen img {
-            width: 120px;
-            height: 120px;
-            border-radius: 24px;
-            object-fit: cover;
-            margin-bottom: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        #splashScreen h2 {
-            color: white;
-            font-size: 22px;
-            font-weight: bold;
+        .level {
+            font-size: 14px;
+            color: #888;
+            margin-top: 5px;
             letter-spacing: 1px;
         }
-
-        .header {
+        .coin-section {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .coin {
+            width: 250px;
+            height: 250px;
+            cursor: pointer;
+            transition: transform 0.05s ease;
+            filter: drop-shadow(0 0 25px rgba(0, 255, 102, 0.4));
+        }
+        .coin:active {
+            transform: scale(0.90);
+        }
+        .floating-text {
+            position: absolute;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 0 0 10px #ff0000;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.3); }
+        }
+        .footer-section {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+        }
+        .energy-bar-container {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 15px;
+            font-size: 14px;
+            color: #aaa;
+            padding: 0 10px;
         }
-        .user-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+        .energy-bar {
+            width: 100%;
+            height: 12px;
+            background: #111;
+            border-radius: 6px;
+            border: 1px solid #00ff66;
             overflow: hidden;
+            position: relative;
         }
-        .user-avatar img {
+        .energy-fill {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background: linear-gradient(90deg, #00cc52, #00ff66);
+            box-shadow: 0 0 10px #00ff66;
+            transition: width 0.2s linear;
         }
-        .user-name {
-            font-size: 15px;
-            font-weight: 600;
-        }
-        .user-support {
-            font-size: 12px;
-            color: var(--sub-text);
-        }
-        .coin-balance {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
+        .nav-bar {
             display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .balance-card {
-            background: linear-gradient(135deg, #2540ff, #1a2bbd);
-            margin: 15px;
-            padding: 20px;
-            border-radius: 20px;
-            color: white;
-        }
-        .balance-title {
-            font-size: 13px;
-            color: #d0d7de;
-            margin-bottom: 5px;
-        }
-        .balance-amount {
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .balance-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .b-btn {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 5px;
-            border-radius: 14px;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 0 15px;
-            margin-bottom: 20px;
-        }
-        .card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            overflow: hidden;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            position: relative;
-        }
-        .card img {
-            width: 100%;
-            height: 75px;
-            object-fit: cover;
-        }
-        .card-title {
-            padding: 8px 4px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-        .badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #2563eb;
-            color: white;
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .page {
-            display: none;
-            padding: 15px;
-        }
-        .page.active {
-            display: block;
-        }
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .game-header {
-            background: var(--card-bg);
-            padding: 15px;
+            justify-content: space-around;
+            background: rgba(10, 20, 10, 0.85);
+            border: 1px solid rgba(0, 255, 102, 0.2);
             border-radius: 16px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-        }
-        .game-header img {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-        .input-group {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-        }
-        .input-group label {
-            font-size: 11px;
-            color: var(--sub-text);
-            text-transform: uppercase;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .input-row {
-            display: flex;
-            gap: 10px;
-        }
-        .input-row input {
-            flex: 1;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 10px;
-            color: var(--text-color);
-            font-size: 14px;
-        }
-        .check-btn {
-            background: #1d35cc;
-            border: none;
-            color: white;
-            padding: 0 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-            max-height: 350px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .p-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 14px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .p-card.selected {
-            border-color: #2563eb;
-            background: var(--card-bg);
-        }
-        .p-title {
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .p-price {
-            font-size: 12px;
-            color: #3b82f6;
-            font-weight: bold;
-        }
-        .buy-action-btn {
-            width: 100%;
-            background: #2238ef;
-            border: none;
-            padding: 15px;
-            border-radius: 14px;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 30px;
-        }
-        
-        .bankomat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            cursor: pointer;
-            display: inline-block;
-            width: 100%;
-            max-width: 180px;
-            margin: 0 auto;
-            text-decoration: none;
-            color: var(--text-color);
-        }
-        .bankomat-card svg {
-            width: 48px;
-            height: 48px;
-            fill: #3b82f6;
-            margin-bottom: 10px;
-        }
-
-        .history-tabs, .sub-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .h-tab, .s-tab {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: var(--sub-text);
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .h-tab.active, .s-tab.active {
-            background: #2238ef;
-            color: white;
-            border-color: #2238ef;
-        }
-        .empty-history {
-            text-align: center;
-            color: var(--sub-text);
-            margin-top: 50px;
-            font-size: 14px;
-        }
-        
-        .setting-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 14px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--text-color);
-        }
-        .setting-info h4 {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-        .setting-info p {
-            font-size: 11px;
-            color: var(--sub-text);
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #374151;
-            transition: .3s;
-            border-radius: 24px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: #2238ef;
-        }
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        /* Zamonaviy Floating Menyu Dizayni */
-        .footer-nav {
-            position: fixed;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 420px;
-            background: #111726;
-            border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px;
-            border-radius: 35px;
-            z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            padding: 10px 0;
+            backdrop-filter: blur(10px);
         }
         .nav-item {
-            flex: 1;
-            text-align: center;
-            color: var(--sub-text);
-            font-size: 11px;
-            cursor: pointer;
-            padding: 8px 4px;
-            border-radius: 28px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            transition: 0.3s;
+            color: #888;
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.2s;
         }
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
+        .nav-item:hover, .nav-item.active {
+            color: #00ff66;
         }
-        .nav-item.active {
-            background: #2238ef;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(34, 56, 239, 0.4);
-        }
-        .nav-item.special-jarima {
-            background: #192238;
-            border: 1px solid #2a3859;
-            color: #facc15;
+        .nav-item span {
+            font-size: 18px;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
-    <!-- SPLASH SCREEN -->
-    <div id="splashScreen">
-        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" alt="Lavpin">
-        <h2>Lavpin</h2>
+    <div class="header">
+        <div class="balance-container">
+            <span id="score">0</span>
+        </div>
+        <div class="level" id="levelText">LEVEL: +1 PER TAP</div>
     </div>
 
-    <!-- ASOSIY SAHIFA -->
-    <div id="homePage" class="page active">
-        <div class="header">
-            <div class="user-box">
-                <div class="user-avatar" id="userAvatar">JS</div>
-                <div>
-                    <div class="user-name" id="userName">Janob Shoxruz</div>
-                    <div class="user-support">@lavpin_support</div>
-                </div>
-            </div>
-            <div class="coin-balance">🟡 <span id="coinVal">0</span></div>
-        </div>
-
-        <div class="balance-card">
-            <div class="balance-title">Balans</div>
-            <div class="balance-amount"><span id="balanceVal">0</span> so'm</div>
-            <div class="balance-buttons">
-                <button class="b-btn" onclick="openPage('topupPage')">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                    Hisobni to'ldirish
-                </button>
-                <button class="b-btn" onclick="openPage('bonusPage')">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.33 8.67 12 12 8.5 15.33 12 17 10.33 14.92 8H20v6z"/></svg>
-                    Bonus kodlar
-                </button>
-                <a href="https://t.me/lavpin_support" target="_blank" class="b-btn">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-                    Qo'llab-quvvatlash
-                </a>
-            </div>
-        </div>
-
-        <div style="padding: 0 15px; margin-bottom: 10px; font-weight: bold; font-size: 15px;">O'yinlar va Xizmatlar</div>
-
-        <div class="grid-container">
-            <!-- PUBG MOBILE -->
-            <div class="card" onclick="openGame('pubg')">
-                <span class="badge">Global</span>
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300" alt="PUBG">
-                <div class="card-title">PUBG MOBILE</div>
-            </div>
-            <!-- FREE FIRE - Yangi yuborgan rasm bilan -->
-            <div class="card" onclick="openGame('freefire')">
-                <span class="badge" style="background:#d97706;">SNG</span>
-                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300" alt="Free Fire" id="ffImgCustom">
-                <div class="card-title">FREE FIRE</div>
-            </div>
-            <div class="card" onclick="openGame('mlbb')">
-                <span class="badge">Global</span>
-                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300" alt="MLBB">
-                <div class="card-title">MOBILE LEGENDS</div>
-            </div>
-            <div class="card" onclick="openGame('stars')">
-                <span class="badge" style="background:#7c3aed;">AVTO</span>
-                <img src="https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=300" alt="Stars">
-                <div class="card-title">TG STARS</div>
-            </div>
-            <div class="card" onclick="openGame('premium')">
-                <span class="badge" style="background:#7c3aed;">AVTO</span>
-                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" alt="Premium">
-                <div class="card-title">TG PREMIUM</div>
-            </div>
-            <div class="card" onclick="openGame('gifts')">
-                <span class="badge" style="background:#059669;">GIFTS</span>
-                <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300" alt="Gifts">
-                <div class="card-title">Telegram Sovg'alar</div>
-            </div>
-            <div class="card" onclick="openGame('steam')">
-                <span class="badge" style="background:#d97706;">SNG</span>
-                <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300" alt="Steam">
-                <div class="card-title">STEAM</div>
-            </div>
-        </div>
+    <div class="coin-section" id="coinSection">
+        <!-- O'zingizning shaffof tanga rasmingiz havolasini shu yerga qo'yasiz -->
+        <img src="https://i.imgur.com/3V28sV3.png" alt="Coin" class="coin" id="coin">
     </div>
 
-    <!-- TARIX SAHIFASI -->
-    <div id="historyPage" class="page">
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Tarix</div>
-        <div class="history-tabs">
-            <div class="h-tab active" onclick="switchHistoryTab(this)">Buyurtmalar</div>
-            <div class="h-tab" onclick="switchHistoryTab(this)">Moliya</div>
+    <div class="footer-section">
+        <div class="energy-bar-container">
+            <span>⚡ <span id="energy">1000</span> / 1000</span>
+            <span>Energy</span>
         </div>
-        <div class="sub-tabs">
-            <div class="s-tab active" onclick="switchSubTab(this)">Barchasi</div>
-            <div class="s-tab" onclick="switchSubTab(this)">Bajarildi</div>
-            <div class="s-tab" onclick="switchSubTab(this)">Kutilmoqda</div>
-            <div class="s-tab" onclick="switchSubTab(this)">Bekor qilingan</div>
-        </div>
-        <div class="empty-history">Tranzaksiyalar yo'q</div>
-    </div>
-
-    <!-- SOZLAMALAR SAHIFASI -->
-    <div id="settingsPage" class="page">
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Sozlamalar</div>
-        
-        <div class="setting-item" onclick="openPage('referralPage')">
-            <div class="setting-info">
-                <h4>Do'stlarni taklif qilish</h4>
-                <p>Do'stlaringizni taklif qilib bonus tangalar yutib oling</p>
-            </div>
-            <span>➔</span>
+        <div class="energy-bar">
+            <div class="energy-fill" id="energyFill"></div>
         </div>
 
-        <div class="setting-item" onclick="openPage('discountPage')">
-            <div class="setting-info">
-                <h4>Chegirma kodlar</h4>
-                <p>Kashbek sarflab chegirma kodi yarating</p>
-            </div>
-            <span>➔</span>
-        </div>
-
-        <a href="https://t.me/lavpin_support" target="_blank" class="setting-item">
-            <div class="setting-info">
-                <h4>Qo'llab-quvvatlash</h4>
-                <p>Savollar bo'yicha 24/7 yordam chati orqali bog'laning</p>
-            </div>
-            <span>➔</span>
-        </div>
-
-        <div class="setting-item">
-            <div class="setting-info">
-                <h4>Tungi rejim</h4>
-                <p>Yorug' va qorong'u rejimni o'zgartirish</p>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
-                <span class="slider"></span>
-            </label>
-        </div>
-    </div>
-
-    <!-- DO'STLARNI TAKLIF QILISH -->
-    <div id="referralPage" class="page">
-        <button class="back-btn" onclick="openPage('settingsPage')">⬅ Orqaga</button>
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Do'stlarni taklif qilish</div>
-        <div class="input-group">
-            <label>Referal havolasi</label>
-            <input type="text" id="refLink" value="https://t.me/buypinbot?start=ref" readonly style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); padding:10px; border-radius:10px; color:var(--text-color); margin-bottom:10px;">
-            <div style="display:flex; gap:10px;">
-                <button class="b-btn" style="background:#2238ef; padding:12px; flex:1;" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value); alert('Nusxalandi!');">Nusxalash</button>
-                <button class="b-btn" style="background:#2563eb; padding:12px; flex:1;" onclick="shareRef()">Ulashish</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CHEGIRMA KODLAR -->
-    <div id="discountPage" class="page">
-        <button class="back-btn" onclick="openPage('settingsPage')">⬅ Orqaga</button>
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Chegirma kodlar</div>
-        <div class="balance-card" style="margin:0 0 15px 0;">
-            <div class="balance-title">SIZNING KASHBEKINGIZ</div>
-            <div class="balance-amount">0</div>
-        </div>
-        <div style="font-size: 12px; color: var(--sub-text); margin-bottom: 15px;">Kashbek sarflab chegirma kodi yarating va keyingi xaridda foydalaning</div>
-        <div class="empty-history" style="margin-top:20px;">Hali kod yo'q</div>
-    </div>
-
-    <!-- HISOBNI TO'LDIRISH (BANKOMAT) -->
-    <div id="topupPage" class="page">
-        <button class="back-btn" onclick="goHome()">⬅ Orqaga</button>
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Hisobni to'ldirish</div>
-        <div style="font-size: 12px; color: var(--sub-text); margin-bottom: 15px;">To'lov usulini tanlang</div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="https://t.me/lavpin_support?text=Assalomu%20Alaykum%20qaysi%20bank%20kartaga%20pul%20tashashim%20kerak%3F" target="_blank" class="bankomat-card">
-                <svg viewBox="0 0 24 24">
-                    <path d="M4 10h16v2H4zm0 4h16v2H4zm5-8h6v2H9zm11-4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 16H4V4h16v14z"/>
-                </svg>
-                <div style="font-size: 13px; font-weight: bold; letter-spacing: 0.5px;">BANKOMAT</div>
-            </a>
-        </div>
-    </div>
-
-    <!-- O'YIN / MAHSULOT SAHIFASI -->
-    <div id="gamePage" class="page">
-        <button class="back-btn" onclick="goHome()">⬅ Orqaga</button>
-        <div class="game-header">
-            <img id="gameImg" src="" alt="">
-            <div>
-                <div id="gameTitle" style="font-weight: bold; font-size: 16px;">O'YIN</div>
-                <div style="font-size: 12px; color: var(--sub-text);" id="gameSub">Rasmiy do'kon</div>
-            </div>
-        </div>
-        <div class="input-group">
-            <label id="idLabel">O'yinchi ID</label>
-            <div class="input-row">
-                <input type="text" id="playerIdInput" placeholder="ID kiriting...">
-                <button class="check-btn" onclick="alert('ID tekshirildi: Faol!')">Tekshirish</button>
-            </div>
-        </div>
-        <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Mahsulotni tanlang</div>
-        <div class="products-grid" id="productsList"></div>
-        <button class="buy-action-btn" onclick="makePurchase()">Sotib olish</button>
-    </div>
-
-    <!-- BONUS KODLAR -->
-    <div id="bonusPage" class="page">
-        <button class="back-btn" onclick="goHome()">⬅ Orqaga</button>
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">Bonus kodi</div>
-        <div class="input-group" style="text-align: center; padding: 30px 15px;">
-            <div style="font-size: 35px; margin-bottom: 15px;">🎟️</div>
-            <input type="text" placeholder="KODNI KIRITING" style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); padding:12px; border-radius:10px; color:var(--text-color); text-align:center; font-weight:bold; margin-bottom:15px;">
-            <button class="buy-action-btn" style="margin-bottom:0;" onclick="alert('Kod yaroqsiz!')">Faollashtirish</button>
-        </div>
-    </div>
-
-    <!-- ZAMONAVIY PASTKI MENYU -->
-    <div class="footer-nav">
-        <div class="nav-item active" onclick="switchNav('homePage', this)">
-            <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-            Bosh sahifa
-        </div>
-        <div class="nav-item" onclick="switchNav('historyPage', this)">
-            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
-            Tarix
-        </div>
-        <div class="nav-item" onclick="switchNav('settingsPage', this)">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-            Sozlamalar
-        </div>
-        <div class="nav-item special-jarima" onclick="window.open('https://t.me/lavpin_support', '_blank')">
-            <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2H6v2zm3 0h2v-2H9v2zm3 0h2v-2h-2v2z"/></svg>
-            Ijaraga
+        <div class="nav-bar">
+            <div class="nav-item active"><span>🚀</span>Boost</div>
+            <div class="nav-item"><span>👥</span>Friends</div>
+            <div class="nav-item"><span>📋</span>Tasks</div>
+            <div class="nav-item"><span>💎</span>Airdrop</div>
         </div>
     </div>
 
     <script>
+        // Xotiradan (localStorage) saqlangan tangalarni o'qib olish, bo'lmasa 0 dan boshlash
+        let score = parseInt(localStorage.getItem('game_score')) || 0;
+        let energy = parseInt(localStorage.getItem('game_energy')) || 1000;
+        const maxEnergy = 1000;
+
+        const scoreEl = document.getElementById('score');
+        const energyEl = document.getElementById('energy');
+        const energyFill = document.getElementById('energyFill');
+        const coinSection = document.getElementById('coinSection');
+        const coin = document.getElementById('coin');
+        const levelText = document.getElementById('levelText');
+
+        // Boshlang'ich qiymatni ekranga chiqarish
+        scoreEl.textContent = score;
+        energyEl.textContent = energy;
+        updateEnergyBar();
+
+        // Har bir bosishdagi tangani aniqlash funksiyasi
+        function getClickPower() {
+            if (score >= 6000) {
+                levelText.textContent = "MAX LEVEL: +12 PER TAP";
+                return 12;
+            } else if (score >= 100) {
+                levelText.textContent = "LEVEL: +5 PER TAP";
+                return 5;
+            } else {
+                levelText.textContent = "LEVEL: +1 PER TAP";
+                return 1;
+            }
+        }
+
+        // Tanga bosilganda
+        coin.addEventListener('click', (e) => {
+            let clickPower = getClickPower();
+
+            if (energy >= clickPower) {
+                score += clickPower;
+                energy -= clickPower;
+                
+                scoreEl.textContent = score;
+                energyEl.textContent = energy;
+                updateEnergyBar();
+
+                // Ma'lumotlarni telefonda/brauzerda saqlab qolish (chiqib ketsa ham turadi)
+                localStorage.setItem('game_score', score);
+                localStorage.setItem('game_energy', energy);
+
+                // Uchqun effektining chiqish joyi
+                const rect = coin.getBoundingClientRect();
+                const x = e.clientX - rect.left - 50;
+                const y = e.clientY - rect.top - 50;
+
+                createClickEffect(x, y, clickPower);
+            }
+        });
+
+        // Sensor/Mobil ekranlar uchun ham (Tap-tap tez bosganda qotib qolmasligi uchun)
+        coin.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            let touch = e.touches[0];
+            let clickPower = getClickPower();
+
+            if (energy >= clickPower) {
+                score += clickPower;
+                energy -= clickPower;
+                
+                scoreEl.textContent = score;
+                energyEl.textContent = energy;
+                updateEnergyBar();
+
+                localStorage.setItem('game_score', score);
+                localStorage.setItem('game_energy', energy);
+
+                const rect = coin.getBoundingClientRect();
+                const x = touch.clientX - rect.left - 50;
+                const y = touch.clientY - rect.top - 50;
+
+                createClickEffect(x, y, clickPower);
+            }
+        }, { passive: false });
+
+        // Uchqun animatsiyasini yaratish (Siz yoqtirgan sariq-qizil effekt)
+        function createClickEffect(x, y, power) {
+            const effect = document.createElement('div');
+            effect.className = 'floating-text';
+            effect.textContent = `+${power}`;
+            effect.style.left = `${x + 60}px`;
+            effect.style.top = `${y + 40}px`;
+            
+            coinSection.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 800);
+        }
+
+        // Energiyani o'z-o'zidan tiklanishi
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 3);
+                energyEl.textContent = energy;
+                localStorage.setItem('game_energy', energy);
+                updateEnergyBar();
+            }
+        }, 1000);
+
+        function updateEnergyBar() {
+            const percentage = (energy / maxEnergy) * 100;
+            energyFill.style.width = `${percentage}%`;
+        }
+
+        // Telegram WebApp kengayishi
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        setTimeout(() => {
-            let splash = document.getElementById('splashScreen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 1500);
-
-        let balance = localStorage.getItem('lavpin_balance') ? parseInt(localStorage.getItem('lavpin_balance')) : 0;
-        updateBalanceUI();
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            let user = tg.initDataUnsafe.user;
-            document.getElementById('userName').innerText = user.first_name;
-            document.getElementById('userAvatar').innerText = user.first_name[0];
-            document.getElementById('refLink').value = "https://t.me/buypinbot?start=" + user.id;
-        }
-
-        function updateBalanceUI() {
-            document.getElementById('balanceVal').innerText = balance.toLocaleString();
-            document.getElementById('coinVal').innerText = balance;
-            localStorage.setItem('lavpin_balance', balance);
-        }
-
-        function toggleTheme() {
-            if(document.getElementById('themeToggle').checked) {
-                document.body.classList.add('light-theme');
-                localStorage.setItem('lavpin_theme', 'light');
-            } else {
-                document.body.classList.remove('light-theme');
-                localStorage.setItem('lavpin_theme', 'dark');
-            }
-        }
-
-        if(localStorage.getItem('lavpin_theme') === 'light') {
-            document.body.classList.add('light-theme');
-            document.getElementById('themeToggle').checked = true;
-        }
-
-        function shareRef() {
-            let link = document.getElementById('refLink').value;
-            if (navigator.share) {
-                navigator.share({ title: 'Lavpin Shop', url: link });
-            } else {
-                window.open('https://t.me/share/url?url=' + encodeURIComponent(link));
-            }
-        }
-
-        const gameData = {
-            pubg: { 
-                title: "PUBG MOBILE", 
-                sub: "UC", 
-                img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300", 
-                label: "Player ID", 
-                items: [
-                    { name: "60 UC", price: 12225 },
-                    { name: "325 UC", price: 61200 },
-                    { name: "660 UC", price: 122000 },
-                    { name: "1800 UC", price: 325000 },
-                    { name: "3850 UC", price: 650000 },
-                    { name: "8100 UC", price: 1320000 },
-                    { name: "8700 UC", price: 1410000 }
-                ] 
-            },
-            freefire: { 
-                title: "FREE FIRE", 
-                sub: "Olmoslar", 
-                img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300", 
-                label: "O'yinchi ID", 
-                items: [
-                    { name: "110 Olmos", price: 10700 },
-                    { name: "341 Olmos", price: 32500 },
-                    { name: "572 Olmos", price: 53000 },
-                    { name: "1060 Olmos", price: 98000 },
-                    { name: "2200 Olmos", price: 198000 },
-                    { name: "5080 Olmos", price: 445000 },
-                    { name: "7800 Olmos", price: 680000 }
-                ] 
-            },
-            mlbb: { 
-                title: "MOBILE LEGENDS", 
-                sub: "Olmoslar", 
-                img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300", 
-                label: "O'yinchi ID", 
-                items: [
-                    { name: "55 Olmos", price: 10000 }, 
-                    { name: "165 Olmos", price: 30500 }
-                ] 
-            },
-            stars: { 
-                title: "TG STARS", 
-                sub: "Telegram Yulduzlar", 
-                img: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=300", 
-                label: "@USERNAME", 
-                items: [
-                    { name: "50 Stars", price: 11000 }, 
-                    { name: "100 Stars", price: 22000 }
-                ] 
-            },
-            premium: { 
-                title: "TG PREMIUM", 
-                sub: "Telegram Premium", 
-                img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300", 
-                label: "@USERNAME", 
-                items: [
-                    { name: "3 Oylik", price: 169000 }, 
-                    { name: "6 Oylik", price: 225000 }
-                ] 
-            },
-            gifts: { 
-                title: "Telegram Sovg'alar", 
-                sub: "Limited & Oddiy", 
-                img: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300", 
-                label: "@USERNAME", 
-                items: [
-                    { name: "Bomb Bear", price: 14000 }, 
-                    { name: "Yurak", price: 4000 }
-                ] 
-            },
-            steam: { 
-                title: "STEAM", 
-                sub: "Balans ($)", 
-                img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300", 
-                label: "STEAM LOGIN", 
-                items: [
-                    { name: "1 $", price: 13100 }, 
-                    { name: "5 $", price: 65500 }
-                ] 
-            }
-        };
-
-        let selectedPrice = 0;
-
-        function openGame(key) {
-            let g = gameData[key];
-            document.getElementById('gameTitle').innerText = g.title;
-            document.getElementById('gameSub').innerText = g.sub;
-            document.getElementById('gameImg').src = g.img;
-            document.getElementById('idLabel').innerText = g.label;
-            
-            let list = document.getElementById('productsList');
-            list.innerHTML = "";
-            g.items.forEach((item, index) => {
-                let div = document.createElement('div');
-                div.className = "p-card" + (index === 0 ? " selected" : "");
-                div.innerHTML = `<div class="p-title">${item.name}</div><div class="p-price">${item.price.toLocaleString()} so'm</div>`;
-                if(index === 0) selectedPrice = item.price;
-                
-                div.onclick = function() {
-                    document.querySelectorAll('.p-card').forEach(c => c.classList.remove('selected'));
-                    div.classList.add('selected');
-                    selectedPrice = item.price;
-                };
-                list.appendChild(div);
-            });
-
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('gamePage').classList.add('active');
-        }
-
-        function makePurchase() {
-            if(balance >= selectedPrice) {
-                balance -= selectedPrice;
-                updateBalanceUI();
-                alert("Buyurtma muvaffaqiyatli qabul qilindi!");
-                goHome();
-            } else {
-                alert("Balansingizda mablag' yetarli emas!");
-            }
-        }
-
-        function openPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
-
-        function goHome() {
-            openPage('homePage');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.nav-item')[0].classList.add('active');
-        }
-
-        function switchNav(pageId, element) {
-            openPage(pageId);
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        function switchHistoryTab(el) {
-            document.querySelectorAll('.h-tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function switchSubTab(el) {
-            document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        }
     </script>
 </body>
 </html>
