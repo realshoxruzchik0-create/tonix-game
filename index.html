@@ -31,8 +31,8 @@
 
     /* ONBOARDING MODAL */
     #onboarding-modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9000;
-      display: flex; justify-content: center; align-items: center; padding: 20px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9000;
+      display: none; justify-content: center; align-items: center; padding: 20px;
     }
     .modal-card {
       background: var(--card-bg); border-radius: 16px; padding: 24px; width: 100%; max-width: 360px;
@@ -75,7 +75,7 @@
 
     /* GAME DISPLAY */
     .game-display {
-      flex: 1; position: relative; background: radial-gradient(circle at center, #1b2436 0%, #090c12 100%);
+      flex: 1; position: relative; background: radial-gradient(circle at center, #261218 0%, #090c12 100%);
       display: flex; justify-content: center; align-items: center; overflow: hidden;
     }
     canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -122,42 +122,35 @@
 </head>
 <body>
 
-  <!-- SPLASH SCREEN ANIMATION -->
   <div id="splash-screen">
     <div class="fox-logo-anim">
       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M50 80L15 45L30 15L50 35L70 15L85 45L50 80Z" stroke="#00e676" stroke-width="4" fill="#090c12"/>
-        <polygon points="50,45 35,25 50,35" fill="#00e676"/>
-        <polygon points="50,45 65,25 50,35" fill="#00e676"/>
+        <path d="M50 80L15 45L30 15L50 35L70 15L85 45L50 80Z" stroke="#ff1744" stroke-width="4" fill="#090c12"/>
+        <polygon points="50,45 35,25 50,35" fill="#ff1744"/>
+        <polygon points="50,45 65,25 50,35" fill="#ff1744"/>
       </svg>
     </div>
-    <div class="loading-text">GEOFOX AVIATOR...</div>
+    <div class="loading-text" style="color: var(--accent-red);">GEOFOX AVIATOR...</div>
   </div>
 
-  <!-- ONBOARDING REGISTRATION -->
   <div id="onboarding-modal">
     <div class="modal-card">
       <div class="modal-title">GEOFOX REJIMI</div>
       <div class="input-group">
-        <label>Hisob turi:</label>
+        <label>Hisob turi (Faqat 1 marta tanlanadi):</label>
         <select id="acc-type-select">
           <option value="demo">Demo Hisob (100,000 SO'M)</option>
           <option value="real">Haqiqiy Hisob (Humo / Uzcard)</option>
         </select>
       </div>
       <div class="input-group">
-        <label>Telefon raqamingiz:</label>
-        <input type="text" id="user-phone" placeholder="+998 90 123 45 67" />
-      </div>
-      <div class="input-group">
-        <label>Username (Nikingiz):</label>
-        <input type="text" id="user-name" placeholder="Masalan: trader_777" />
+        <label>Nikingiz (@ bilan boshlanib 001 bilan tugasin):</label>
+        <input type="text" id="user-name" placeholder="@trader_001" value="@player_001" />
       </div>
       <button class="btn-submit" onclick="finishOnboarding()">O'YINNI BOSHLASH 🚀</button>
     </div>
   </div>
 
-  <!-- DEPOSIT MODAL -->
   <div id="deposit-modal">
     <div class="modal-card">
       <div class="modal-title">Balansni To'ldirish</div>
@@ -173,12 +166,11 @@
     </div>
   </div>
 
-  <!-- HEADER -->
   <header>
     <div class="user-info">
       <div class="avatar" id="avatar-letter">G</div>
       <div>
-        <div class="username-display" id="disp-username">@player</div>
+        <div class="username-display" id="disp-username">@player_001</div>
         <div class="account-type" id="disp-acctype">DEMO</div>
       </div>
     </div>
@@ -188,16 +180,12 @@
     </div>
   </header>
 
-  <!-- HISTORY MULTIPLIERS -->
   <div class="history-bar" id="history-bar">
     <div class="history-chip mid">2.73x</div>
     <div class="history-chip">1.15x</div>
-    <div class="history-chip">1.77x</div>
     <div class="history-chip high">4.13x</div>
-    <div class="history-chip">1.05x</div>
   </div>
 
-  <!-- AVIATOR GAME DISPLAY -->
   <div class="game-display">
     <canvas id="crashCanvas"></canvas>
     <div style="text-align: center;">
@@ -206,10 +194,8 @@
     </div>
   </div>
 
-  <!-- DUAL BET CONTROL PANELS -->
   <div class="controls-container">
     
-    <!-- PANEL 1 -->
     <div class="bet-panel">
       <div class="panel-header">
         <span>Stavka #1</span>
@@ -239,7 +225,6 @@
       </div>
     </div>
 
-    <!-- PANEL 2 -->
     <div class="bet-panel">
       <div class="panel-header">
         <span>Stavka #2</span>
@@ -282,17 +267,47 @@
       2: { active: false, cashed: false, amount: 3000 }
     };
 
-    setTimeout(() => {
-      document.getElementById('splash-screen').style.opacity = '0';
-      setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 600);
-    }, 2000);
+    // Ma'lumotlarni saqlash va tekshirish (LocalStorage)
+    window.onload = function() {
+      setTimeout(() => {
+        document.getElementById('splash-screen').style.opacity = '0';
+        setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 600);
+      }, 1500);
+
+      const savedUser = localStorage.getItem('geofox_user');
+      const savedAcc = localStorage.getItem('geofox_acc_type');
+      const savedBalance = localStorage.getItem('geofox_balance');
+
+      if (savedUser && savedAcc) {
+        // Agar oldindan ro'yxatdan o'tgan bo'lsa, modalni ko'rsatmaymiz
+        document.getElementById('disp-username').innerText = savedUser;
+        document.getElementById('avatar-letter').innerText = savedUser[1] ? savedUser[1].toUpperCase() : 'G';
+        document.getElementById('disp-acctype').innerText = savedAcc.toUpperCase();
+        if (savedBalance) balance = parseInt(savedBalance);
+        updateBalance();
+        startRoundLoop();
+      } else {
+        // Birinchi marta kirish bo'lsa registratsiya chiqadi
+        document.getElementById('onboarding-modal').style.display = 'flex';
+      }
+    };
 
     function finishOnboarding() {
-      const name = document.getElementById('user-name').value || 'player_1';
+      let nameInput = document.getElementById('user-name').value.trim();
       const accType = document.getElementById('acc-type-select').value;
-      
-      document.getElementById('disp-username').innerText = '@' + name;
-      document.getElementById('avatar-letter').innerText = name[0].toUpperCase();
+
+      // Nik shartini tekshirish (@ bilan boshlanib 001 bilan tugashi)
+      if (!nameInput.startsWith('@') || !nameInput.endsWith('001')) {
+        alert("Iltimos, nikingiz '@' bilan boshlanib '001' bilan tugasin! (Masalan: @trader_001)");
+        return;
+      }
+
+      localStorage.setItem('geofox_user', nameInput);
+      localStorage.setItem('geofox_acc_type', accType);
+      localStorage.setItem('geofox_balance', balance);
+
+      document.getElementById('disp-username').innerText = nameInput;
+      document.getElementById('avatar-letter').innerText = nameInput[1].toUpperCase();
       document.getElementById('disp-acctype').innerText = accType.toUpperCase();
       document.getElementById('onboarding-modal').style.display = 'none';
 
@@ -325,6 +340,11 @@
       document.getElementById('mult-text').innerText = 'KUTING...';
       document.getElementById('status-text').style.display = 'none';
 
+      // Raund boshlanishidan oldin stavka tugmalarini faollashtirish (agar o'yin boshlanmagan bo'lsa)
+      [1, 2].forEach(p => {
+        if (!bets[p].active) resetBtn(p);
+      });
+
       setTimeout(() => {
         gameState = 'running';
         currentMultiplier = 1.00;
@@ -353,7 +373,9 @@
             cashout(p);
           } else {
             const winAmt = Math.floor(bets[p].amount * currentMultiplier);
-            document.getElementById(`btn-action-${p}`).innerHTML = `<span>OBNALICHIT</span><span class="sub-payout">${winAmt} SO'M</span>`;
+            const btn = document.getElementById(`btn-action-${p}`);
+            btn.className = 'btn-action btn-cashout';
+            btn.innerHTML = `<span>OBNALICHIT</span><span class="sub-payout">${winAmt} SO'M</span>`;
           }
         }
       });
@@ -371,7 +393,9 @@
         [1, 2].forEach(p => {
           if (bets[p].active && !bets[p].cashed) {
             bets[p].active = false;
-            resetBtn(p);
+            const btn = document.getElementById(`btn-action-${p}`);
+            btn.className = 'btn-action btn-bet';
+            btn.innerHTML = `<span>YUTqAZDINGIZ</span><span class="sub-payout">0 SO'M</span>`;
           }
         });
 
@@ -382,7 +406,12 @@
     }
 
     function handleAction(p) {
-      if (!bets[p].active && gameState !== 'crashed') {
+      // O'yin ketayotgan paytda YANGI stavka qo'yib bo'lmaydi! Faqat obnalichit qilish mumkin.
+      if (!bets[p].active) {
+        if (gameState === 'running') {
+          alert("O'yin davom etmoqda! Keyingi raund boshlanishini kuting.");
+          return;
+        }
         placeBet(p);
       } else if (bets[p].active && !bets[p].cashed && gameState === 'running') {
         cashout(p);
@@ -390,6 +419,7 @@
     }
 
     function placeBet(p) {
+      if (gameState === 'running') return; // Xavfsizlik uchun qo'shimcha tekshiruv
       const amt = parseInt(document.getElementById(`bet-amt-${p}`).value);
       if (balance >= amt) {
         balance -= amt;
@@ -400,7 +430,9 @@
         
         const btn = document.getElementById(`btn-action-${p}`);
         btn.className = 'btn-action btn-cancel';
-        btn.innerHTML = `<span>OTMENA</span><span class="sub-payout">${amt} SO'M</span>`;
+        btn.innerHTML = `<span>KUTILYAPTI</span><span class="sub-payout">${amt} SO'M</span>`;
+      } else {
+        alert("Balansingiz yetarli emas!");
       }
     }
 
@@ -416,22 +448,27 @@
     }
 
     function resetBtn(p) {
+      bets[p].active = false;
+      bets[p].cashed = false;
       const btn = document.getElementById(`btn-action-${p}`);
       btn.className = 'btn-action btn-bet';
-      btn.innerHTML = `<span>STAVKA</span><span class="sub-payout" id="sub-${p}">${bets[p].amount} SO'M</span>`;
+      btn.innerHTML = `<span>STAVKA</span><span class="sub-payout">${bets[p].amount} SO'M</span>`;
     }
 
     function updateBalance() {
       document.getElementById('disp-balance').innerText = balance.toLocaleString() + ' UZS';
+      localStorage.setItem('geofox_balance', balance);
     }
 
     function setBet(p, val) {
+      if (gameState === 'running' && bets[p].active) return;
       document.getElementById(`bet-amt-${p}`).value = val;
       bets[p].amount = val;
       if (!bets[p].active) resetBtn(p);
     }
 
     function adjustBet(p, delta) {
+      if (gameState === 'running' && bets[p].active) return;
       const input = document.getElementById(`bet-amt-${p}`);
       let newVal = Math.max(1000, parseInt(input.value) + delta);
       input.value = newVal;
