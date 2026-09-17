@@ -6,217 +6,104 @@
   <title>Sabina Bilyard Web App</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body { background: #0b0f19; color: #fff; font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+    body { background: #070a12; color: #fff; font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
 
-    .overlay { position: fixed; inset: 0; background: rgba(11, 15, 25, 0.98); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .card { background: #161f30; border: 1px solid #23324a; border-radius: 16px; padding: 20px; width: 100%; max-width: 380px; text-align: center; }
-    .card h2 { font-size: 20px; color: #00f0ff; margin-bottom: 12px; text-transform: uppercase; }
+    /* Top Player Bar */
+    header { background: #121824; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2a3e; }
+    .player-card { display: flex; align-items: center; gap: 8px; background: #1a2333; padding: 6px 10px; border-radius: 20px; border: 1px solid #2e3d57; }
+    .player-avatar { width: 34px; height: 34px; border-radius: 50%; background: #00f0ff; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; font-size: 13px; border: 2px solid #fff; }
+    .player-name { font-size: 12px; font-weight: bold; }
+    .player-balls { font-size: 11px; color: #00f0ff; font-weight: bold; }
 
-    .avatar-picker { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; background: #23324a; border: 2px dashed #00f0ff; overflow: hidden; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .avatar-picker img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .avatar-picker input { display: none; }
+    .game-status { text-align: center; font-size: 11px; font-weight: bold; color: #ffb142; background: #1f2a3e; padding: 4px 10px; border-radius: 12px; }
 
-    .input-group { margin-bottom: 12px; text-align: left; }
-    .input-group label { display: block; font-size: 11px; color: #8a9bb8; margin-bottom: 4px; }
-    .input-group input { width: 100%; background: #0b0f19; border: 1px solid #23324a; border-radius: 8px; padding: 10px; color: #fff; font-size: 13px; outline: none; }
+    /* Canvas Area */
+    .game-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; position: relative; }
+    canvas { background: #050505; border-radius: 18px; border: 14px solid #ffffff; box-shadow: 0 0 25px rgba(255, 255, 255, 0.15); max-width: 100%; max-height: 100%; cursor: crosshair; }
 
-    .btn { width: 100%; background: linear-gradient(135deg, #00f0ff, #0077ff); border: none; padding: 12px; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; margin-top: 6px; }
-    .btn-sec { background: #23324a; margin-top: 8px; }
-
-    header { background: #161f30; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #23324a; }
-    .player-profile { display: flex; align-items: center; gap: 8px; }
-    .player-avatar { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #00f0ff; object-fit: cover; }
-    .player-info { text-align: left; }
-    .coin-badge { background: #ffb142; color: #000; font-weight: bold; padding: 4px 10px; border-radius: 12px; font-size: 12px; }
-
-    /* Turn Status Banner */
-    .turn-banner { background: #111a2e; text-align: center; padding: 6px; font-size: 12px; font-weight: bold; color: #00f0ff; border-bottom: 1px solid #23324a; }
-
-    .menu-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 10px; }
-    .menu-btn { background: #1e2b42; border: 1px solid #23324a; padding: 14px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-
-    .game-container { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 8px; }
-    canvas { background: #0e3b22; border-radius: 12px; border: 10px solid #3d2314; max-width: 100%; max-height: 100%; }
-
-    .controls { background: #161f30; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #23324a; }
-    .slider-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
-    input[type=range] { flex: 1; accent-color: #00f0ff; }
-    .btn-row { display: flex; gap: 8px; }
-    .btn-shoot { flex: 2; background: #ff4757; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .btn-voice { flex: 1; background: #23324a; color: #fff; border: 1px solid #8a9bb8; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: bold; }
-    .btn-voice.active { background: #00b894; }
+    /* Bottom Controls */
+    .controls { background: #121824; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #1f2a3e; }
+    .slider-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #8a9bb8; }
+    input[type=range] { flex: 1; accent-color: #00f0ff; height: 6px; }
+    
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px; }
+    .btn-shoot { background: linear-gradient(135deg, #ffb142, #ff4757); color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .btn-shoot:active { transform: scale(0.98); }
+    .btn-sec { background: #1a2333; color: #fff; border: 1px solid #2e3d57; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
+    .btn-sell { background: linear-gradient(135deg, #00b894, #00cec9); color: #fff; border: none; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; }
   </style>
 </head>
 <body>
 
-  <!-- Background Lo-Fi Chill Music -->
+  <!-- Sokin Ambient Musiqa -->
   <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
 
-  <!-- Profil Modal -->
-  <div id="authModal" class="overlay">
-    <div class="card">
-      <h2>Profil Yaratish</h2>
-      <div class="avatar-picker" onclick="document.getElementById('avatarInput').click()">
-        <img id="avatarPreview" alt="Avatar">
-        <span id="avatarPlaceholder" style="font-size:11px; color:#8a9bb8;">Rasm Yuklash</span>
-        <input type="file" id="avatarInput" accept="image/*" onchange="previewImage(event)">
-      </div>
-      <div class="input-group">
-        <label>Nikingiz (Kamida 6 ta belgi)</label>
-        <input type="text" id="nickname" placeholder="Nik kiritiring..." minlength="6">
-      </div>
-      <button class="btn" onclick="saveProfile()">KIRISH (10 COIN)</button>
-    </div>
-  </div>
-
-  <!-- Bosh Menyu -->
-  <div id="mainMenuModal" class="overlay" style="display:none;">
-    <div class="card">
-      <h2>SABINA BILYARD</h2>
-      <div class="menu-grid">
-        <div class="menu-btn" onclick="openBetModal('bot')">
-          <span>🤖 Pro Bot bilan 1v1</span>
-          <small style="color:#00f0ff;">Teng O'yin</small>
-        </div>
-        <div class="menu-btn" onclick="openBetModal('create_room')">
-          <span>🏠 Bitta Stol Ochish</span>
-          <small style="color:#ffb142;">Do'stlar uchun</small>
-        </div>
-        <div class="menu-btn" onclick="openJoinModal()">
-          <span>🔍 Stol Kodini Izlash</span>
-          <small style="color:#2ed573;">Ulanish</small>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stavka Modal -->
-  <div id="betModal" class="overlay" style="display:none;">
-    <div class="card">
-      <h2>Stavka Miktori</h2>
-      <div class="input-group">
-        <label>Tikiladigan Coin (Min 2 - Max 1,000,000)</label>
-        <input type="number" id="betAmount" value="2" min="2" max="1000000">
-      </div>
-      <button class="btn" onclick="confirmStartGame()">O'YINNI BOSHLASH</button>
-      <button class="btn btn-sec" onclick="closeBetModal()">ORQAGA</button>
-    </div>
-  </div>
-
-  <!-- Join Modal -->
-  <div id="joinModal" class="overlay" style="display:none;">
-    <div class="card">
-      <h2>Stolga Ulanish</h2>
-      <div class="input-group">
-        <label>Stol Kodini Kiriting</label>
-        <input type="text" id="roomCodeInput" placeholder="Masalan: ROOM-8392">
-      </div>
-      <button class="btn" onclick="joinRoom()">ULANISH</button>
-      <button class="btn btn-sec" onclick="closeJoinModal()">ORQAGA</button>
-    </div>
-  </div>
-
-  <!-- Header -->
+  <!-- Top Player Bar -->
   <header>
-    <div class="player-profile">
-      <img id="userAvatar" class="player-avatar" src="" alt="Avatar">
-      <div class="player-info">
-        <div id="userName" style="font-size: 13px; font-weight: bold;">-</div>
-        <div id="userId" style="font-size: 10px; color: #8a9bb8;">ID: -</div>
+    <div class="player-card">
+      <div class="player-avatar">S</div>
+      <div>
+        <div class="player-name">Sabina</div>
+        <div id="p1Score" class="player-balls">0/6 To'p</div>
       </div>
     </div>
-    <div class="coin-badge">🟡 <span id="userCoins">10</span> Coin</div>
+
+    <div class="game-status">
+      <div>PRO 8-BALL</div>
+      <div id="turnBanner" style="color: #00f0ff; font-size: 10px; margin-top: 2px;">SIZNING GANGIZ</div>
+    </div>
+
+    <div class="player-card">
+      <div>
+        <div class="player-name" style="text-align: right;">Pro Bot</div>
+        <div id="p2Score" class="player-balls" style="text-align: right; color: #ff4757;">0/6 To'p</div>
+      </div>
+      <div class="player-avatar" style="background: #ff4757;">P2</div>
+    </div>
   </header>
 
-  <!-- Turn Banner -->
-  <div id="turnBanner" class="turn-banner">NAVBI: SIZNING GANGIZ</div>
-
-  <!-- Canvas Game -->
+  <!-- Katta Qora Bilyard Stoli -->
   <div class="game-container">
-    <canvas id="billiardCanvas" width="800" height="400"></canvas>
+    <canvas id="billiardCanvas" width="1000" height="500"></canvas>
   </div>
 
-  <!-- Controls -->
+  <!-- Bottom Controls -->
   <div class="controls">
     <div class="slider-row">
-      <label>Zarba Kuchi:</label>
-      <input type="range" id="powerSlider" min="1" max="100" value="30">
-      <span id="powerVal">30%</span>
+      <span>⚡ Power:</span>
+      <input type="range" id="powerSlider" min="1" max="100" value="44">
+      <span id="powerVal" style="color: #fff; font-weight: bold; width: 35px;">44%</span>
     </div>
     <div class="btn-row">
-      <button id="voiceBtn" class="btn-voice" onclick="toggleVoice()">🎙 Voice: Off</button>
-      <button id="musicBtn" class="btn-voice" onclick="toggleMusic()">🎵 Musiqa: Off</button>
-      <button id="shootBtn" class="btn-shoot" onclick="shootBall()">ZARBA</button>
+      <button id="musicBtn" class="btn-sec" onclick="toggleMusic()">🎵 Musiqa: On</button>
+      
+      <!-- Toshlarni Sotish Tugmasi -->
+      <a href="https://t.me/s_blrd?text=Salom%20men%20toshlarimni%20sizga%20sotmoqchiman." target="_blank" class="btn-sell">
+        💰 Toshlarni Sotish
+      </a>
+
+      <button id="shootBtn" class="btn-shoot" onclick="shootBall()">🎯 SHOOT</button>
     </div>
   </div>
 
   <script>
-    let user = { id: '', name: '', avatar: '', coins: 10 };
-    let gameMode = ''; 
-    let currentBet = 2;
-    let isVoiceActive = false;
-    let isMusicPlaying = false;
-
-    // Game Turns & Pocket Rules
-    let currentTurn = 'player'; // 'player' yoki 'opponent'
-    let ballPocketedThisTurn = false;
-    let isMoving = false;
-
     const canvas = document.getElementById('billiardCanvas');
     const ctx = canvas.getContext('2d');
+
     let balls = [];
     let pockets = [
-      {x: 10, y: 10}, {x: 400, y: 10}, {x: 790, y: 10},
-      {x: 10, y: 390}, {x: 400, y: 390}, {x: 790, y: 390}
+      {x: 18, y: 18}, {x: 500, y: 12}, {x: 982, y: 18},
+      {x: 18, y: 482}, {x: 500, y: 488}, {x: 982, y: 482}
     ];
-    let cue = { angle: 0, power: 30 };
 
-    function previewImage(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          document.getElementById('avatarPreview').src = evt.target.result;
-          document.getElementById('avatarPreview').style.display = 'block';
-          document.getElementById('avatarPlaceholder').style.display = 'none';
-          user.avatar = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
+    let cue = { angle: 0, power: 44 };
+    let currentTurn = 'player';
+    let isMoving = false;
+    let isMusicPlaying = false;
 
-    function saveProfile() {
-      const nick = document.getElementById('nickname').value.trim();
-      if (nick.length < 6) return alert("Nik kamida 6 ta belgidan iborat bo'lishi kerak!");
-
-      user.name = nick;
-      user.id = 'ID-' + Math.floor(10000 + Math.random() * 90000);
-      if(!user.avatar) user.avatar = 'https://via.placeholder.com/40/00f0ff/ffffff?text=' + nick.charAt(0);
-
-      document.getElementById('userName').innerText = user.name;
-      document.getElementById('userId').innerText = user.id;
-      document.getElementById('userAvatar').src = user.avatar;
-      document.getElementById('userCoins').innerText = user.coins;
-
-      document.getElementById('authModal').style.display = 'none';
-      openMainMenu();
-    }
-
-    function openMainMenu() { document.getElementById('mainMenuModal').style.display = 'flex'; }
-    function openBetModal(mode) { gameMode = mode; document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('betModal').style.display = 'flex'; }
-    function closeBetModal() { document.getElementById('betModal').style.display = 'none'; openMainMenu(); }
-    function openJoinModal() { document.getElementById('mainMenuModal').style.display = 'none'; document.getElementById('joinModal').style.display = 'flex'; }
-    function closeJoinModal() { document.getElementById('joinModal').style.display = 'none'; openMainMenu(); }
-
-    function confirmStartGame() {
-      const bet = parseInt(document.getElementById('betAmount').value);
-      if (bet < 2 || bet > 1000000) return alert("Stavka 2 va 1,000,000 Coin oralig'ida bo'lishi kerak!");
-      if (bet > user.coins) return alert("Sizda yetarli Coin yo'q!");
-
-      currentBet = bet;
-      document.getElementById('betModal').style.display = 'none';
-      initGame();
-    }
+    let playerPocketed = 0;
+    let botPocketed = 0;
+    const WIN_LIMIT = 6;
 
     function toggleMusic() {
       const audio = document.getElementById('bgMusic');
@@ -231,35 +118,38 @@
       isMusicPlaying = !isMusicPlaying;
     }
 
-    function toggleVoice() {
-      isVoiceActive = !isVoiceActive;
-      const btn = document.getElementById('voiceBtn');
-      btn.innerText = isVoiceActive ? "🎙 Voice: On" : "🎙 Voice: Off";
-      btn.classList.toggle('active', isVoiceActive);
-    }
-
-    function initGame() {
+    function resetGame() {
       balls = [];
-      balls.push({ x: 200, y: 200, vx: 0, vy: 0, r: 10, color: '#ffffff', isCue: true });
+      playerPocketed = 0;
+      botPocketed = 0;
+      updateScoreUI();
 
-      const startX = 550, startY = 200, radius = 10;
-      const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#3742fa', '#000000', '#e84393', '#74b9ff'];
+      // Oq to'p
+      balls.push({ x: 250, y: 250, vx: 0, vy: 0, r: 12, color: '#ffffff', isCue: true });
+
+      // Professional Uchburchak Piramida
+      const startX = 680, startY = 250, r = 12;
+      const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#000000', '#e84393', '#74b9ff', '#9b59b6', '#218c74', '#b33939', '#f5cd79', '#ff5252', '#341f97', '#01a3a4', '#f368e0'];
 
       let idx = 0;
-      for (let col = 0; col < 4; col++) {
+      for (let col = 0; col < 5; col++) {
         for (let row = 0; row <= col; row++) {
           balls.push({
-            x: startX + col * (radius * 2 - 1),
-            y: startY + (row - col / 2) * (radius * 2 + 2),
-            vx: 0, vy: 0, r: radius,
+            x: startX + col * (r * 2 - 1),
+            y: startY + (row - col / 2) * (r * 2 + 2),
+            vx: 0, vy: 0, r: r,
             color: colors[idx % colors.length]
           });
           idx++;
         }
       }
       currentTurn = 'player';
-      updateTurnBanner();
-      requestAnimationFrame(updateGame);
+      updateStatus();
+    }
+
+    function updateScoreUI() {
+      document.getElementById('p1Score').innerText = `${playerPocketed}/${WIN_LIMIT} To'p`;
+      document.getElementById('p2Score').innerText = `${botPocketed}/${WIN_LIMIT} To'p`;
     }
 
     document.getElementById('powerSlider').addEventListener('input', (e) => {
@@ -268,10 +158,10 @@
     });
 
     canvas.addEventListener('mousemove', (e) => {
-      if (currentTurn !== 'player') return;
+      if (currentTurn !== 'player' || isMoving) return;
       const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
       const cueBall = balls[0];
       if (cueBall) cue.angle = Math.atan2(mouseY - cueBall.y, mouseX - cueBall.x);
     });
@@ -280,122 +170,173 @@
       if (currentTurn !== 'player' || isMoving) return;
       const cueBall = balls[0];
       if (cueBall) {
-        ballPocketedThisTurn = false;
-        const force = cue.power * 0.15;
+        const force = cue.power * 0.18;
         cueBall.vx = Math.cos(cue.angle) * force;
         cueBall.vy = Math.sin(cue.angle) * force;
         isMoving = true;
       }
     }
 
-    // Pro Bot Zarba Berish Logikasi (Inson kabi)
+    // O'ta Aqlli va Murakkab Pro Bot Logikasi
     function botTurn() {
-      if (currentTurn !== 'opponent' || balls.length <= 1) return;
+      if (currentTurn !== 'bot' || balls.length <= 1) return;
 
       setTimeout(() => {
         const cueBall = balls[0];
-        const targetBall = balls[1]; // Eng yaqin to'p
+        let targetBall = balls[1];
+        let minDist = 9999;
+
+        // Eng munosib va yaqin to'pni tanlash
+        for (let i = 1; i < balls.length; i++) {
+          let d = Math.hypot(balls[i].x - cueBall.x, balls[i].y - cueBall.y);
+          if (d < minDist) {
+            minDist = d;
+            targetBall = balls[i];
+          }
+        }
         
-        // Asosiy burchak + insoniy tasodifiy xatolik (-0.15 va 0.15 rad)
         let angle = Math.atan2(targetBall.y - cueBall.y, targetBall.x - cueBall.x);
-        angle += (Math.random() - 0.5) * 0.3;
+        angle += (Math.random() - 0.5) * 0.08; // Professional kichik xatolik margin
 
         cue.angle = angle;
-        ballPocketedThisTurn = false;
-        
-        const force = (20 + Math.random() * 40) * 0.15;
+        const force = (35 + Math.random() * 35) * 0.18;
         cueBall.vx = Math.cos(angle) * force;
         cueBall.vy = Math.sin(angle) * force;
         isMoving = true;
-      }, 1500);
+      }, 1300);
     }
 
-    function updateTurnBanner() {
+    function updateStatus() {
       const banner = document.getElementById('turnBanner');
       if (currentTurn === 'player') {
-        banner.innerText = "NAVBA: SIZNING GANGIZ";
+        banner.innerText = "SIZNING GANGIZ";
         banner.style.color = "#00f0ff";
       } else {
-        banner.innerText = "NAVBA: RAQIB (PRO BOT) GANGI";
+        banner.innerText = "PRO BOT GANGI";
         banner.style.color = "#ff4757";
+      }
+    }
+
+    function checkWinCondition() {
+      if (playerPocketed >= WIN_LIMIT) {
+        alert("TABRIKLAYMIZ! Siz Pro Botni yutdingiz! 🎉");
+        resetGame();
+      } else if (botPocketed >= WIN_LIMIT) {
+        alert("PRO BOT YUTDI! Qayta urinib ko'ring. 🤖");
+        resetGame();
       }
     }
 
     function updateGame() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Pockets (Luzalarni chizish)
-      ctx.fillStyle = '#05140b';
+      // Oq teshiklar (Luzalar)
+      ctx.fillStyle = '#ffffff';
       pockets.forEach(p => {
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 16, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 22, 0, Math.PI * 2);
         ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
       });
 
       let stillMoving = false;
 
-      // To'plar Harakati
-      for (let i = balls.length - 1; i >= 0; i--) {
+      // To'plar harakati va fizika
+      for (let i = 0; i < balls.length; i++) {
         let ball = balls[i];
         ball.x += ball.vx; ball.y += ball.vy;
-        ball.vx *= 0.98; ball.vy *= 0.98;
+        ball.vx *= 0.985; ball.vy *= 0.985;
 
         if (Math.abs(ball.vx) > 0.05 || Math.abs(ball.vy) > 0.05) stillMoving = true;
 
         // Devordan qaytish
-        if (ball.x - ball.r < 0 || ball.x + ball.r > canvas.width) ball.vx *= -1;
-        if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) ball.vy *= -1;
+        if (ball.x - ball.r < 10 || ball.x + ball.r > canvas.width - 10) ball.vx *= -1;
+        if (ball.y - ball.r < 10 || ball.y + ball.r > canvas.height - 10) ball.vy *= -1;
 
-        // Luzaga tushishni tekshirish
+        // O'zaro to'qnashuv
+        for (let j = i + 1; j < balls.length; j++) {
+          let b2 = balls[j];
+          let dx = b2.x - ball.x;
+          let dy = b2.y - ball.y;
+          let dist = Math.hypot(dx, dy);
+
+          if (dist < ball.r + b2.r) {
+            let angle = Math.atan2(dy, dx);
+            let speed1 = Math.hypot(ball.vx, ball.vy);
+            let speed2 = Math.hypot(b2.vx, b2.vy);
+
+            ball.vx = -Math.cos(angle) * speed2 * 0.92;
+            ball.vy = -Math.sin(angle) * speed2 * 0.92;
+            b2.vx = Math.cos(angle) * speed1 * 0.92;
+            b2.vy = Math.sin(angle) * speed1 * 0.92;
+          }
+        }
+
+        // Luzaga tushish va xallash
         pockets.forEach(p => {
-          let dist = Math.hypot(ball.x - p.x, ball.y - p.y);
-          if (dist < 16) {
+          if (Math.hypot(ball.x - p.x, ball.y - p.y) < 20) {
             if (ball.isCue) {
-              // Oq to'p tushsa markazga qaytadi
-              ball.x = 200; ball.y = 200; ball.vx = 0; ball.vy = 0;
+              ball.x = 250; ball.y = 250; ball.vx = 0; ball.vy = 0;
             } else {
+              if (currentTurn === 'player') playerPocketed++;
+              else botPocketed++;
+
               balls.splice(i, 1);
-              ballPocketedThisTurn = true; // To'p tushdi!
+              updateScoreUI();
+              checkWinCondition();
             }
           }
         });
 
+        // 3D Rendering
         if (balls[i]) {
           ctx.beginPath();
           ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
           ctx.fillStyle = ball.color;
           ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+          ctx.stroke();
           ctx.closePath();
         }
       }
 
-      // To'plar to'xtaganda Navbatni tekshirish
+      // Zarba tugagach navbatni almashtirish
       if (isMoving && !stillMoving) {
         isMoving = false;
-        if (!ballPocketedThisTurn) {
-          // To'p tushmadi - Navbat almashadi
-          currentTurn = (currentTurn === 'player') ? 'opponent' : 'player';
-          updateTurnBanner();
-          if (currentTurn === 'opponent' && gameMode === 'bot') botTurn();
-        } else {
-          // To'p tushdi - Shu o'yinchi yana uradi
-          if (currentTurn === 'opponent' && gameMode === 'bot') botTurn();
-        }
+        currentTurn = (currentTurn === 'player') ? 'bot' : 'player';
+        updateStatus();
+        if (currentTurn === 'bot') botTurn();
       }
 
-      // Kiy chizish
+      // Uzun Kiy (Tayoqcha)
       const cueBall = balls[0];
       if (cueBall && !isMoving && currentTurn === 'player') {
         ctx.save();
         ctx.translate(cueBall.x, cueBall.y);
         ctx.rotate(cue.angle);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(300, 0);
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+
         ctx.fillStyle = '#d63031';
-        ctx.fillRect(-120 - cue.power / 2, -3, 100, 6);
+        ctx.fillRect(-220 - cue.power / 1.5, -4, 200, 8);
         ctx.restore();
       }
 
       requestAnimationFrame(updateGame);
     }
+
+    resetGame();
+    requestAnimationFrame(updateGame);
   </script>
 </body>
 </html>
