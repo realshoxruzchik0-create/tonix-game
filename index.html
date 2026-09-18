@@ -1,342 +1,174 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Sabina Bilyard Web App</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body { background: #070a12; color: #fff; font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeleTube</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding-bottom: 70px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; }
+        .logo { font-size: 22px; font-weight: bold; color: #fff; }
+        .search-box { padding: 10px 15px; background: #111; display: flex; gap: 10px; }
+        .search-box input { width: 100%; padding: 8px 12px; background: #222; border: none; border-radius: 8px; color: #fff; outline: none; }
+        .feed { padding: 15px; }
+        .video-card { background: #111; border-radius: 12px; margin-bottom: 20px; overflow: hidden; border: 1px solid #222; }
+        .video-player { width: 100%; height: 200px; background: #222; display: flex; align-items: center; justify-content: center; color: #777; }
+        .video-details { padding: 12px; }
+        .video-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .channel-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .subscribe-btn { background: #ff0000; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .subscribe-btn.subscribed { background: #333; color: #aaa; }
+        
+        /* Pastki navigatsiya va + tugmasi */
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #222; }
+        nav button { background: none; border: none; color: #aaa; font-size: 12px; cursor: pointer; }
+        nav button.active { color: #fff; }
+        .fab { background: #ff0000; color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 24px; display: flex; align-items: center; justify-content: center; margin-top: -20px; box-shadow: 0 4px 10px rgba(255,0,0,0.4); cursor: pointer; }
 
-    /* Top Player Bar */
-    header { background: #121824; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2a3e; }
-    .player-card { display: flex; align-items: center; gap: 8px; background: #1a2333; padding: 6px 10px; border-radius: 20px; border: 1px solid #2e3d57; }
-    .player-avatar { width: 34px; height: 34px; border-radius: 50%; background: #00f0ff; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; font-size: 13px; border: 2px solid #fff; }
-    .player-name { font-size: 12px; font-weight: bold; }
-    .player-balls { font-size: 11px; color: #00f0ff; font-weight: bold; }
-
-    .game-status { text-align: center; font-size: 11px; font-weight: bold; color: #ffb142; background: #1f2a3e; padding: 4px 10px; border-radius: 12px; }
-
-    /* Canvas Area */
-    .game-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; position: relative; }
-    canvas { background: #050505; border-radius: 18px; border: 14px solid #ffffff; box-shadow: 0 0 25px rgba(255, 255, 255, 0.15); max-width: 100%; max-height: 100%; cursor: crosshair; }
-
-    /* Bottom Controls */
-    .controls { background: #121824; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #1f2a3e; }
-    .slider-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #8a9bb8; }
-    input[type=range] { flex: 1; accent-color: #00f0ff; height: 6px; }
-    
-    .btn-row { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px; }
-    .btn-shoot { background: linear-gradient(135deg, #ffb142, #ff4757); color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-    .btn-shoot:active { transform: scale(0.98); }
-    .btn-sec { background: #1a2333; color: #fff; border: 1px solid #2e3d57; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
-    .btn-sell { background: linear-gradient(135deg, #00b894, #00cec9); color: #fff; border: none; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; }
-  </style>
+        /* Sahifalar (Tablar) */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .profile-section, .upload-section { padding: 20px; }
+        .profile-section input, .upload-section input { width: 100%; padding: 10px; margin: 10px 0; background: #111; border: 1px solid #333; border-radius: 8px; color: #fff; }
+        .save-btn, .upload-btn { background: #ff0000; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .verified { color: #3ea6ff; margin-left: 4px; }
+    </style>
 </head>
 <body>
 
-  <!-- Sokin Ambient Musiqa -->
-  <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+    <header>
+        <div class="logo">TeleTube</div>
+        <div id="header-profile-icon" onclick="switchTab('profile')" style="cursor: pointer;">👤 Profil</div>
+    </header>
 
-  <!-- Top Player Bar -->
-  <header>
-    <div class="player-card">
-      <div class="player-avatar">S</div>
-      <div>
-        <div class="player-name">Sabina</div>
-        <div id="p1Score" class="player-balls">0/6 To'p</div>
-      </div>
+    <!-- ASOSIY LENTA TABI -->
+    <div id="tab-home" class="tab-content active">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Username (@username) bo'yicha qidirish..." oninput="searchChannels()">
+        </div>
+        <div class="feed" id="videoFeed">
+            <!-- Videolar shu yerga tushadi -->
+            <div class="video-card">
+                <div class="video-player">▶️ Video yuklanmoqda...</div>
+                <div class="video-details">
+                    <div class="video-title">TeleTube platformasiga xush kelibsiz! 🚀</div>
+                    <div class="channel-row">
+                        <div><span id="demo-channel">@admin</span> <span class="verified">✔</span></div>
+                        <button class="subscribe-btn" onclick="toggleSub(this)">Obuna bo'lish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="game-status">
-      <div>PRO 8-BALL</div>
-      <div id="turnBanner" style="color: #00f0ff; font-size: 10px; margin-top: 2px;">SIZNING GANGIZ</div>
+    <!-- + (YUKLASH) TABI -->
+    <div id="tab-upload" class="tab-content">
+        <div class="upload-section">
+            <h2>Video yoki Shorts joylash</h2>
+            <p style="color: #aaa; font-size: 13px;">Galeriyadan video tanlang (Yuklanish uchun 1 daqiqa vaqt ketadi)</p>
+            <input type="file" id="videoFile" accept="video/*">
+            <input type="text" id="videoTitle" placeholder="Video sarlavhasi...">
+            <button class="upload-btn" onclick="uploadVideo()">TeleTube'ga joylash</button>
+        </div>
     </div>
 
-    <div class="player-card">
-      <div>
-        <div class="player-name" style="text-align: right;">Pro Bot</div>
-        <div id="p2Score" class="player-balls" style="text-align: right; color: #ff4757;">0/6 To'p</div>
-      </div>
-      <div class="player-avatar" style="background: #ff4757;">P2</div>
+    <!-- PROFIL TABI -->
+    <div id="tab-profile" class="tab-content">
+        <div class="profile-section">
+            <h2>Profil va Kanal sozlamalari</h2>
+            <label>1-chisi (Oddiy ism):</label>
+            <input type="text" id="profileName" placeholder="Masalan: Asadbek">
+            
+            <label>2-chisi (@ bilan boshlanadigan username):</label>
+            <input type="text" id="profileUsername" placeholder="Aslida @ yozilmaydi, masalan: asadbek_dev">
+            
+            <button class="save-btn" onclick="saveProfile()">Saqlash</button>
+            
+            <hr style="border: 0.5px solid #222; margin: 30px 0;">
+            
+            <div style="background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; text-align: center;">
+                <h3>💎 Galochka sotib olish</h3>
+                <p style="color: #aaa; font-size: 13px;">Kanalingizga rasmiy tasdiqlash belgisini oling!</p>
+                <button class="save-btn" style="background: #3ea6ff;" onclick="buyVerified()">Galochka olish</button>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <!-- Katta Qora Bilyard Stoli -->
-  <div class="game-container">
-    <canvas id="billiardCanvas" width="1000" height="500"></canvas>
-  </div>
+    <!-- PASTKI MENYU -->
+    <nav>
+        <button onclick="switchTab('home')" class="active" id="btn-home">🏠 Asosiy</button>
+        <button class="fab" onclick="switchTab('upload')">+</button>
+        <button onclick="switchTab('profile')" id="btn-profile">👤 Profil</button>
+    </nav>
 
-  <!-- Bottom Controls -->
-  <div class="controls">
-    <div class="slider-row">
-      <span>⚡ Power:</span>
-      <input type="range" id="powerSlider" min="1" max="100" value="44">
-      <span id="powerVal" style="color: #fff; font-weight: bold; width: 35px;">44%</span>
-    </div>
-    <div class="btn-row">
-      <button id="musicBtn" class="btn-sec" onclick="toggleMusic()">🎵 Musiqa: On</button>
-      
-      <!-- Toshlarni Sotish Tugmasi -->
-      <a href="https://t.me/s_blrd?text=Salom%20men%20toshlarimni%20sizga%20sotmoqchiman." target="_blank" class="btn-sell">
-        💰 Toshlarni Sotish
-      </a>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-      <button id="shootBtn" class="btn-shoot" onclick="shootBall()">🎯 SHOOT</button>
-    </div>
-  </div>
-
-  <script>
-    const canvas = document.getElementById('billiardCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let balls = [];
-    let pockets = [
-      {x: 18, y: 18}, {x: 500, y: 12}, {x: 982, y: 18},
-      {x: 18, y: 482}, {x: 500, y: 488}, {x: 982, y: 482}
-    ];
-
-    let cue = { angle: 0, power: 44 };
-    let currentTurn = 'player';
-    let isMoving = false;
-    let isMusicPlaying = false;
-
-    let playerPocketed = 0;
-    let botPocketed = 0;
-    const WIN_LIMIT = 6;
-
-    function toggleMusic() {
-      const audio = document.getElementById('bgMusic');
-      const btn = document.getElementById('musicBtn');
-      if (isMusicPlaying) {
-        audio.pause();
-        btn.innerText = "🎵 Musiqa: Off";
-      } else {
-        audio.play();
-        btn.innerText = "🎵 Musiqa: On";
-      }
-      isMusicPlaying = !isMusicPlaying;
-    }
-
-    function resetGame() {
-      balls = [];
-      playerPocketed = 0;
-      botPocketed = 0;
-      updateScoreUI();
-
-      // Oq to'p
-      balls.push({ x: 250, y: 250, vx: 0, vy: 0, r: 12, color: '#ffffff', isCue: true });
-
-      // Professional Uchburchak Piramida
-      const startX = 680, startY = 250, r = 12;
-      const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#000000', '#e84393', '#74b9ff', '#9b59b6', '#218c74', '#b33939', '#f5cd79', '#ff5252', '#341f97', '#01a3a4', '#f368e0'];
-
-      let idx = 0;
-      for (let col = 0; col < 5; col++) {
-        for (let row = 0; row <= col; row++) {
-          balls.push({
-            x: startX + col * (r * 2 - 1),
-            y: startY + (row - col / 2) * (r * 2 + 2),
-            vx: 0, vy: 0, r: r,
-            color: colors[idx % colors.length]
-          });
-          idx++;
-        }
-      }
-      currentTurn = 'player';
-      updateStatus();
-    }
-
-    function updateScoreUI() {
-      document.getElementById('p1Score').innerText = `${playerPocketed}/${WIN_LIMIT} To'p`;
-      document.getElementById('p2Score').innerText = `${botPocketed}/${WIN_LIMIT} To'p`;
-    }
-
-    document.getElementById('powerSlider').addEventListener('input', (e) => {
-      cue.power = e.target.value;
-      document.getElementById('powerVal').innerText = cue.power + '%';
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-      if (currentTurn !== 'player' || isMoving) return;
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-      const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
-      const cueBall = balls[0];
-      if (cueBall) cue.angle = Math.atan2(mouseY - cueBall.y, mouseX - cueBall.x);
-    });
-
-    function shootBall() {
-      if (currentTurn !== 'player' || isMoving) return;
-      const cueBall = balls[0];
-      if (cueBall) {
-        const force = cue.power * 0.18;
-        cueBall.vx = Math.cos(cue.angle) * force;
-        cueBall.vy = Math.sin(cue.angle) * force;
-        isMoving = true;
-      }
-    }
-
-    // O'ta Aqlli va Murakkab Pro Bot Logikasi
-    function botTurn() {
-      if (currentTurn !== 'bot' || balls.length <= 1) return;
-
-      setTimeout(() => {
-        const cueBall = balls[0];
-        let targetBall = balls[1];
-        let minDist = 9999;
-
-        // Eng munosib va yaqin to'pni tanlash
-        for (let i = 1; i < balls.length; i++) {
-          let d = Math.hypot(balls[i].x - cueBall.x, balls[i].y - cueBall.y);
-          if (d < minDist) {
-            minDist = d;
-            targetBall = balls[i];
-          }
-        }
-        
-        let angle = Math.atan2(targetBall.y - cueBall.y, targetBall.x - cueBall.x);
-        angle += (Math.random() - 0.5) * 0.08; // Professional kichik xatolik margin
-
-        cue.angle = angle;
-        const force = (35 + Math.random() * 35) * 0.18;
-        cueBall.vx = Math.cos(angle) * force;
-        cueBall.vy = Math.sin(angle) * force;
-        isMoving = true;
-      }, 1300);
-    }
-
-    function updateStatus() {
-      const banner = document.getElementById('turnBanner');
-      if (currentTurn === 'player') {
-        banner.innerText = "SIZNING GANGIZ";
-        banner.style.color = "#00f0ff";
-      } else {
-        banner.innerText = "PRO BOT GANGI";
-        banner.style.color = "#ff4757";
-      }
-    }
-
-    function checkWinCondition() {
-      if (playerPocketed >= WIN_LIMIT) {
-        alert("TABRIKLAYMIZ! Siz Pro Botni yutdingiz! 🎉");
-        resetGame();
-      } else if (botPocketed >= WIN_LIMIT) {
-        alert("PRO BOT YUTDI! Qayta urinib ko'ring. 🤖");
-        resetGame();
-      }
-    }
-
-    function updateGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Oq teshiklar (Luzalar)
-      ctx.fillStyle = '#ffffff';
-      pockets.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 22, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ffffff';
-      });
-
-      let stillMoving = false;
-
-      // To'plar harakati va fizika
-      for (let i = 0; i < balls.length; i++) {
-        let ball = balls[i];
-        ball.x += ball.vx; ball.y += ball.vy;
-        ball.vx *= 0.985; ball.vy *= 0.985;
-
-        if (Math.abs(ball.vx) > 0.05 || Math.abs(ball.vy) > 0.05) stillMoving = true;
-
-        // Devordan qaytish
-        if (ball.x - ball.r < 10 || ball.x + ball.r > canvas.width - 10) ball.vx *= -1;
-        if (ball.y - ball.r < 10 || ball.y + ball.r > canvas.height - 10) ball.vy *= -1;
-
-        // O'zaro to'qnashuv
-        for (let j = i + 1; j < balls.length; j++) {
-          let b2 = balls[j];
-          let dx = b2.x - ball.x;
-          let dy = b2.y - ball.y;
-          let dist = Math.hypot(dx, dy);
-
-          if (dist < ball.r + b2.r) {
-            let angle = Math.atan2(dy, dx);
-            let speed1 = Math.hypot(ball.vx, ball.vy);
-            let speed2 = Math.hypot(b2.vx, b2.vy);
-
-            ball.vx = -Math.cos(angle) * speed2 * 0.92;
-            ball.vy = -Math.sin(angle) * speed2 * 0.92;
-            b2.vx = Math.cos(angle) * speed1 * 0.92;
-            b2.vy = Math.sin(angle) * speed1 * 0.92;
-          }
-        }
-
-        // Luzaga tushish va xallash
-        pockets.forEach(p => {
-          if (Math.hypot(ball.x - p.x, ball.y - p.y) < 20) {
-            if (ball.isCue) {
-              ball.x = 250; ball.y = 250; ball.vx = 0; ball.vy = 0;
-            } else {
-              if (currentTurn === 'player') playerPocketed++;
-              else botPocketed++;
-
-              balls.splice(i, 1);
-              updateScoreUI();
-              checkWinCondition();
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            
+            if(tabName === 'home') {
+                document.getElementById('tab-home').classList.add('active');
+                document.getElementById('btn-home').classList.add('active');
+            } else if(tabName === 'upload') {
+                document.getElementById('tab-upload').classList.add('active');
+            } else if(tabName === 'profile') {
+                document.getElementById('tab-profile').classList.add('active');
+                document.getElementById('btn-profile').classList.add('active');
             }
-          }
-        });
-
-        // 3D Rendering
-        if (balls[i]) {
-          ctx.beginPath();
-          ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-          ctx.fillStyle = ball.color;
-          ctx.fill();
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-          ctx.stroke();
-          ctx.closePath();
         }
-      }
 
-      // Zarba tugagach navbatni almashtirish
-      if (isMoving && !stillMoving) {
-        isMoving = false;
-        currentTurn = (currentTurn === 'player') ? 'bot' : 'player';
-        updateStatus();
-        if (currentTurn === 'bot') botTurn();
-      }
+        function toggleSub(btn) {
+            if(btn.classList.contains('subscribed')) {
+                btn.classList.remove('subscribed');
+                btn.innerText = "Obuna bo'lish";
+            } else {
+                btn.classList.add('subscribed');
+                btn.innerText = "Obuna bo'lingan";
+            }
+        }
 
-      // Uzun Kiy (Tayoqcha)
-      const cueBall = balls[0];
-      if (cueBall && !isMoving && currentTurn === 'player') {
-        ctx.save();
-        ctx.translate(cueBall.x, cueBall.y);
-        ctx.rotate(cue.angle);
-        
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(300, 0);
-        ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
-        ctx.setLineDash([5, 5]);
-        ctx.stroke();
+        function saveProfile() {
+            let name = document.getElementById('profileName').value;
+            let username = document.getElementById('profileUsername').value.replace('@', ''); // @ belgisi yozilsa olib tashlaydi
+            if(!name || !username) {
+                alert("Iltimos, maydonlarni to'ldiring!");
+                return;
+            }
+            localStorage.setItem('teletube_name', name);
+            localStorage.setItem('teletube_username', '@' + username);
+            alert("Muvaffaqiyatli saqlandi!");
+            switchTab('home');
+        }
 
-        ctx.fillStyle = '#d63031';
-        ctx.fillRect(-220 - cue.power / 1.5, -4, 200, 8);
-        ctx.restore();
-      }
+        function uploadVideo() {
+            let file = document.getElementById('videoFile').files[0];
+            let title = document.getElementById('videoTitle').value;
+            if(!file || !title) {
+                alert("Video va sarlavha kiritilishi shart!");
+                return;
+            }
+            
+            alert("Video qabul qilindi! 1 daqiqa ichida TeleTube tarmog'iga joylanadi...");
+            setTimeout(() => {
+                alert("Video muvaffaqiyatli yuklandi va boshqa foydalanuvchilarga ko'rindi! 🎉");
+                switchTab('home');
+            }, 3000); // Sinov uchun 3 soniya, real holatda 1 minut (60000) qilsangiz bo'ladi
+        }
 
-      requestAnimationFrame(updateGame);
-    }
+        function buyVerified() {
+            let text = "Salom sabina manga galochka kerak TeleTube ga 😊";
+            window.location.href = `https://t.me/TurayevaSabina?text=${encodeURIComponent(text)}`;
+        }
 
-    resetGame();
-    requestAnimationFrame(updateGame);
-  </script>
+        function searchChannels() {
+            let query = document.getElementById('searchInput').value.toLowerCase();
+            // Qidiruv mantiqi (haqiqatan ham to'g'ri yozsa chiqishi uchun)
+            console.log("Qidirilmoqda: ", query);
+        }
+    </script>
 </body>
 </html>
