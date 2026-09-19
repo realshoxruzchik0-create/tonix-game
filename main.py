@@ -1,29 +1,30 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 import asyncio
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import CommandStart
+from aiogram.enums import ParseMode
 
-TOKEN = "8821101595:AAFzvcbSWUZpAa7qmzv3rinvVSMCmiE32jA"
+# Bot tokeningiz
+TOKEN = "8695811464:AAG09aLyLwWdQ4YVLlrkBz-21hk6cRvktrk"
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-@dp.message(Command("start"))
-async def start_cmd(message: types.Message):
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(
-            text="🚀 Lavpin Shop Ochish", 
-            web_app=WebAppInfo(url="https://realshoxruzchik0-create.github.io/tonix-game/")
-        )],
-        [InlineKeyboardButton(text="📢 Yangiliklar", url="https://t.me/lavpin_donat")]
-    ])
+# /start buyrug'i kelganda ishlaydigan bo'lim
+@dp.message(CommandStart())
+async def start_handler(message: types.Message):
+    # Custom emoji ID: 5990173055026990900
+    custom_emoji = '<tg-emoji emoji-id="5990173055026990900">✔️</tg-emoji>'
     
-    await message.answer_photo(
-        photo="AgACAgEAAxkBAAMeaol63izZUgIsNIZCgKVVUpOVbnMAAjgNaxs1vUlEUZgcRYxeP2sBAAMCAAN5AAM9BA",
-        caption="Lavpin botga xush kelibsiz! Xaridni boshlash uchun pastdagi tugmani bosing:",
-        reply_markup=kb
-    )
+    # Yuboriladigan matn
+    text = f"Assalomu alaykum dev {custom_emoji}"
+    
+    # HTML formatida javob qaytarish
+    await message.answer(text, parse_mode=ParseMode.HTML)
 
 async def main():
+    logging.basicConfig(level=logging.INFO)
+    print("Bot muvaffaqiyatli ishga tushdi!")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
