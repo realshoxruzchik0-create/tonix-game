@@ -1,174 +1,23 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeleTube</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { background-color: #000000; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding-bottom: 70px; }
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #222; }
-        .logo { font-size: 22px; font-weight: bold; color: #fff; }
-        .search-box { padding: 10px 15px; background: #111; display: flex; gap: 10px; }
-        .search-box input { width: 100%; padding: 8px 12px; background: #222; border: none; border-radius: 8px; color: #fff; outline: none; }
-        .feed { padding: 15px; }
-        .video-card { background: #111; border-radius: 12px; margin-bottom: 20px; overflow: hidden; border: 1px solid #222; }
-        .video-player { width: 100%; height: 200px; background: #222; display: flex; align-items: center; justify-content: center; color: #777; }
-        .video-details { padding: 12px; }
-        .video-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
-        .channel-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .subscribe-btn { background: #ff0000; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .subscribe-btn.subscribed { background: #333; color: #aaa; }
-        
-        /* Pastki navigatsiya va + tugmasi */
-        nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #222; }
-        nav button { background: none; border: none; color: #aaa; font-size: 12px; cursor: pointer; }
-        nav button.active { color: #fff; }
-        .fab { background: #ff0000; color: white; width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 24px; display: flex; align-items: center; justify-content: center; margin-top: -20px; box-shadow: 0 4px 10px rgba(255,0,0,0.4); cursor: pointer; }
+import asyncio
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import CommandStart
+from aiogram.enums import ParseMode
 
-        /* Sahifalar (Tablar) */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .profile-section, .upload-section { padding: 20px; }
-        .profile-section input, .upload-section input { width: 100%; padding: 10px; margin: 10px 0; background: #111; border: 1px solid #333; border-radius: 8px; color: #fff; }
-        .save-btn, .upload-btn { background: #ff0000; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .verified { color: #3ea6ff; margin-left: 4px; }
-    </style>
-</head>
-<body>
+TOKEN = "8695811464:AAG09aLyLwWdQ4YVLlrkBz-21hk6cRvktrk"
 
-    <header>
-        <div class="logo">TeleTube</div>
-        <div id="header-profile-icon" onclick="switchTab('profile')" style="cursor: pointer;">👤 Profil</div>
-    </header>
+bot = Bot(token=TOKEN)
+dp = Dispatcher()
 
-    <!-- ASOSIY LENTA TABI -->
-    <div id="tab-home" class="tab-content active">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Username (@username) bo'yicha qidirish..." oninput="searchChannels()">
-        </div>
-        <div class="feed" id="videoFeed">
-            <!-- Videolar shu yerga tushadi -->
-            <div class="video-card">
-                <div class="video-player">▶️ Video yuklanmoqda...</div>
-                <div class="video-details">
-                    <div class="video-title">TeleTube platformasiga xush kelibsiz! 🚀</div>
-                    <div class="channel-row">
-                        <div><span id="demo-channel">@admin</span> <span class="verified">✔</span></div>
-                        <button class="subscribe-btn" onclick="toggleSub(this)">Obuna bo'lish</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+@dp.message(CommandStart())
+async def start_handler(message: types.Message):
+    custom_emoji = '<tg-emoji emoji-id="5990173055026990900">✔️</tg-emoji>'
+    text = f"Assalomu alaykum dev {custom_emoji}"
+    await message.answer(text, parse_mode=ParseMode.HTML)
 
-    <!-- + (YUKLASH) TABI -->
-    <div id="tab-upload" class="tab-content">
-        <div class="upload-section">
-            <h2>Video yoki Shorts joylash</h2>
-            <p style="color: #aaa; font-size: 13px;">Galeriyadan video tanlang (Yuklanish uchun 1 daqiqa vaqt ketadi)</p>
-            <input type="file" id="videoFile" accept="video/*">
-            <input type="text" id="videoTitle" placeholder="Video sarlavhasi...">
-            <button class="upload-btn" onclick="uploadVideo()">TeleTube'ga joylash</button>
-        </div>
-    </div>
+async def main():
+    logging.basicConfig(level=logging.INFO)
+    await dp.start_polling(bot)
 
-    <!-- PROFIL TABI -->
-    <div id="tab-profile" class="tab-content">
-        <div class="profile-section">
-            <h2>Profil va Kanal sozlamalari</h2>
-            <label>1-chisi (Oddiy ism):</label>
-            <input type="text" id="profileName" placeholder="Masalan: Asadbek">
-            
-            <label>2-chisi (@ bilan boshlanadigan username):</label>
-            <input type="text" id="profileUsername" placeholder="Aslida @ yozilmaydi, masalan: asadbek_dev">
-            
-            <button class="save-btn" onclick="saveProfile()">Saqlash</button>
-            
-            <hr style="border: 0.5px solid #222; margin: 30px 0;">
-            
-            <div style="background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; text-align: center;">
-                <h3>💎 Galochka sotib olish</h3>
-                <p style="color: #aaa; font-size: 13px;">Kanalingizga rasmiy tasdiqlash belgisini oling!</p>
-                <button class="save-btn" style="background: #3ea6ff;" onclick="buyVerified()">Galochka olish</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PASTKI MENYU -->
-    <nav>
-        <button onclick="switchTab('home')" class="active" id="btn-home">🏠 Asosiy</button>
-        <button class="fab" onclick="switchTab('upload')">+</button>
-        <button onclick="switchTab('profile')" id="btn-profile">👤 Profil</button>
-    </nav>
-
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-            
-            if(tabName === 'home') {
-                document.getElementById('tab-home').classList.add('active');
-                document.getElementById('btn-home').classList.add('active');
-            } else if(tabName === 'upload') {
-                document.getElementById('tab-upload').classList.add('active');
-            } else if(tabName === 'profile') {
-                document.getElementById('tab-profile').classList.add('active');
-                document.getElementById('btn-profile').classList.add('active');
-            }
-        }
-
-        function toggleSub(btn) {
-            if(btn.classList.contains('subscribed')) {
-                btn.classList.remove('subscribed');
-                btn.innerText = "Obuna bo'lish";
-            } else {
-                btn.classList.add('subscribed');
-                btn.innerText = "Obuna bo'lingan";
-            }
-        }
-
-        function saveProfile() {
-            let name = document.getElementById('profileName').value;
-            let username = document.getElementById('profileUsername').value.replace('@', ''); // @ belgisi yozilsa olib tashlaydi
-            if(!name || !username) {
-                alert("Iltimos, maydonlarni to'ldiring!");
-                return;
-            }
-            localStorage.setItem('teletube_name', name);
-            localStorage.setItem('teletube_username', '@' + username);
-            alert("Muvaffaqiyatli saqlandi!");
-            switchTab('home');
-        }
-
-        function uploadVideo() {
-            let file = document.getElementById('videoFile').files[0];
-            let title = document.getElementById('videoTitle').value;
-            if(!file || !title) {
-                alert("Video va sarlavha kiritilishi shart!");
-                return;
-            }
-            
-            alert("Video qabul qilindi! 1 daqiqa ichida TeleTube tarmog'iga joylanadi...");
-            setTimeout(() => {
-                alert("Video muvaffaqiyatli yuklandi va boshqa foydalanuvchilarga ko'rindi! 🎉");
-                switchTab('home');
-            }, 3000); // Sinov uchun 3 soniya, real holatda 1 minut (60000) qilsangiz bo'ladi
-        }
-
-        function buyVerified() {
-            let text = "Salom sabina manga galochka kerak TeleTube ga 😊";
-            window.location.href = `https://t.me/TurayevaSabina?text=${encodeURIComponent(text)}`;
-        }
-
-        function searchChannels() {
-            let query = document.getElementById('searchInput').value.toLowerCase();
-            // Qidiruv mantiqi (haqiqatan ham to'g'ri yozsa chiqishi uchun)
-            console.log("Qidirilmoqda: ", query);
-        }
-    </script>
-</body>
-</html>
+if __name__ == "__main__":
+    asyncio.run(main())
