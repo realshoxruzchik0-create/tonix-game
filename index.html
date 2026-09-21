@@ -253,9 +253,12 @@
             <div class="verif-subtitle">Manzilni tasdiqlovchi hujjatni yuklang</div>
             <div class="verif-desc">Hujjat manzilingizni ko'rsatishi kerak</div>
 
-            <div class="upload-box">
+            <!-- Yashirin file input (Galereyadan tanlash uchun) -->
+            <input type="file" id="file-input" style="display: none;" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+
+            <div class="upload-box" onclick="triggerFileUpload()">
                 <div class="upload-title">Hujjat <span>*</span></div>
-                <div class="upload-sub">Qurilmadan tanlash</div>
+                <div class="upload-sub" id="upload-sub-text">Qurilmadan tanlash</div>
                 <div class="upload-formats">JPG, PNG, HEIC, WEBP yoki PDF (maksimal 50 MB)</div>
             </div>
 
@@ -270,7 +273,7 @@
             <div class="verif-footer-text">Yana nimani yuklashim mumkin?</div>
             <div class="req-mark"><span>*</span> Talab qilinadigan maydonlar</div>
 
-            <button class="submit-btn" onclick="closeVerificationModal()">Hujjat yuklash</button>
+            <button class="submit-btn" onclick="submitDocument()">Hujjat yuklash</button>
         </div>
     </div>
 
@@ -538,6 +541,31 @@
 
         function closeVerificationModal() {
             document.getElementById("verification-modal").classList.remove("active");
+        }
+
+        // --- GALEREYADAN HUJJAT TANLASH ---
+        function triggerFileUpload() {
+            document.getElementById("file-input").click();
+        }
+
+        let selectedFile = null;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById("upload-sub-text").innerText = "Tanlandi: " + file.name;
+                document.getElementById("upload-sub-text").style.color = "#00e676";
+            }
+        }
+
+        function submitDocument() {
+            if (!selectedFile) {
+                alert("Iltimos, avval galereyadan hujjat yoki rasm tanlang!");
+                return;
+            }
+            alert("Hujjat muvaffaqiyatli yuklandi va tekshiruvga yuborildi!");
+            closeVerificationModal();
         }
 
         function redirectToSabinaDeposit() {
