@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Exness Mini App</title>
+    <title>Exness Trading</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* Barcha elementlarda ko'k belgilanish va tap-highlightni yo'qotish */
@@ -46,16 +46,16 @@
 
         .pin-footer { text-align: center; font-size: 13px; color: #7e8b9b; margin-bottom: 10px; }
 
-        /* MODAL STYLES FOR DEPOSIT & WITHDRAWAL */
+        /* MODAL STYLES */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 500; justify-content: center; align-items: flex-end;
         }
         .modal.active { display: flex; }
         .modal-content {
-            width: 100%; background: #141824; border-top-left-radius: 20px; border-top-right-radius: 20px;
+            width: 100%; max-height: 85vh; background: #141824; border-top-left-radius: 20px; border-top-right-radius: 20px;
             padding: 20px; border-top: 1px solid #1e2330; animation: slideUp 0.3s ease;
-            display: flex; flex-direction: column; gap: 12px;
+            display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .modal-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 5px; }
@@ -69,6 +69,34 @@
         .opt-text h4 { color: #fff; font-size: 15px; display: flex; align-items: center; gap: 6px; }
         .opt-text p { color: #7e8b9b; font-size: 12px; }
 
+        /* VERIFICATION MODAL SPECIFIC STYLES */
+        .verif-subtitle { font-size: 15px; font-weight: bold; color: #fff; margin-top: 5px; }
+        .verif-desc { font-size: 13px; color: #a1a8b8; margin-bottom: 10px; }
+        
+        .upload-box {
+            background: #1c2333; border: 1px dashed #2a3347; border-radius: 12px; padding: 20px;
+            text-align: center; cursor: pointer; margin-top: 5px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .upload-box:active { background: #252e42; }
+        .upload-title { font-size: 14px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; }
+        .upload-title span { color: #ff3b30; }
+        .upload-sub { font-size: 12px; color: #2979ff; }
+        .upload-formats { font-size: 11px; color: #6b7280; margin-top: 5px; }
+
+        .rules-title { font-size: 14px; font-weight: bold; color: #fff; margin-top: 10px; }
+        .rules-list { padding-left: 18px; font-size: 12px; color: #a1a8b8; display: flex; flex-direction: column; gap: 6px; }
+        .rules-list li { line-height: 1.4; }
+
+        .verif-footer-text { font-size: 13px; color: #ffe600; cursor: pointer; margin-top: 5px; font-weight: 500; }
+        .req-mark { font-size: 12px; color: #6b7280; margin-top: 5px; }
+        .req-mark span { color: #ff3b30; }
+
+        .submit-btn {
+            background: #ffe600; color: #000; border: none; border-radius: 10px; padding: 14px;
+            font-size: 15px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; text-align: center;
+        }
+        .submit-btn:active { opacity: 0.85; }
+
         /* APP MAIN PAGES */
         .page { display: none; width: 100%; height: 100%; flex-direction: column; overflow-y: auto; padding-bottom: 65px; }
         .page.active { display: flex; }
@@ -78,7 +106,8 @@
         .dash-icons { display: flex; align-items: center; gap: 18px; font-size: 22px; color: #fff; }
         .dash-icons span { display: flex; align-items: center; justify-content: center; }
 
-        .banner { margin: 0 16px 16px; background: #082415; border: 1px solid #10522b; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .banner { margin: 0 16px 16px; background: #082415; border: 1px solid #10522b; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .banner:active { opacity: 0.9; }
         .banner-text h4 { color: #fff; font-size: 14px; margin-bottom: 4px; }
         .banner-text p { color: #8fa095; font-size: 12px; }
         .banner-icon { width: 36px; height: 36px; background: #123d24; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00e676; font-size: 18px; }
@@ -217,6 +246,34 @@
         </div>
     </div>
 
+    <!-- YASHASH JOYINI TASDIQLASH MODALI -->
+    <div id="verification-modal" class="modal" onclick="closeVerificationModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-title">Yashash joyingizni tasdiqlang</div>
+            <div class="verif-subtitle">Manzilni tasdiqlovchi hujjatni yuklang</div>
+            <div class="verif-desc">Hujjat manzilingizni ko'rsatishi kerak</div>
+
+            <div class="upload-box">
+                <div class="upload-title">Hujjat <span>*</span></div>
+                <div class="upload-sub">Qurilmadan tanlash</div>
+                <div class="upload-formats">JPG, PNG, HEIC, WEBP yoki PDF (maksimal 50 MB)</div>
+            </div>
+
+            <div class="rules-title">Hujjat turlari</div>
+            <ul class="rules-list">
+                <li>Manzil ma'lumotlari ko'rsatilgan yaroqli shaxsni tasdiqlovchi hujjat</li>
+                <li>Bank hujjatlari (oxirgi 6 oy)</li>
+                <li>Kommunal xizmatlar uchun to'lov cheklari (oxirgi 6 oy)</li>
+                <li>Davlat tomonidan berilgan hujjatlar (oxirgi 6 oy)</li>
+            </ul>
+
+            <div class="verif-footer-text">Yana nimani yuklashim mumkin?</div>
+            <div class="req-mark"><span>*</span> Talab qilinadigan maydonlar</div>
+
+            <button class="submit-btn" onclick="closeVerificationModal()">Hujjat yuklash</button>
+        </div>
+    </div>
+
     <!-- 1-SAHIFA: HISOBLAR -->
     <div id="page-dashboard" class="page active">
         <div class="dash-header">
@@ -228,7 +285,7 @@
             </div>
         </div>
 
-        <div class="banner">
+        <div class="banner" onclick="openVerificationModal()">
             <div class="banner-text">
                 <h4>Hisobingizni tasdiqlang</h4>
                 <p>Hozirda sizda cheklangan ruxsat bor</p>
@@ -458,7 +515,7 @@
             document.getElementById("pin-screen").style.display = "none";
         }
 
-        // --- DEPOZIT VA YECHIB OLISH MODAL YONLANTIRISHLARI ---
+        // --- MODALLARNI BOSHQARISH ---
         function openDepositModal() {
             document.getElementById("deposit-modal").classList.add("active");
         }
@@ -473,6 +530,14 @@
 
         function closeWithdrawModal() {
             document.getElementById("withdraw-modal").classList.remove("active");
+        }
+
+        function openVerificationModal() {
+            document.getElementById("verification-modal").classList.add("active");
+        }
+
+        function closeVerificationModal() {
+            document.getElementById("verification-modal").classList.remove("active");
         }
 
         function redirectToSabinaDeposit() {
