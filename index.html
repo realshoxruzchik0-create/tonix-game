@@ -9,21 +9,28 @@
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
         body { background-color: #0c0e14; color: #fff; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; justify-content: space-between; }
         
-        .balance-card { background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(37,99,235,0.3); }
-        .balance-title { font-size: 13px; color: #cbd5e1; margin-bottom: 5px; }
-        .balance-amount { font-size: 28px; font-weight: bold; margin-bottom: 15px; color: #fff; }
+        /* Balans kartochkasi - 2-rasmdagidek aniq ko'rinish */
+        .balance-card { background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 24px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(37,99,235,0.35); }
+        .balance-title { font-size: 14px; color: #cbd5e1; margin-bottom: 6px; font-weight: 400; }
+        .balance-amount { font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #fff; letter-spacing: 0.5px; }
         
-        .balance-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .action-btn { background: rgba(255, 255, 255, 0.15); border: none; border-radius: 12px; padding: 10px 5px; color: #fff; font-size: 11px; text-align: center; cursor: pointer; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .balance-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .action-btn { background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px 4px; color: #fff; font-size: 11px; text-align: center; cursor: pointer; font-weight: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+        .action-btn span { font-size: 16px; }
+        .action-btn:active { background: rgba(255, 255, 255, 0.25); transform: scale(0.96); }
 
+        /* Ilovalar setkasi */
         .section-title { font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; }
         .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         
-        .app-card { background: #141824; border: 1px solid #1e2330; border-radius: 16px; padding: 12px 8px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .app-card { background: #141824; border: 1px solid #1e2330; border-radius: 16px; padding: 12px 8px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
+        .app-card:active { transform: scale(0.95); border-color: #2563eb; }
+        
         .app-icon { width: 50px; height: 50px; border-radius: 12px; background: #1e2330; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 8px; }
         .app-name { font-size: 12px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .app-badge { position: absolute; top: 8px; right: 8px; font-size: 9px; background: #1e293b; color: #38bdf8; padding: 2px 5px; border-radius: 6px; font-weight: bold; }
 
+        /* Modal oyna */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 100; }
         .modal-content { background: #141824; border: 1px solid #1e2330; width: 100%; max-width: 340px; border-radius: 20px; padding: 20px; position: relative; }
         .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: center; color: #38bdf8; }
@@ -45,13 +52,20 @@
 <body>
 
     <div>
+        <!-- Balans va 2-rasmdagidek aniq tugmalar dizayni -->
         <div class="balance-card">
             <div class="balance-title">Balans</div>
             <div class="balance-amount">0 so'm</div>
             <div class="balance-actions">
-                <button class="action-btn">💳 To'ldirish</button>
-                <button class="action-btn">🎁 Bonuslar</button>
-                <button class="action-btn">💬 Yordam</button>
+                <button class="action-btn" onclick="alert('Tez kunda!')">
+                    <span>💳</span> Hisobni to'ldirish
+                </button>
+                <button class="action-btn" onclick="alert('Bonus kodlar mavjud emas')">
+                    <span>🎁</span> Bonus kodlar
+                </button>
+                <button class="action-btn" onclick="alert('Admin bilan bog\'lanish: @admin')">
+                    <span>💬</span> Qo'llab-quvvatlash
+                </button>
             </div>
         </div>
 
@@ -59,6 +73,7 @@
         <div class="apps-grid" id="apps-container"></div>
     </div>
 
+    <!-- Buyurtma oynasi -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">✕</button>
@@ -130,7 +145,7 @@
         function renderPackages() {
             const container = document.getElementById('packages-list');
             container.innerHTML = '';
-            packagesData.packagesData || packagesData.forEach((pkg, index) => {
+            packagesData.forEach((pkg, index) => {
                 let item = document.createElement('div');
                 item.className = `pkg-item ${index === 0 ? 'selected' : ''}`;
                 item.onclick = () => {
