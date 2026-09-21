@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Exness Live Sim</title>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { width: 100%; height: 100%; overflow: hidden; background-color: #0c0e14; color: #a1a8b8; display: flex; flex-direction: column; }
 
-        /* Yuqori qism / Header */
+        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #121621; border-bottom: 1px solid #1e2330; }
         .pair-badge { display: flex; align-items: center; gap: 6px; }
         .pair-title { font-size: 16px; font-weight: bold; color: #ffffff; }
@@ -21,7 +20,7 @@
         .balance-val { font-size: 15px; font-weight: bold; color: #00e676; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
         .refresh-btn { cursor: pointer; font-size: 12px; color: #5e6678; }
 
-        /* Kichik panel / Sub-Header */
+        /* Sub Header */
         .sub-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #0c0e14; font-size: 12px; font-weight: bold; }
         .timeframes span { margin-right: 12px; color: #5e6678; cursor: pointer; }
         .timeframes span.active { color: #2979ff; background: #18253f; padding: 2px 6px; border-radius: 3px; }
@@ -30,14 +29,14 @@
         .bid-val { color: #f44336; }
         .ask-val { color: #00e676; }
 
-        /* Grafik zonasi */
-        #chart-wrapper { flex: 1; width: 100%; position: relative; }
-        #chart-container { width: 100%; height: 100%; }
+        /* Chart */
+        #chart-wrapper { flex: 1; width: 100%; position: relative; background: #0c0e14; }
+        canvas { width: 100%; height: 100%; display: block; }
 
-        /* Foyda/Ziyon indikatori */
+        /* Overlay PnL */
         .pnl-overlay { position: absolute; top: 12px; left: 12px; z-index: 10; background: rgba(18, 22, 33, 0.85); border: 1px solid #1e2330; border-radius: 4px; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #00e676; }
 
-        /* Boshqaruv paneli */
+        /* Control Panel */
         .controls { background: #121621; border-top: 1px solid #1e2330; padding: 10px 14px; }
         .inputs-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .input-item { flex: 1; background: #1a202c; border: 1px solid #2d3748; border-radius: 4px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; }
@@ -53,7 +52,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <div class="header">
         <div class="pair-badge">
             <span class="pair-title">EUR/USD</span>
@@ -65,7 +63,6 @@
         </div>
     </div>
 
-    <!-- Taymfreym va Narxlar -->
     <div class="sub-header">
         <div class="timeframes">
             <span class="active">M1</span>
@@ -78,13 +75,11 @@
         </div>
     </div>
 
-    <!-- Grafik -->
     <div id="chart-wrapper">
         <div class="pnl-overlay" id="floating-pnl">Floating PnL: +$0.00</div>
-        <div id="chart-container"></div>
+        <canvas id="canvas"></canvas>
     </div>
 
-    <!-- Boshqaruv tugmalari -->
     <div class="controls">
         <div class="inputs-row">
             <div class="input-item">
@@ -116,58 +111,52 @@
         let currentPrice = 1.08694;
         let spread = 0.00002;
         let activeOrders = [];
-        let trend = 0; 
+        let trend = 0;
 
-        const wrapper = document.getElementById('chart-wrapper');
-        const container = document.getElementById('chart-container');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-        const chart = LightweightCharts.createChart(container, {
-            width: wrapper.clientWidth,
-            height: wrapper.clientHeight,
-            layout: { backgroundColor: '#0c0e14', textColor: '#5e6678' },
-            grid: { vertLines: { color: '#161a24' }, horzLines: { color: '#161a24' } },
-            timeScale: { timeVisible: true, secondsVisible: true }
-        });
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        const candleSeries = chart.addCandlestickSeries({
-            upColor: '#00c853', downColor: '#e53935',
-            borderUpColor: '#00c853', borderDownColor: '#e53935',
-            wickUpColor: '#00c853', wickDownColor: '#e53935'
-        });
-
-        new ResizeObserver(entries => {
-            if (entries[0]) {
-                const { width, height } = entries[0].contentRect;
-                chart.applyOptions({ width, height });
-            }
-        }).observe(wrapper);
-
-        let currentTime = Math.floor(Date.now() / 1000) - 300;
-        let chartData = [];
-        for (let i = 0; i < 60; i++) {
+        // Shamchalar ma'lumotlari
+        let candles = [];
+        for (let i = 0; i < 35; i++) {
             let open = currentPrice;
-            let close = open + (Math.random() - 0.49) * 0.00015;
-            let high = Math.max(open, close) + Math.random() * 0.00008;
-            let low = Math.min(open, close) - Math.random() * 0.00008;
-            chartData.push({ time: currentTime + (i * 5), open, high, low, close });
+            let close = open + (Math.random() - 0.49) * 0.00012;
+            let high = Math.max(open, close) + Math.random() * 0.00006;
+            let low = Math.min(open, close) - Math.random() * 0.00006;
+            candles.push({ open, high, low, close });
             currentPrice = close;
         }
-        candleSeries.setData(chartData);
 
-        // Jonli shamchalar tebranishi (har 0.5 soniyada)
+        // Qiyinlashtirilgan matematik algoritm bilan harakatlanish
         setInterval(() => {
-            currentTime += 1;
-            let open = currentPrice;
+            let lastCandle = candles[candles.length - 1];
 
-            if (Math.random() < 0.1) trend = (Math.random() - 0.5) * 0.0001; 
-            let noise = (Math.random() - 0.5) * 0.00008;
+            if (Math.random() < 0.15) trend = (Math.random() - 0.5) * 0.00008;
+            let noise = (Math.random() - 0.5) * 0.00005;
             
-            let close = open + trend + noise;
-            let high = Math.max(open, close) + Math.random() * 0.00004;
-            let low = Math.min(open, close) - Math.random() * 0.00004;
+            lastCandle.close += trend + noise;
+            if (lastCandle.close > lastCandle.high) lastCandle.high = lastCandle.close;
+            if (lastCandle.close < lastCandle.low) lastCandle.low = lastCandle.close;
 
-            candleSeries.update({ time: currentTime, open, high, low, close });
-            currentPrice = close;
+            currentPrice = lastCandle.close;
+
+            // Har 5 soniyada yangi shamcha hosil qilish
+            if (Math.random() < 0.1) {
+                candles.shift();
+                candles.push({
+                    open: currentPrice,
+                    high: currentPrice,
+                    low: currentPrice,
+                    close: currentPrice
+                });
+            }
 
             let bid = currentPrice.toFixed(5);
             let ask = (currentPrice + spread).toFixed(5);
@@ -175,7 +164,56 @@
             document.getElementById('sub-ask').innerText = ask;
 
             updateFloatingPnL();
-        }, 500);
+            drawChart();
+        }, 200);
+
+        function drawChart() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // To'r (Grid)
+            ctx.strokeStyle = '#161a24';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // Min va Max narxlarni topish
+            let minP = Math.min(...candles.map(c => c.low));
+            let maxP = Math.max(...candles.map(c => c.high));
+            let range = (maxP - minP) || 0.0001;
+
+            let candleWidth = canvas.width / candles.length;
+
+            // Shamchalarni chizish
+            candles.forEach((c, index) => {
+                let x = index * candleWidth + candleWidth / 2;
+                
+                let openY = canvas.height - ((c.open - minP) / range) * (canvas.height - 40) - 20;
+                let closeY = canvas.height - ((c.close - minP) / range) * (canvas.height - 40) - 20;
+                let highY = canvas.height - ((c.high - minP) / range) * (canvas.height - 40) - 20;
+                let lowY = canvas.height - ((c.low - minP) / range) * (canvas.height - 40) - 20;
+
+                let isGreen = c.close >= c.open;
+                let color = isGreen ? '#00c853' : '#e53935';
+
+                // Wick (Tayoqchasi)
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(x, highY);
+                ctx.lineTo(x, lowY);
+                ctx.stroke();
+
+                // Body (Tana)
+                ctx.fillStyle = color;
+                let bodyHeight = Math.max(Math.abs(closeY - openY), 2);
+                let bodyY = Math.min(openY, closeY);
+                ctx.fillRect(x - candleWidth / 3, bodyY, candleWidth * 0.66, bodyHeight);
+            });
+        }
 
         function executeTrade(type) {
             let lotInput = parseFloat(document.getElementById('lot-size').value);
