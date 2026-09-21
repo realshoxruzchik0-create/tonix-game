@@ -3,64 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ludo - Hardcore Mode</title>
+    <title>Voice Coins Market</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        body { background-color: #0c0e14; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 15px; overflow: hidden; }
+        body { background-color: #0c0e14; color: #fff; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; justify-content: space-between; }
         
-        .header { text-align: center; font-size: 18px; font-weight: bold; color: #ff4757; }
-        .sub-header { text-align: center; font-size: 12px; color: #a1a8b8; margin-bottom: 5px; }
-
-        .game-board { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #141824; border-radius: 12px; border: 1px solid #1e2330; position: relative; padding: 10px; max-width: 350px; margin: 0 auto; width: 100%; }
+        /* Balans bloki */
+        .balance-card { background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(37,99,235,0.3); }
+        .balance-title { font-size: 13px; color: #cbd5e1; margin-bottom: 5px; }
+        .balance-amount { font-size: 28px; font-weight: bold; margin-bottom: 15px; color: #fff; }
         
-        .status-box { font-size: 14px; text-align: center; margin: 10px 0; color: #ffe600; font-weight: bold; min-height: 20px; }
+        .balance-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .action-btn { background: rgba(255, 255, 255, 0.15); border: none; border-radius: 12px; padding: 10px 5px; color: #fff; font-size: 11px; text-align: center; cursor: pointer; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; }
+        .action-btn:active { background: rgba(255, 255, 255, 0.3); }
 
-        .dice-area { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .dice { width: 60px; height: 60px; background: #fff; color: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,255,255,0.2); transition: transform 0.1s; }
-        .dice:active { transform: scale(0.9); }
-
-        .players-info { display: flex; justify-content: space-around; width: 100%; font-size: 12px; margin-bottom: 10px; }
-        .player-badge { padding: 5px 10px; border-radius: 6px; background: #1e2330; border: 1px solid #2f3640; }
-        .player-badge.active { border-color: #ffe600; color: #ffe600; }
-
-        .btn { background: #ff4757; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; text-align: center; }
+        /* Ilovalar setkasi (Grid) */
+        .section-title { font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; }
+        .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         
-        /* O'yin maydoni sxematik ko'rinishi */
-        .track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; max-width: 280px; margin: 15px 0; }
-        .cell { height: 45px; background: #1e2330; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; border: 1px solid #2f3640; }
-        .cell.home { background: #2f3640; }
+        .app-card { background: #141824; border: 1px solid #1e2330; border-radius: 16px; padding: 12px 8px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .app-card:active { transform: scale(0.95); border-color: #3b82f6; }
         
-        .token { width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; position: absolute; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        .token.red { background: #ff4757; color: #fff; }
-        .token.blue { background: #2ed573; color: #000; }
+        .app-icon { width: 50px; height: 50px; border-radius: 12px; background: #1e2330; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .app-name { font-size: 12px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .app-badge { position: absolute; top: 8px; right: 8px; font-size: 9px; background: #1e293b; color: #38bdf8; padding: 2px 5px; border-radius: 6px; font-weight: bold; }
+
+        /* Modal oyna (Tanlanganda chiqadi) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 100; }
+        .modal-content { background: #141824; border: 1px solid #1e2330; width: 100%; max-width: 340px; border-radius: 20px; padding: 20px; position: relative; }
+        .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: center; color: #38bdf8; }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 10px; background: #0c0e14; border: 1px solid #1e2330; border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
+        
+        .packages-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
+        .pkg-item { background: #0c0e14; border: 1px solid #1e2330; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; }
+        .pkg-item.selected { border-color: #38bdf8; background: #1e293b; }
+        .pkg-coins { font-size: 13px; font-weight: bold; color: #f8fafc; }
+        .pkg-price { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+
+        .btn { background: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 14px; text-align: center; }
+        .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div>
-        <div class="header">🎲 Ludo: Hardcore Mode</div>
-        <div class="sub-header">Raqib bot xatoga yo'l qo'ymaydi!</div>
-    </div>
-
-    <div class="game-board">
-        <div class="players-info">
-            <div class="player-badge" id="badge-0">Siz (Qizil)</div>
-            <div class="player-badge" id="badge-1">Qiyin Bot (Yashil)</div>
+        <!-- Balans va Asosiy tugmalar -->
+        <div class="balance-card">
+            <div class="balance-title">Balans</div>
+            <div class="balance-amount" id="user-balance">0 so'm</div>
+            <div class="balance-actions">
+                <button class="action-btn" onclick="alert('Tez kunda!')">💳 Hisobni to'ldirish</button>
+                <button class="action-btn" onclick="alert('Bonus kodlar mavjud emas')">🎁 Bonus kodlar</button>
+                <button class="action-btn" onclick="alert('Admin: @admin')">💬 Qo'llab-quvvatlash</button>
+            </div>
         </div>
 
-        <div class="status-box" id="game-status"> Zarni tashlash uchun bosing!</div>
-
-        <div class="track" id="board-track">
-            <!-- Kataklar dinamik yaratiladi -->
-        </div>
-
-        <div class="dice-area">
-            <div class="dice" id="dice-btn" onclick="rollDice()">🎲</div>
+        <div class="section-title">Ovozli chat va efir ilovalari</div>
+        
+        <!-- Top 10 Ilovalar Grid ko'rinishida -->
+        <div class="apps-grid" id="apps-container">
+            <!-- JavaScript orqali to'ldiriladi -->
         </div>
     </div>
 
-    <button class="btn" onclick="resetGame()">O'yinni qaytadan boshlash</button>
+    <!-- Buyurtma berish oynasi (Modal) -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <div class="modal-title" id="modal-app-title">Poppo Live</div>
+            
+            <div class="form-group">
+                <label>Foydalanuvchi ID (User ID):</label>
+                <input type="number" id="userid" placeholder="Masalan: 84920192">
+            </div>
+
+            <div class="form-group">
+                <label>Paketni tanlang:</label>
+                <div class="packages-grid" id="packages-list">
+                    <!-- Paketlar -->
+                </div>
+            </div>
+
+            <button class="btn" onclick="submitOrder()">Sotib olish 🚀</button>
+        </div>
+    </div>
 
     <script>
         if (window.Telegram && window.Telegram.WebApp) {
@@ -68,130 +98,99 @@
             window.Telegram.WebApp.expand();
         }
 
-        // Hardcore o'yin mantig'i uchun o'zgaruvchilar
-        let boardSize = 15; // 15 ta katakli soddalashtirilgan poyga yo'li
-        let playerPos = 0;   // Sizning pozitsiyangiz (0 - uychada)
-        let botPos = 0;      // Bot pozitsiyasi
-        let turn = 0;        // 0 - Siz, 1 - Bot
-        let diceVal = 0;
-        let gameEnded = false;
+        // Top 10 Ovozli chat ilovalari ro'yxati
+        const apps = [
+            { name: "Poppo Live", icon: "🎙️", badge: "Global" },
+            { name: "We Party", icon: "🎉", badge: "Popular" },
+            { name: "Bigo Live", icon: "🌟", badge: "Global" },
+            { name: "Tigo Live", icon: "🎤", badge: "Hot" },
+            { name: "Yalla", icon: "👑", badge: "Voice" },
+            { name: "Hago", icon: "🎮", badge: "Game" },
+            { name: "SuGO", icon: "💬", badge: "New" },
+            { name: "TopTop", icon: "🎲", badge: "Voice" },
+            { name: "Uplive", icon: "✨", badge: "Show" },
+            { name: "HayiChat", icon: "🎧", badge: "Active" }
+        ];
 
-        function createBoard() {
-            const track = document.getElementById('board-track');
-            track.innerHTML = '';
-            for (let i = 0; i < 15; i++) {
-                let cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.id = `cell-${i}`;
-                cell.innerHTML = `<span>${i}</span>`;
-                
-                // Tokenlarni joylash
-                if (i === playerPos && playerPos > 0) {
-                    let t = document.createElement('div');
-                    t.className = 'token red';
-                    t.innerText = 'Siz';
-                    cell.appendChild(t);
-                }
-                if (i === botPos && botPos > 0) {
-                    let t = document.createElement('div');
-                    t.className = 'token blue';
-                    t.innerText = 'Bot';
-                    cell.appendChild(t);
-                }
-                track.appendChild(cell);
+        let selectedApp = "";
+        let selectedPkg = { name: "10,000 Coins", price: "15,000 so'm" };
+
+        const packagesData = [
+            { name: "10,000 Coins", price: "15,000 so'm" },
+            { name: "50,000 Coins", price: "70,000 so'm" },
+            { name: "100,000 Coins", price: "135,000 so'm" },
+            { name: "500,000 Coins", price: "650,000 so'm" }
+        ];
+
+        function renderApps() {
+            const container = document.getElementById('apps-container');
+            container.innerHTML = '';
+            apps.forEach(app => {
+                let card = document.createElement('div');
+                card.className = 'app-card';
+                card.onclick = () => openModal(app.name);
+                card.innerHTML = `
+                    <div class="app-badge">${app.badge}</div>
+                    <div class="app-icon">${app.icon}</div>
+                    <div class="app-name">${app.name}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openModal(appName) {
+            selectedApp = appName;
+            document.getElementById('modal-app-title').innerText = appName;
+            document.getElementById('orderModal').style.display = 'flex';
+            renderPackages();
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function renderPackages() {
+            const container = document.getElementById('packages-list');
+            container.innerHTML = '';
+            packagesData.forEach((pkg, index) => {
+                let item = document.createElement('div');
+                item.className = `pkg-item ${index === 0 ? 'selected' : ''}`;
+                item.onclick = () => {
+                    document.querySelectorAll('.pkg-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    selectedPkg = pkg;
+                };
+                item.innerHTML = `
+                    <div class="pkg-coins">${pkg.name}</div>
+                    <div class="pkg-price">${pkg.price}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function submitOrder() {
+            let userid = document.getElementById('userid').value;
+            if (!userid) {
+                alert("Iltimos, User ID raqamingizni kiriting!");
+                return;
+            }
+
+            let data = {
+                platform: selectedApp,
+                userid: userid,
+                package: selectedPkg.name,
+                price: selectedPkg.price
+            };
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.sendData(JSON.stringify(data));
+            } else {
+                alert(`Buyurtma tayyor!\nIlova: ${selectedApp}\nID: ${userid}\nPaket: ${selectedPkg.name} (${selectedPkg.price})`);
+                closeModal();
             }
         }
 
-        function updateUI() {
-            createBoard();
-            document.getElementById('badge-0').className = `player-badge ${turn === 0 ? 'active' : ''}`;
-            document.getElementById('badge-1').className = `player-badge ${turn === 1 ? 'active' : ''}`;
-        }
-
-        function rollDice() {
-            if (gameEnded || turn !== 0) return;
-
-            // O'ta qiyin rejim: Tasodifiy zar, lekin bot har doim aqlli yuradi
-            diceVal = Math.floor(Math.random() * 6) + 1;
-            document.getElementById('dice-btn').innerText = diceVal;
-            
-            document.getElementById('game-status').innerText = `Siz ${diceVal} tushirdingiz! Yurishmoqda...`;
-
-            setTimeout(() => {
-                if (playerPos === 0) {
-                    if (diceVal === 6) {
-                        playerPos = 1;
-                        document.getElementById('game-status').innerText = "O'yin boshlandi! Kartangiz o'yinga tushdi.";
-                    } else {
-                        document.getElementById('game-status').innerText = "Chiqish uchun 6 tushishi kerak edi!";
-                    }
-                } else {
-                    playerPos += diceVal;
-                    if (playerPos >= 14) {
-                        playerPos = 14;
-                        gameEnded = true;
-                        document.getElementById('game-status').innerText = "🎉 Tabriklaymiz, siz g'alaba qozondingiz!";
-                        return;
-                    }
-                }
-
-                // Hardcore qoida: Agar siz bot turgan katakka tushib qolsangiz, bot sizni ortga qaytarib yuboradi!
-                if (playerPos === botPos && botPos > 0) {
-                    playerPos = 0;
-                    document.getElementById('game-status').innerText = "🔥 Bot sizni urib yubordi! Boshidan boshlaysiz.";
-                }
-
-                turn = 1;
-                updateUI();
-                if (!gameEnded) setTimeout(botTurn, 1200);
-
-            }, 800);
-        }
-
-        function botTurn() {
-            if (gameEnded) return;
-            
-            // O'ta qiyin bot mantig'i: Bot deyarli har doim yaxshi natija chiqaradi va xato qilmaydi
-            let botDice = Math.floor(Math.random() * 6) + 1;
-            document.getElementById('game-status').innerText = `Bot zarni tashladi: ${botDice}`;
-
-            setTimeout(() => {
-                if (botPos === 0) {
-                    if (botDice >= 4 || botDice === 6) { // Qiyin rejim: bot osonroq chiqadi
-                        botPos = 1;
-                    }
-                } else {
-                    botPos += botDice;
-                    if (botPos >= 14) {
-                        botPos = 14;
-                        gameEnded = true;
-                        document.getElementById('game-status').innerText = "🤖 Hardcore Bot g'alaba qozondi! Siz yutqazdingiz.";
-                        return;
-                    }
-                }
-
-                // Bot sizni urib ketishi
-                if (botPos === playerPos && playerPos > 0) {
-                    playerPos = 0;
-                    document.getElementById('game-status').innerText = "⚠️ Bot sizni urib yubordi! Juda qattiqqo'l raqib.";
-                }
-
-                turn = 0;
-                updateUI();
-            }, 1000);
-        }
-
-        function resetGame() {
-            playerPos = 0;
-            botPos = 0;
-            turn = 0;
-            gameEnded = false;
-            document.getElementById('dice-btn').innerText = '🎲';
-            document.getElementById('game-status').innerText = "Yangi o'yin! Zarni tashlang.";
-            updateUI();
-        }
-
-        resetGame();
+        renderApps();
     </script>
 </body>
 </html>
