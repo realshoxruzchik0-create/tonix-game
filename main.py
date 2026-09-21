@@ -45,7 +45,8 @@ async def web_app_receive(message: Message):
         price = data.get("price")
         
         user_name = message.from_user.full_name
-        username = f"@{message.from_user.username}" if message.from_user.username "Mavjud emas"
+        # Xatolik to'g'rilangan joyi:
+        username = f"@{message.from_user.username}" if message.from_user.username else "Mavjud emas"
         user_tg_id = message.from_user.id
 
         # Foydalanuvchiga buyurtma qabul qilingani haqida xabar beramiz
@@ -69,6 +70,7 @@ async def web_app_receive(message: Message):
             f"🔗 Telegram ID: <code>{user_tg_id}</code>"
         )
         
+        # Probel (indentatsiya) to'g'rilandi:
         await bot.send_message(chat_id=ADMIN_ID, text=admin_text, parse_mode="HTML")
 
     except Exception as e:
