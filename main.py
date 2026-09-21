@@ -2,28 +2,39 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
-from aiogram.enums import ParseMode
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-# Bot tokeningiz
-TOKEN = "8695811464:AAG09aLyLwWdQ4YVLlrkBz-21hk6cRvktrk"
+# Logging sozlamalari (konsolda xatolar ko'rinishi uchun)
+logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=TOKEN)
+# Telegram Bot Tokeningiz
+BOT_TOKEN = "8648218746:AAGHmVB88Vy-OeP8PJZ7mRMBUPWNwQWhemM"
+
+# GitHub Pages orqali olingan sizning WebApp havolangiz
+WEBAPP_URL = "https://realshoxruzchik0-create.github.io/tonix-game/"
+
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# /start buyrug'i kelganda ishlaydigan bo'lim
 @dp.message(CommandStart())
-async def start_handler(message: types.Message):
-    # Custom emoji ID: 5990173055026990900
-    custom_emoji = '<tg-emoji emoji-id="5990173055026990900">✔️</tg-emoji>'
+async def start_cmd(message: types.Message):
+    # WebApp tugmasini hosil qilish
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="📈 Exness Forex Terminalni Ochish", 
+            web_app=WebAppInfo(url=WEBAPP_URL)
+        )]
+    ])
     
-    # Yuboriladigan matn
-    text = f"Assalomu alaykum dev {custom_emoji}"
-    
-    # HTML formatida javob qaytarish
-    await message.answer(text, parse_mode=ParseMode.HTML)
+    await message.answer(
+        f"Salom, <b>{message.from_user.first_name}</b>! 👋\n\n"
+        "Exness Trading simulatoriga xush kelibsiz.\n"
+        "Real vaqtdagi Forex grafiklarini tahlil qilish va savdo qilish uchun quyidagi tugmani bosing:",
+        parse_mode="HTML",
+        reply_markup=keyboard
+    )
 
 async def main():
-    logging.basicConfig(level=logging.INFO)
     print("Bot muvaffaqiyatli ishga tushdi!")
     await dp.start_polling(bot)
 
