@@ -3,437 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Exness Trading</title>
+    <title>Ludo - Hardcore Mode</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Barcha elementlarda ko'k belgilanish va tap-highlightni yo'qotish */
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            user-select: none; 
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background-color: #0c0e14; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 15px; overflow: hidden; }
         
-        html, body { width: 100%; height: 100%; overflow: hidden; background-color: #0c0e14; color: #a1a8b8; display: flex; flex-direction: column; }
+        .header { text-align: center; font-size: 18px; font-weight: bold; color: #ff4757; }
+        .sub-header { text-align: center; font-size: 12px; color: #a1a8b8; margin-bottom: 5px; }
 
-        /* PIN SCREEN STYLES */
-        #pin-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0c0e14; z-index: 1000; display: flex; flex-direction: column;
-            align-items: center; justify-content: space-between; padding: 40px 20px 20px;
-        }
-        .pin-logo { font-size: 28px; font-weight: bold; color: #fff; letter-spacing: -1px; margin-top: 10px; }
-        .pin-title { font-size: 15px; color: #ffffff; margin-top: 30px; text-align: center; }
+        .game-board { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #141824; border-radius: 12px; border: 1px solid #1e2330; position: relative; padding: 10px; max-width: 350px; margin: 0 auto; width: 100%; }
         
-        .pin-dots { display: flex; gap: 12px; margin: 25px 0; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #2a3142; transition: background 0.2s; }
-        .dot.active { background: #ffe600; }
+        .status-box { font-size: 14px; text-align: center; margin: 10px 0; color: #ffe600; font-weight: bold; min-height: 20px; }
 
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 280px; margin-bottom: 20px; }
-        .key-btn {
-            width: 70px; height: 70px; border-radius: 50%; background: #1a202c; color: #fff;
-            font-size: 24px; font-weight: 500; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto; cursor: pointer; transition: background 0.1s;
-        }
-        .key-btn:active { background: #2d3748; }
-        .key-btn.empty { background: transparent; }
-        .key-btn.backspace { background: transparent; font-size: 18px; color: #a1a8b8; }
+        .dice-area { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .dice { width: 60px; height: 60px; background: #fff; color: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,255,255,0.2); transition: transform 0.1s; }
+        .dice:active { transform: scale(0.9); }
 
-        .pin-footer { text-align: center; font-size: 13px; color: #7e8b9b; margin-bottom: 10px; }
+        .players-info { display: flex; justify-content: space-around; width: 100%; font-size: 12px; margin-bottom: 10px; }
+        .player-badge { padding: 5px 10px; border-radius: 6px; background: #1e2330; border: 1px solid #2f3640; }
+        .player-badge.active { border-color: #ffe600; color: #ffe600; }
 
-        /* MODAL STYLES */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 500; justify-content: center; align-items: flex-end;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            width: 100%; max-height: 85vh; background: #141824; border-top-left-radius: 20px; border-top-right-radius: 20px;
-            padding: 20px; border-top: 1px solid #1e2330; animation: slideUp 0.3s ease;
-            display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .btn { background: #ff4757; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; text-align: center; }
         
-        .option-item {
-            display: flex; align-items: center; justify-content: space-between; background: #1c2333; padding: 15px;
-            border-radius: 12px; cursor: pointer; border: 1px solid #2a3347;
-        }
-        .option-item:active { background: #252e42; }
-        .opt-left { display: flex; align-items: center; gap: 12px; }
-        .opt-text h4 { color: #fff; font-size: 15px; display: flex; align-items: center; gap: 6px; }
-        .opt-text p { color: #7e8b9b; font-size: 12px; }
-
-        /* VERIFICATION MODAL SPECIFIC STYLES */
-        .verif-subtitle { font-size: 15px; font-weight: bold; color: #fff; margin-top: 5px; }
-        .verif-desc { font-size: 13px; color: #a1a8b8; margin-bottom: 10px; }
+        /* O'yin maydoni sxematik ko'rinishi */
+        .track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; max-width: 280px; margin: 15px 0; }
+        .cell { height: 45px; background: #1e2330; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; border: 1px solid #2f3640; }
+        .cell.home { background: #2f3640; }
         
-        .upload-box {
-            background: #1c2333; border: 1px dashed #2a3347; border-radius: 12px; padding: 20px;
-            text-align: center; cursor: pointer; margin-top: 5px; display: flex; flex-direction: column; align-items: center; gap: 8px;
-        }
-        .upload-box:active { background: #252e42; }
-        .upload-title { font-size: 14px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; }
-        .upload-title span { color: #ff3b30; }
-        .upload-sub { font-size: 12px; color: #2979ff; }
-        .upload-formats { font-size: 11px; color: #6b7280; margin-top: 5px; }
-
-        .rules-title { font-size: 14px; font-weight: bold; color: #fff; margin-top: 10px; }
-        .rules-list { padding-left: 18px; font-size: 12px; color: #a1a8b8; display: flex; flex-direction: column; gap: 6px; }
-        .rules-list li { line-height: 1.4; }
-
-        .verif-footer-text { font-size: 13px; color: #ffe600; cursor: pointer; margin-top: 5px; font-weight: 500; }
-        .req-mark { font-size: 12px; color: #6b7280; margin-top: 5px; }
-        .req-mark span { color: #ff3b30; }
-
-        .submit-btn {
-            background: #ffe600; color: #000; border: none; border-radius: 10px; padding: 14px;
-            font-size: 15px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; text-align: center;
-        }
-        .submit-btn:active { opacity: 0.85; }
-
-        /* APP MAIN PAGES */
-        .page { display: none; width: 100%; height: 100%; flex-direction: column; overflow-y: auto; padding-bottom: 65px; }
-        .page.active { display: flex; }
-
-        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #0c0e14; }
-        .dash-title { font-size: 26px; font-weight: bold; color: #ffffff; }
-        .dash-icons { display: flex; align-items: center; gap: 18px; font-size: 22px; color: #fff; }
-        .dash-icons span { display: flex; align-items: center; justify-content: center; }
-
-        .banner { margin: 0 16px 16px; background: #082415; border: 1px solid #10522b; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .banner:active { opacity: 0.9; }
-        .banner-text h4 { color: #fff; font-size: 14px; margin-bottom: 4px; }
-        .banner-text p { color: #8fa095; font-size: 12px; }
-        .banner-icon { width: 36px; height: 36px; background: #123d24; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00e676; font-size: 18px; }
-
-        .account-card { margin: 0 16px 16px; background: #141824; border-radius: 14px; padding: 16px; }
-        .acc-type { display: flex; gap: 6px; margin-bottom: 12px; }
-        .badge { background: #1c2333; color: #8fa0b5; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
-        
-        .acc-balance { font-size: 24px; font-weight: bold; color: #ffffff; margin-bottom: 16px; }
-
-        .quick-actions { display: flex; justify-content: space-around; }
-        .action-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-        .action-btn-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #1e2433; color: #fff; }
-        .action-btn-circle.yellow { background: #ffe600; color: #000; }
-        .action-label { font-size: 12px; color: #a1a8b8; font-weight: 500; }
-
-        .tab-section { margin: 0 16px; display: flex; gap: 16px; border-bottom: 1px solid #1e2330; padding-bottom: 8px; margin-bottom: 12px; }
-        .tab-item { font-size: 14px; font-weight: bold; color: #5e6678; cursor: pointer; }
-        .tab-item.active { color: #ffffff; border-bottom: 2px solid #ffffff; padding-bottom: 6px; }
-
-        .pnl-summary { margin: 0 16px 12px; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
-        .pnl-green { color: #00e676; }
-
-        /* TRADING PAGE */
-        #page-trading { padding-bottom: 65px; overflow: hidden; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #121621; border-bottom: 1px solid #1e2330; }
-        .pair-badge { display: flex; align-items: center; gap: 6px; }
-        .back-btn { font-size: 18px; color: #fff; margin-right: 8px; cursor: pointer; }
-        .pair-title { font-size: 16px; font-weight: bold; color: #ffffff; }
-        
-        .balance-container { text-align: right; }
-        .balance-label { font-size: 10px; color: #5e6678; text-transform: uppercase; font-weight: bold; }
-        .balance-val { font-size: 15px; font-weight: bold; color: #00e676; }
-
-        .sub-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #0c0e14; font-size: 12px; font-weight: bold; }
-        .timeframes span { margin-right: 12px; color: #5e6678; cursor: pointer; }
-        .timeframes span.active { color: #2979ff; background: #18253f; padding: 2px 6px; border-radius: 3px; }
-        
-        .bid-ask-box { display: flex; gap: 12px; font-size: 11px; }
-        .bid-val { color: #f44336; }
-        .ask-val { color: #00e676; }
-
-        #chart-wrapper { flex: 1; width: 100%; position: relative; background: #0c0e14; }
-        canvas { width: 100%; height: 100%; display: block; }
-
-        .controls { background: #121621; border-top: 1px solid #1e2330; padding: 10px 14px; }
-        .inputs-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .input-item { flex: 1; background: #1a202c; border: 1px solid #2d3748; border-radius: 4px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; }
-        .input-label { font-size: 11px; color: #718096; }
-        .input-val { width: 45px; background: transparent; border: none; color: #fff; text-align: right; font-weight: bold; font-size: 13px; outline: none; }
-
-        .action-btns { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 13px; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; color: #ffffff; cursor: pointer; }
-        .btn-sell { background: #e53935; }
-        .btn-buy { background: #00c853; }
-
-        /* PLACEHOLDER PAGES */
-        .placeholder-page { padding: 40px 20px; text-align: center; color: #ffffff; }
-
-        /* BOTTOM NAV */
-        .bottom-nav { background: #121621; border-top: 1px solid #1e2330; display: flex; justify-content: space-around; padding: 8px 0 10px; position: fixed; bottom: 0; width: 100%; z-index: 99; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #7e8b9b; font-size: 10px; cursor: pointer; flex: 1; position: relative; }
-        .nav-item.active { color: #ffffff; }
-        .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
-        .red-dot { position: absolute; top: -1px; right: 18px; width: 7px; height: 7px; background-color: #ff3b30; border-radius: 50%; }
+        .token { width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; position: absolute; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .token.red { background: #ff4757; color: #fff; }
+        .token.blue { background: #2ed573; color: #000; }
     </style>
 </head>
 <body>
 
-    <!-- PIN KOD EKRANI -->
-    <div id="pin-screen">
-        <div class="pin-logo">exness</div>
-        <div>
-            <div class="pin-title" id="pin-title-text">Davom etish uchun PIN kodni kiriting</div>
-            <div class="pin-dots">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-        </div>
-
-        <div class="keypad">
-            <div class="key-btn" onclick="pressKey(1)">1</div>
-            <div class="key-btn" onclick="pressKey(2)">2</div>
-            <div class="key-btn" onclick="pressKey(3)">3</div>
-            <div class="key-btn" onclick="pressKey(4)">4</div>
-            <div class="key-btn" onclick="pressKey(5)">5</div>
-            <div class="key-btn" onclick="pressKey(6)">6</div>
-            <div class="key-btn" onclick="pressKey(7)">7</div>
-            <div class="key-btn" onclick="pressKey(8)">8</div>
-            <div class="key-btn" onclick="pressKey(9)">9</div>
-            <div class="key-btn empty"></div>
-            <div class="key-btn" onclick="pressKey(0)">0</div>
-            <div class="key-btn backspace" onclick="pressBackspace()">✕</div>
-        </div>
-
-        <div class="pin-footer">PIN kodni unutdingizmi?</div>
+    <div>
+        <div class="header">🎲 Ludo: Hardcore Mode</div>
+        <div class="sub-header">Raqib bot xatoga yo'l qo'ymaydi!</div>
     </div>
 
-    <!-- DEPOZIT MODAL -->
-    <div id="deposit-modal" class="modal" onclick="closeDepositModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title">Depozit usulini tanlang</div>
-            <div class="option-item" onclick="redirectToBotDeposit()">
-                <div class="opt-left">
-                    <div class="opt-text">
-                        <h4>Humo <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/5393380644803852289.webp" width="20" height="20" alt="Humo"></span></h4>
-                        <p>Humo kartasi orqali to'lov</p>
-                    </div>
-                </div>
-            </div>
+    <div class="game-board">
+        <div class="players-info">
+            <div class="player-badge" id="badge-0">Siz (Qizil)</div>
+            <div class="player-badge" id="badge-1">Qiyin Bot (Yashil)</div>
+        </div>
+
+        <div class="status-box" id="game-status"> Zarni tashlash uchun bosing!</div>
+
+        <div class="track" id="board-track">
+            <!-- Kataklar dinamik yaratiladi -->
+        </div>
+
+        <div class="dice-area">
+            <div class="dice" id="dice-btn" onclick="rollDice()">🎲</div>
         </div>
     </div>
 
-    <!-- YECHIB OLISH MODAL -->
-    <div id="withdraw-modal" class="modal" onclick="closeWithdrawModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title">Yechib olish usulini tanlang</div>
-            
-            <div class="option-item" onclick="redirectToBotWithdrawUzcard()">
-                <div class="opt-left">
-                    <div class="opt-text">
-                        <h4>Uzcard <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/5389085445579626838.webp" width="20" height="20" alt="Uzcard"></span></h4>
-                        <p>Uzcard kartangizga yechib olish</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="option-item" onclick="redirectToBotWithdrawWallet()">
-                <div class="opt-left">
-                    <div class="opt-text">
-                        <h4>Wallet <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/6001287064589439895.webp" width="20" height="20" alt="Wallet"></span></h4>
-                        <p>Kripto yoki elektron hamyonga</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- YASHASH JOYINI TASDIQLASH MODALI -->
-    <div id="verification-modal" class="modal" onclick="closeVerificationModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title">Yashash joyingizni tasdiqlang</div>
-            <div class="verif-subtitle">Manzilni tasdiqlovchi hujjatni yuklang</div>
-            <div class="verif-desc">Hujjat manzilingizni ko'rsatishi kerak</div>
-
-            <!-- Yashirin file input (Galereyadan tanlash uchun) -->
-            <input type="file" id="file-input" style="display: none;" accept="image/*,.pdf" onchange="handleFileSelect(event)">
-
-            <div class="upload-box" onclick="triggerFileUpload()">
-                <div class="upload-title">Hujjat <span>*</span></div>
-                <div class="upload-sub" id="upload-sub-text">Qurilmadan tanlash</div>
-                <div class="upload-formats">JPG, PNG, HEIC, WEBP yoki PDF (maksimal 50 MB)</div>
-            </div>
-
-            <div class="rules-title">Hujjat turlari</div>
-            <ul class="rules-list">
-                <li>Manzil ma'lumotlari ko'rsatilgan yaroqli shaxsni tasdiqlovchi hujjat</li>
-                <li>Bank hujjatlari (oxirgi 6 oy)</li>
-                <li>Kommunal xizmatlar uchun to'lov cheklari (oxirgi 6 oy)</li>
-                <li>Davlat tomonidan berilgan hujjatlar (oxirgi 6 oy)</li>
-            </ul>
-
-            <div class="verif-footer-text">Yana nimani yuklashim mumkin?</div>
-            <div class="req-mark"><span>*</span> Talab qilinadigan maydonlar</div>
-
-            <button class="submit-btn" onclick="submitDocument()">Hujjat yuklash</button>
-        </div>
-    </div>
-
-    <!-- 1-SAHIFA: HISOBLAR -->
-    <div id="page-dashboard" class="page active">
-        <div class="dash-header">
-            <div class="dash-title">Hisoblar</div>
-            <div class="dash-icons">
-                <span>⏰</span>
-                <span>🔔</span>
-                <span>⋮</span>
-            </div>
-        </div>
-
-        <div class="banner" onclick="openVerificationModal()">
-            <div class="banner-text">
-                <h4>Hisobingizni tasdiqlang</h4>
-                <p>Hozirda sizda cheklangan ruxsat bor</p>
-            </div>
-            <div class="banner-icon">✓</div>
-        </div>
-
-        <div class="account-card">
-            <div class="acc-type">
-                <span class="badge">MT5</span>
-                <span class="badge">Standart</span>
-            </div>
-            <div class="acc-balance" id="dash-balance">10,000 UZS</div>
-            
-            <div class="quick-actions">
-                <div class="action-item" onclick="switchPage('trading')">
-                    <div class="action-btn-circle yellow">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18M15 3v18M6 8h6M12 16h6"/></svg>
-                    </div>
-                    <span class="action-label">Savdo qilish</span>
-                </div>
-                
-                <div class="action-item" onclick="openDepositModal()">
-                    <div class="action-btn-circle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M9 13l3 3 3-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <span class="action-label">Depozit</span>
-                </div>
-                
-                <div class="action-item" onclick="openWithdrawModal()">
-                    <div class="action-btn-circle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 15l6-6M10 9h5v5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <span class="action-label">Yechib olish</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-section">
-            <div class="tab-item active">Ochish <span>0</span></div>
-            <div class="tab-item">Kutilayotgan</div>
-            <div class="tab-item">Yopiq</div>
-        </div>
-
-        <div class="pnl-summary">
-            <span>Jami P/L</span>
-            <span class="pnl-green">0.00 UZS</span>
-        </div>
-    </div>
-
-    <!-- 2-SAHIFA: SAVDO QILISH -->
-    <div id="page-trading" class="page">
-        <div class="header">
-            <div class="pair-badge">
-                <span class="back-btn" onclick="switchPage('dashboard')">⬅</span>
-                <span class="pair-title">EUR/USD</span>
-            </div>
-            <div class="balance-container">
-                <div class="balance-label">BALANS</div>
-                <div class="balance-val"><span id="balance">10,000</span> UZS</div>
-            </div>
-        </div>
-
-        <div class="sub-header">
-            <div class="timeframes"><span class="active">M1</span><span>M5</span><span>M15</span></div>
-            <div class="bid-ask-box">
-                <div>SELL <span class="bid-val" id="sub-bid">1.08694</span></div>
-                <div>BUY <span class="ask-val" id="sub-ask">1.08696</span></div>
-            </div>
-        </div>
-
-        <div id="chart-wrapper">
-            <canvas id="canvas"></canvas>
-        </div>
-
-        <div class="controls">
-            <div class="inputs-row">
-                <div class="input-item">
-                    <span class="input-label">Lot:</span>
-                    <input type="number" id="lot-size" class="input-val" value="0.10" step="0.01">
-                </div>
-            </div>
-            <div class="action-btns">
-                <button class="btn btn-sell">SELL</button>
-                <button class="btn btn-buy">BUY</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3-SAHIFA: TAHLILLAR -->
-    <div id="page-analytics" class="page placeholder-page">
-        <h2>Tahlillar</h2>
-        <p style="margin-top: 15px; color: #7e8b9b;">Bozor tahlillari va yangiliklar bo'limi.</p>
-    </div>
-
-    <!-- 4-SAHIFA: SAMARADORLIK -->
-    <div id="page-performance" class="page placeholder-page">
-        <h2>Samaradorlik</h2>
-        <p style="margin-top: 15px; color: #7e8b9b;">Savdo ko'rsatkichlari va statistika bo'limi.</p>
-    </div>
-
-    <!-- 5-SAHIFA: PROFIL -->
-    <div id="page-profile" class="page placeholder-page">
-        <h2>Profil</h2>
-        <p style="margin-top: 15px; color: #7e8b9b;">Shaxsiy ma'lumotlar va sozlamalar.</p>
-    </div>
-
-    <!-- PASTKI NAVIGATSIYA (5 TA BO'LIM) -->
-    <div class="bottom-nav">
-        <div class="nav-item active" id="nav-dashboard" onclick="switchPage('dashboard')">
-            <div class="nav-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            </div>
-            <span>Hisoblar</span>
-        </div>
-
-        <div class="nav-item" id="nav-trading" onclick="switchPage('trading')">
-            <div class="nav-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18M15 3v18M6 8h6M12 16h6"/></svg>
-            </div>
-            <span>Savdo qilish</span>
-        </div>
-
-        <div class="nav-item" id="nav-analytics" onclick="switchPage('analytics')">
-            <div class="nav-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9V3z"/></svg>
-            </div>
-            <span>Tahlillar</span>
-        </div>
-
-        <div class="nav-item" id="nav-performance" onclick="switchPage('performance')">
-            <div class="nav-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-            </div>
-            <span>Samaradorlik</span>
-        </div>
-
-        <div class="nav-item" id="nav-profile" onclick="switchPage('profile')">
-            <div class="red-dot"></div>
-            <div class="nav-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-            </div>
-            <span>Profil</span>
-        </div>
-    </div>
+    <button class="btn" onclick="resetGame()">O'yinni qaytadan boshlash</button>
 
     <script>
         if (window.Telegram && window.Telegram.WebApp) {
@@ -441,219 +68,130 @@
             window.Telegram.WebApp.expand();
         }
 
-        // --- PIN KOD MANTIQI ---
-        let enteredPin = "";
-        let tempPin = "";
-        let savedPin = localStorage.getItem("exness_pin");
+        // Hardcore o'yin mantig'i uchun o'zgaruvchilar
+        let boardSize = 15; // 15 ta katakli soddalashtirilgan poyga yo'li
+        let playerPos = 0;   // Sizning pozitsiyangiz (0 - uychada)
+        let botPos = 0;      // Bot pozitsiyasi
+        let turn = 0;        // 0 - Siz, 1 - Bot
+        let diceVal = 0;
+        let gameEnded = false;
 
-        const pinTitle = document.getElementById("pin-title-text");
-
-        if (!savedPin) {
-            pinTitle.innerText = "Yangi 6 talik PIN kod yarating";
-        } else {
-            pinTitle.innerText = "Davom etish uchun PIN kodni kiriting";
-        }
-
-        function updateDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, index) => {
-                if (index < enteredPin.length) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
+        function createBoard() {
+            const track = document.getElementById('board-track');
+            track.innerHTML = '';
+            for (let i = 0; i < 15; i++) {
+                let cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `cell-${i}`;
+                cell.innerHTML = `<span>${i}</span>`;
+                
+                // Tokenlarni joylash
+                if (i === playerPos && playerPos > 0) {
+                    let t = document.createElement('div');
+                    t.className = 'token red';
+                    t.innerText = 'Siz';
+                    cell.appendChild(t);
                 }
-            });
-        }
-
-        function pressKey(num) {
-            if (enteredPin.length < 6) {
-                enteredPin += num;
-                updateDots();
-            }
-
-            if (enteredPin.length === 6) {
-                setTimeout(handlePinSubmit, 150);
+                if (i === botPos && botPos > 0) {
+                    let t = document.createElement('div');
+                    t.className = 'token blue';
+                    t.innerText = 'Bot';
+                    cell.appendChild(t);
+                }
+                track.appendChild(cell);
             }
         }
 
-        function pressBackspace() {
-            if (enteredPin.length > 0) {
-                enteredPin = enteredPin.slice(0, -1);
-                updateDots();
-            }
+        function updateUI() {
+            createBoard();
+            document.getElementById('badge-0').className = `player-badge ${turn === 0 ? 'active' : ''}`;
+            document.getElementById('badge-1').className = `player-badge ${turn === 1 ? 'active' : ''}`;
         }
 
-        function handlePinSubmit() {
-            if (!savedPin) {
-                if (!tempPin) {
-                    tempPin = enteredPin;
-                    enteredPin = "";
-                    updateDots();
-                    pinTitle.innerText = "PIN kodni tasdiqlash uchun qayta kiriting";
-                } else {
-                    if (enteredPin === tempPin) {
-                        localStorage.setItem("exness_pin", enteredPin);
-                        savedPin = enteredPin;
-                        unlockApp();
+        function rollDice() {
+            if (gameEnded || turn !== 0) return;
+
+            // O'ta qiyin rejim: Tasodifiy zar, lekin bot har doim aqlli yuradi
+            diceVal = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('dice-btn').innerText = diceVal;
+            
+            document.getElementById('game-status').innerText = `Siz ${diceVal} tushirdingiz! Yurishmoqda...`;
+
+            setTimeout(() => {
+                if (playerPos === 0) {
+                    if (diceVal === 6) {
+                        playerPos = 1;
+                        document.getElementById('game-status').innerText = "O'yin boshlandi! Kartangiz o'yinga tushdi.";
                     } else {
-                        alert("PIN kodlar mos kelmadi! Qaytadan urinib ko'ring.");
-                        tempPin = "";
-                        enteredPin = "";
-                        updateDots();
-                        pinTitle.innerText = "Yangi 6 talik PIN kod yarating";
+                        document.getElementById('game-status').innerText = "Chiqish uchun 6 tushishi kerak edi!";
+                    }
+                } else {
+                    playerPos += diceVal;
+                    if (playerPos >= 14) {
+                        playerPos = 14;
+                        gameEnded = true;
+                        document.getElementById('game-status').innerText = "🎉 Tabriklaymiz, siz g'alaba qozondingiz!";
+                        return;
                     }
                 }
-            } else {
-                if (enteredPin === savedPin) {
-                    unlockApp();
-                } else {
-                    alert("PIN kod noto'g'ri!");
-                    enteredPin = "";
-                    updateDots();
+
+                // Hardcore qoida: Agar siz bot turgan katakka tushib qolsangiz, bot sizni ortga qaytarib yuboradi!
+                if (playerPos === botPos && botPos > 0) {
+                    playerPos = 0;
+                    document.getElementById('game-status').innerText = "🔥 Bot sizni urib yubordi! Boshidan boshlaysiz.";
                 }
-            }
+
+                turn = 1;
+                updateUI();
+                if (!gameEnded) setTimeout(botTurn, 1200);
+
+            }, 800);
         }
 
-        function unlockApp() {
-            document.getElementById("pin-screen").style.display = "none";
+        function botTurn() {
+            if (gameEnded) return;
+            
+            // O'ta qiyin bot mantig'i: Bot deyarli har doim yaxshi natija chiqaradi va xato qilmaydi
+            let botDice = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('game-status').innerText = `Bot zarni tashladi: ${botDice}`;
+
+            setTimeout(() => {
+                if (botPos === 0) {
+                    if (botDice >= 4 || botDice === 6) { // Qiyin rejim: bot osonroq chiqadi
+                        botPos = 1;
+                    }
+                } else {
+                    botPos += botDice;
+                    if (botPos >= 14) {
+                        botPos = 14;
+                        gameEnded = true;
+                        document.getElementById('game-status').innerText = "🤖 Hardcore Bot g'alaba qozondi! Siz yutqazdingiz.";
+                        return;
+                    }
+                }
+
+                // Bot sizni urib ketishi
+                if (botPos === playerPos && playerPos > 0) {
+                    playerPos = 0;
+                    document.getElementById('game-status').innerText = "⚠️ Bot sizni urib yubordi! Juda qattiqqo'l raqib.";
+                }
+
+                turn = 0;
+                updateUI();
+            }, 1000);
         }
 
-        // --- MODALLARNI BOSHQARISH ---
-        function openDepositModal() {
-            document.getElementById("deposit-modal").classList.add("active");
+        function resetGame() {
+            playerPos = 0;
+            botPos = 0;
+            turn = 0;
+            gameEnded = false;
+            document.getElementById('dice-btn').innerText = '🎲';
+            document.getElementById('game-status').innerText = "Yangi o'yin! Zarni tashlang.";
+            updateUI();
         }
 
-        function closeDepositModal() {
-            document.getElementById("deposit-modal").classList.remove("active");
-        }
-
-        function openWithdrawModal() {
-            document.getElementById("withdraw-modal").classList.add("active");
-        }
-
-        function closeWithdrawModal() {
-            document.getElementById("withdraw-modal").classList.remove("active");
-        }
-
-        function openVerificationModal() {
-            document.getElementById("verification-modal").classList.add("active");
-        }
-
-        function closeVerificationModal() {
-            document.getElementById("verification-modal").classList.remove("active");
-        }
-
-        // --- GALEREYADAN HUJJAT TANLASH ---
-        function triggerFileUpload() {
-            document.getElementById("file-input").click();
-        }
-
-        let selectedFile = null;
-
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                selectedFile = file;
-                document.getElementById("upload-sub-text").innerText = "Tanlandi: " + file.name;
-                document.getElementById("upload-sub-text").style.color = "#00e676";
-            }
-        }
-
-        function submitDocument() {
-            if (!selectedFile) {
-                alert("Iltimos, avval galereyadan hujjat yoki rasm tanlang!");
-                return;
-            }
-            alert("Hujjat muvaffaqiyatli yuklandi va tekshiruvga yuborildi!");
-            closeVerificationModal();
-        }
-
-        function redirectToBotDeposit() {
-            const text = encodeURIComponent("Assalomu alaykum");
-            openTelegramLink(text);
-        }
-
-        function redirectToBotWithdrawUzcard() {
-            const text = encodeURIComponent("Assalomu alaykum");
-            openTelegramLink(text);
-        }
-
-        function redirectToBotWithdrawWallet() {
-            const text = encodeURIComponent("Assalomu alaykum");
-            openTelegramLink(text);
-        }
-
-        function openTelegramLink(text) {
-            const url = `https://t.me/ExnessTbotUzs?text=${text}`;
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.openTelegramLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-        }
-
-        // --- SAHIFALARNI ALMASHTIRISH MANTIQI ---
-        const pages = ['dashboard', 'trading', 'analytics', 'performance', 'profile'];
-
-        function switchPage(pageName) {
-            pages.forEach(p => {
-                document.getElementById(`page-${p}`).classList.remove('active');
-                document.getElementById(`nav-${p}`).classList.remove('active');
-            });
-
-            document.getElementById(`page-${pageName}`).classList.add('active');
-            document.getElementById(`nav-${pageName}`).classList.add('active');
-
-            if (pageName === 'trading') {
-                resizeCanvas();
-            }
-        }
-
-        // --- GRAFIK KODLARI ---
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            if (canvas.parentElement) {
-                canvas.width = canvas.parentElement.clientWidth;
-                canvas.height = canvas.parentElement.clientHeight;
-            }
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        let candles = [];
-        let currentPrice = 1.08694;
-        for (let i = 0; i < 30; i++) {
-            let open = currentPrice;
-            let close = open + (Math.random() - 0.49) * 0.0001;
-            candles.push({ open, high: Math.max(open, close)+0.00005, low: Math.min(open, close)-0.00005, close });
-            currentPrice = close;
-        }
-
-        setInterval(() => {
-            if (!document.getElementById('page-trading').classList.contains('active')) return;
-            let last = candles[candles.length - 1];
-            last.close += (Math.random() - 0.5) * 0.00004;
-            drawChart();
-        }, 300);
-
-        function drawChart() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let minP = Math.min(...candles.map(c => c.low));
-            let maxP = Math.max(...candles.map(c => c.high));
-            let range = (maxP - minP) || 0.0001;
-            let w = canvas.width / candles.length;
-
-            candles.forEach((c, i) => {
-                let x = i * w + w / 2;
-                let openY = canvas.height - ((c.open - minP) / range) * (canvas.height - 40) - 20;
-                let closeY = canvas.height - ((c.close - minP) / range) * (canvas.height - 40) - 20;
-                let color = c.close >= c.open ? '#00c853' : '#e53935';
-
-                ctx.fillStyle = color;
-                ctx.fillRect(x - w/3, Math.min(openY, closeY), w*0.66, Math.max(Math.abs(closeY - openY), 2));
-            });
-        }
+        resetGame();
     </script>
 </body>
 </html>
