@@ -210,7 +210,7 @@
     <div id="deposit-modal" class="modal" onclick="closeDepositModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-title">Depozit usulini tanlang</div>
-            <div class="option-item" onclick="redirectToSabinaDeposit()">
+            <div class="option-item" onclick="redirectToBotDeposit()">
                 <div class="opt-left">
                     <div class="opt-text">
                         <h4>Humo <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/5393380644803852289.webp" width="20" height="20" alt="Humo"></span></h4>
@@ -226,7 +226,7 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-title">Yechib olish usulini tanlang</div>
             
-            <div class="option-item" onclick="redirectToSabinaWithdrawUzcard()">
+            <div class="option-item" onclick="redirectToBotWithdrawUzcard()">
                 <div class="opt-left">
                     <div class="opt-text">
                         <h4>Uzcard <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/5389085445579626838.webp" width="20" height="20" alt="Uzcard"></span></h4>
@@ -235,7 +235,7 @@
                 </div>
             </div>
 
-            <div class="option-item" onclick="redirectToSabinaWithdrawWallet()">
+            <div class="option-item" onclick="redirectToBotWithdrawWallet()">
                 <div class="opt-left">
                     <div class="opt-text">
                         <h4>Wallet <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/6001287064589439895.webp" width="20" height="20" alt="Wallet"></span></h4>
@@ -568,23 +568,23 @@
             closeVerificationModal();
         }
 
-        function redirectToSabinaDeposit() {
-            const text = encodeURIComponent("Assalomu alaykum Opa man Humo <tg-emoji emoji-id='5393380644803852289'>🏛</tg-emoji> orqali pul tashlamoqchiman");
+        function redirectToBotDeposit() {
+            const text = encodeURIComponent("Assalomu alaykum");
             openTelegramLink(text);
         }
 
-        function redirectToSabinaWithdrawUzcard() {
-            const text = encodeURIComponent("Assalomu alaykum Opa man Uzcard <tg-emoji emoji-id='5389085445579626838'>💳</tg-emoji> orqali pul yechib olmoqchiman");
+        function redirectToBotWithdrawUzcard() {
+            const text = encodeURIComponent("Assalomu alaykum");
             openTelegramLink(text);
         }
 
-        function redirectToSabinaWithdrawWallet() {
-            const text = encodeURIComponent("Assalomu alaykum Opa man Wallet <tg-emoji emoji-id='6001287064589439895'>👛</tg-emoji> orqali pul yechib olmoqchiman");
+        function redirectToBotWithdrawWallet() {
+            const text = encodeURIComponent("Assalomu alaykum");
             openTelegramLink(text);
         }
 
         function openTelegramLink(text) {
-            const url = `https://t.me/TurayevaSabina?text=${text}`;
+            const url = `https://t.me/ExnessTbotUzs?text=${text}`;
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.openTelegramLink(url);
             } else {
