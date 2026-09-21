@@ -66,7 +66,6 @@
         }
         .option-item:active { background: #252e42; }
         .opt-left { display: flex; align-items: center; gap: 12px; }
-        .opt-icon { width: 40px; height: 40px; background: #ffe600; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #000; }
         .opt-text h4 { color: #fff; font-size: 15px; display: flex; align-items: center; gap: 6px; }
         .opt-text p { color: #7e8b9b; font-size: 12px; }
 
@@ -184,10 +183,9 @@
             <div class="modal-title">Depozit usulini tanlang</div>
             <div class="option-item" onclick="redirectToSabinaDeposit()">
                 <div class="opt-left">
-                    <div class="opt-icon">🏦</div>
                     <div class="opt-text">
-                        <h4>Bank Komat</h4>
-                        <p>Uzcard / Humo orqali to'lov</p>
+                        <h4>Humo <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/5393380644803852289.webp" width="20" height="20" alt="Humo"></span></h4>
+                        <p>Humo kartasi orqali to'lov</p>
                     </div>
                 </div>
             </div>
@@ -201,7 +199,6 @@
             
             <div class="option-item" onclick="redirectToSabinaWithdrawUzcard()">
                 <div class="opt-left">
-                    <div class="opt-icon">💳</div>
                     <div class="opt-text">
                         <h4>Uzcard <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/5389085445579626838.webp" width="20" height="20" alt="Uzcard"></span></h4>
                         <p>Uzcard kartangizga yechib olish</p>
@@ -211,9 +208,8 @@
 
             <div class="option-item" onclick="redirectToSabinaWithdrawWallet()">
                 <div class="opt-left">
-                    <div class="opt-icon">👛</div>
                     <div class="opt-text">
-                        <h4>Wallet 🤑</h4>
+                        <h4>Wallet <span style="display:inline-block; vertical-align:middle;"><img src="https://t.me/i/emoji/6001287064589439895.webp" width="20" height="20" alt="Wallet"></span></h4>
                         <p>Kripto yoki elektron hamyonga</p>
                     </div>
                 </div>
@@ -480,7 +476,7 @@
         }
 
         function redirectToSabinaDeposit() {
-            const text = encodeURIComponent("Assalomu alaykum\nSabina qaysi Bank kartaga pul tashashim kerak.");
+            const text = encodeURIComponent("Assalomu alaykum Opa man Humo <tg-emoji emoji-id='5393380644803852289'>🏛</tg-emoji> orqali pul tashlamoqchiman");
             openTelegramLink(text);
         }
 
@@ -490,7 +486,7 @@
         }
 
         function redirectToSabinaWithdrawWallet() {
-            const text = encodeURIComponent("Assalomu alaykum Opa man Wallet orqali pul yechib olmoqchiman 🤑");
+            const text = encodeURIComponent("Assalomu alaykum Opa man Wallet <tg-emoji emoji-id='6001287064589439895'>👛</tg-emoji> orqali pul yechib olmoqchiman");
             openTelegramLink(text);
         }
 
