@@ -68,7 +68,7 @@
         .dep-text p { color: #7e8b9b; font-size: 12px; }
 
         /* APP MAIN PAGES */
-        .page { display: none; width: 100%; height: 100%; flex-direction: column; overflow-y: auto; padding-bottom: 60px; }
+        .page { display: none; width: 100%; height: 100%; flex-direction: column; overflow-y: auto; padding-bottom: 65px; }
         .page.active { display: flex; }
 
         .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #0c0e14; }
@@ -100,7 +100,7 @@
         .pnl-green { color: #00e676; }
 
         /* TRADING PAGE */
-        #page-trading { padding-bottom: 50px; overflow: hidden; }
+        #page-trading { padding-bottom: 65px; overflow: hidden; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #121621; border-bottom: 1px solid #1e2330; }
         .pair-badge { display: flex; align-items: center; gap: 6px; }
         .back-btn { font-size: 18px; color: #fff; margin-right: 8px; cursor: pointer; }
@@ -132,11 +132,15 @@
         .btn-sell { background: #e53935; }
         .btn-buy { background: #00c853; }
 
+        /* PLACEHOLDER PAGES */
+        .placeholder-page { padding: 40px 20px; text-align: center; color: #ffffff; }
+
         /* BOTTOM NAV */
         .bottom-nav { background: #121621; border-top: 1px solid #1e2330; display: flex; justify-content: space-around; padding: 8px 0 10px; position: fixed; bottom: 0; width: 100%; z-index: 99; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #7e8b9b; font-size: 11px; cursor: pointer; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #7e8b9b; font-size: 10px; cursor: pointer; flex: 1; position: relative; }
         .nav-item.active { color: #ffffff; }
-        .nav-icon { display: flex; align-items: center; justify-content: center; height: 24px; }
+        .nav-icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+        .red-dot { position: absolute; top: -1px; right: 18px; width: 7px; height: 7px; background-color: #ff3b30; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -184,7 +188,7 @@
         </div>
     </div>
 
-    <!-- 1-SAHIFA: DASHBOARD -->
+    <!-- 1-SAHIFA: HISOBLAR -->
     <div id="page-dashboard" class="page active">
         <div class="dash-header">
             <div class="dash-title">Hisoblar</div>
@@ -207,7 +211,7 @@
             <div class="acc-balance" id="dash-balance">0.00 UZS</div>
             
             <div class="quick-actions">
-                <div class="action-item" onclick="openTradingPage()">
+                <div class="action-item" onclick="switchPage('trading')">
                     <div class="action-btn-circle yellow">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18M15 3v18M6 8h6M12 16h6"/></svg>
                     </div>
@@ -242,11 +246,11 @@
         </div>
     </div>
 
-    <!-- 2-SAHIFA: TRADING -->
+    <!-- 2-SAHIFA: SAVDO QILISH -->
     <div id="page-trading" class="page">
         <div class="header">
             <div class="pair-badge">
-                <span class="back-btn" onclick="openDashboardPage()">⬅</span>
+                <span class="back-btn" onclick="switchPage('dashboard')">⬅</span>
                 <span class="pair-title">EUR/USD</span>
             </div>
             <div class="balance-container">
@@ -281,15 +285,60 @@
         </div>
     </div>
 
-    <!-- PASTKI NAVIGATSIYA -->
+    <!-- 3-SAHIFA: TAHLILLAR -->
+    <div id="page-analytics" class="page placeholder-page">
+        <h2>Tahlillar</h2>
+        <p style="margin-top: 15px; color: #7e8b9b;">Bozor tahlillari va yangiliklar bo'limi.</p>
+    </div>
+
+    <!-- 4-SAHIFA: SAMARADORLIK -->
+    <div id="page-performance" class="page placeholder-page">
+        <h2>Samaradorlik</h2>
+        <p style="margin-top: 15px; color: #7e8b9b;">Savdo ko'rsatkichlari va statistika bo'limi.</p>
+    </div>
+
+    <!-- 5-SAHIFA: PROFIL -->
+    <div id="page-profile" class="page placeholder-page">
+        <h2>Profil</h2>
+        <p style="margin-top: 15px; color: #7e8b9b;">Shaxsiy ma'lumotlar va sozlamalar.</p>
+    </div>
+
+    <!-- PASTKI NAVIGATSIYA (5 TA BO'LIM) -->
     <div class="bottom-nav">
-        <div class="nav-item active" id="nav-acc" onclick="openDashboardPage()">
-            <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+        <div class="nav-item active" id="nav-dashboard" onclick="switchPage('dashboard')">
+            <div class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
             <span>Hisoblar</span>
         </div>
-        <div class="nav-item" id="nav-trade" onclick="openTradingPage()">
-            <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18M15 3v18M6 8h6M12 16h6"/></svg></div>
+
+        <div class="nav-item" id="nav-trading" onclick="switchPage('trading')">
+            <div class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18M15 3v18M6 8h6M12 16h6"/></svg>
+            </div>
             <span>Savdo qilish</span>
+        </div>
+
+        <div class="nav-item" id="nav-analytics" onclick="switchPage('analytics')">
+            <div class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9V3z"/></svg>
+            </div>
+            <span>Tahlillar</span>
+        </div>
+
+        <div class="nav-item" id="nav-performance" onclick="switchPage('performance')">
+            <div class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            </div>
+            <span>Samaradorlik</span>
+        </div>
+
+        <div class="nav-item" id="nav-profile" onclick="switchPage('profile')">
+            <div class="red-dot"></div>
+            <div class="nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+            </div>
+            <span>Profil</span>
         </div>
     </div>
 
@@ -395,20 +444,21 @@
             }
         }
 
-        // --- SAHIFA O'TISHLARI ---
-        function openTradingPage() {
-            document.getElementById('page-dashboard').classList.remove('active');
-            document.getElementById('page-trading').classList.add('active');
-            document.getElementById('nav-acc').classList.remove('active');
-            document.getElementById('nav-trade').classList.add('active');
-            resizeCanvas();
-        }
+        // --- SAHIFALARNI ALMASHTIRISH MANTIQI ---
+        const pages = ['dashboard', 'trading', 'analytics', 'performance', 'profile'];
 
-        function openDashboardPage() {
-            document.getElementById('page-trading').classList.remove('active');
-            document.getElementById('page-dashboard').classList.add('active');
-            document.getElementById('nav-trade').classList.remove('active');
-            document.getElementById('nav-acc').classList.add('active');
+        function switchPage(pageName) {
+            pages.forEach(p => {
+                document.getElementById(`page-${p}`).classList.remove('active');
+                document.getElementById(`nav-${p}`).classList.remove('active');
+            });
+
+            document.getElementById(`page-${pageName}`).classList.add('active');
+            document.getElementById(`nav-${pageName}`).classList.add('active');
+
+            if (pageName === 'trading') {
+                resizeCanvas();
+            }
         }
 
         // --- GRAFIK KODLARI ---
