@@ -1,23 +1,100 @@
-import asyncio
-import logging
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import CommandStart
-from aiogram.enums import ParseMode
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Trading Terminal</title>
+    <!-- TradingView tomonidan yaratilgan yengil chart kutubxonasi -->
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0b0e14; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #151a21; border-bottom: 1px solid #222731; }
+        .pair-name { font-size: 16px; font-weight: bold; color: #3b82f6; }
+        .balance-box { text-align: right; font-size: 14px; color: #9ca3af; }
+        .balance-amount { color: #10b981; font-weight: bold; font-size: 16px; }
 
-TOKEN = "8695811464:AAG09aLyLwWdQ4YVLlrkBz-21hk6cRvktrk"
+        #chart-container { width: 100vw; height: 65vh; }
 
-bot = Bot(token=TOKEN)
-dp = Dispatcher()
+        .trade-panel { display: flex; gap: 12px; padding: 16px; background: #151a21; border-top: 1px solid #222731; }
+        .btn { flex: 1; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
+        .btn-buy { background-color: #0ecb81; }
+        .btn-buy:active { background-color: #0b9e64; }
+        .btn-sell { background-color: #f6465d; }
+        .btn-sell:active { background-color: #c93548; }
 
-@dp.message(CommandStart())
-async def start_handler(message: types.Message):
-    custom_emoji = '<tg-emoji emoji-id="5990173055026990900">✔️</tg-emoji>'
-    text = f"Assalomu alaykum dev {custom_emoji}"
-    await message.answer(text, parse_mode=ParseMode.HTML)
+        .trade-info { text-align: center; font-size: 12px; color: #6b7280; padding-bottom: 8px; background: #151a21; }
+    </style>
+</head>
+<body>
 
-async def main():
-    logging.basicConfig(level=logging.INFO)
-    await dp.start_polling(bot)
+    <div class="header">
+        <div class="pair-name">EUR / USD</div>
+        <div class="balance-box">
+            Demo Balans: <br>
+            $<span id="balance" class="balance-amount">10000.00</span>
+        </div>
+    </div>
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    <div id="chart-container"></div>
+
+    <div class="trade-info">
+        Joriy narx: <span id="current-price" style="color: #fff; font-weight: bold;">1.08500</span>
+    </div>
+
+    <div class="trade-panel">
+        <button class="btn btn-buy" onclick="executeTrade('BUY')">BUY ▲</button>
+        <button class="btn btn-sell" onclick="executeTrade('SELL')">SELL ▼</button>
+    </div>
+
+    <script>
+        // 1. Chartni sozlash (Forex uslubidagi qorong'u tema)
+        const container = document.getElementById('chart-container');
+        const chart = LightweightCharts.createChart(container, {
+            layout: { backgroundColor: '#0b0e14', textColor: '#9ca3af' },
+            grid: { vertLines: { color: '#161b22' }, horzLines: { color: '#161b22' } },
+            timeScale: { timeVisible: true, secondsVisible: true }
+        });
+
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: '#0ecb81', downColor: '#f6465d',
+            borderUpColor: '#0ecb81', borderDownColor: '#f6465d',
+            wickUpColor: '#0ecb81', wickDownColor: '#f6465d'
+        });
+
+        // 2. Boshlang'ich Forex shamlar ma'lumotlarini shakllantirish
+        let lastClose = 1.08500;
+        let currentTime = Math.floor(Date.now() / 1000) - 300;
+        let data = [];
+
+        for (let i = 0; i < 60; i++) {
+            let open = lastClose;
+            let close = open + (Math.random() - 0.5) * 0.00040;
+            let high = Math.max(open, close) + Math.random() * 0.00020;
+            let low = Math.min(open, close) - Math.random() * 0.00020;
+            data.push({ time: currentTime + (i * 5), open, high, low, close });
+            lastClose = close;
+        }
+        candleSeries.setData(data);
+
+        // 3. Real vaqt rejimida shamlarni simulyatsiya qilish (Har 1 sekundda)
+        setInterval(() => {
+            currentTime += 1;
+            let open = lastClose;
+            let close = open + (Math.random() - 0.49) * 0.00015;
+            let high = Math.max(open, close) + Math.random() * 0.00008;
+            let low = Math.min(open, close) - Math.random() * 0.00008;
+            
+            candleSeries.update({ time: currentTime, open, high, low, close });
+            lastClose = close;
+            document.getElementById('current-price').innerText = close.toFixed(5);
+        }, 1000);
+
+        // 4. Bitim ochish funksiyasi
+        function executeTrade(direction) {
+            alert(`[Forex Trade] ${direction} pozitsiyasi ochildi!\nKirish narxi: ${lastClose.toFixed(5)}`);
+        }
+    </script>
+</body>
+</html>
