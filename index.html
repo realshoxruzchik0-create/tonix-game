@@ -26,11 +26,10 @@
         .section-title { font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #f8fafc; }
         .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         
-        .app-card { background: #141824; border: 1px solid #1e2330; border-radius: 16px; padding: 12px 8px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
+        .app-card { background: #141824; border: 1px solid #1e2330; border-radius: 16px; padding: 14px 8px; text-align: center; cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
         .app-card:active { transform: scale(0.95); border-color: #2563eb; }
         
-        .app-icon { width: 50px; height: 50px; border-radius: 12px; background: #1e2330; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; overflow: hidden; }
-        .app-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .app-icon { width: 50px; height: 50px; border-radius: 14px; background: #1e2330; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 26px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.05); }
         
         .app-name { font-size: 12px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .app-badge { position: absolute; top: 8px; right: 8px; font-size: 9px; background: #1e293b; color: #38bdf8; padding: 2px 5px; border-radius: 6px; font-weight: bold; }
@@ -106,53 +105,16 @@
             window.Telegram.WebApp.expand();
         }
 
-        // Barcha 9 ta ilovaning o'zingiz bergan haqiqiy rasm linklari:
         const apps = [
-            { 
-                name: "Poppo Live", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNVpqsVO8NIJZo...a52nrfimykeiPRYFAACKwxrG8I7kUXAgA1veqUjweAAwIAA3kAAz0E", 
-                badge: "Global" 
-            },
-            { 
-                name: "We Party", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNV1qsVQBWqj7a_4QE9wwlTbrTiU97QACIAxrG8I7kUVq80ofclpC1QEAAwiAA3kAAz0E", 
-                badge: "Popular" 
-            },
-            { 
-                name: "Bigo Live", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNWBqsVQ-CVix4oKJOnpw0BMAAUbE2BcApUMaxvCO5FF6G5FkNCYEY0BAAMCAAN5AAM9BA", 
-                badge: "Global" 
-            },
-            { 
-                name: "Tigo Live", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNWNqsVSYt3hhRV1okV1Sexe5-oMRiwAClg-R8I7kUWHetgLia8X1wEAAwIAA3kAAz0E", 
-                badge: "Hot" 
-            },
-            { 
-                name: "Yalla", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNWZqsVSwCRw5_JwHulo5onfZW2n8jgACIwxrG8I7kUUWsDILB0eVJAEAAwiAA3kAAz0E", 
-                badge: "Voice" 
-            },
-            { 
-                name: "Hago", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNWlqsVUfu3Bu7iHjBGy7TCh4RKUXVwACmaxrG8I7kUXpZM8LXBKddQEAAwiAA3kAAz0E", 
-                badge: "Game" 
-            },
-            { 
-                name: "SuGO", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNWxqsVU1rzXvHnD6pDnaRnCSE0fKLAACmQxrG8I7kUUHNmpxJkcaRAEAAwiAA3kAAz0E", 
-                badge: "New" 
-            },
-            { 
-                name: "TopTop", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNW9qsVVM0ALVSO1PjksoAAFIccnIT9gAApoMaxvCO5FFFloJaLu1-4QBAAMCAAN5AAM9BA", 
-                badge: "Voice" 
-            },
-            { 
-                name: "HayiChat", 
-                icon: "https://radare.arzfun.com/api/tg/photo?id=AgACAgEAAxkBAAENNXJqsVWbSJJLM0MZTcAlvYZXDFSPfwACmwxrG8I7kUU8y36-WTsWKQEAAwiAA3kAAz0E", 
-                badge: "Active" 
-            }
+            { name: "Poppo Live", icon: "👑", badge: "Global" },
+            { name: "We Party", icon: "🎉", badge: "Popular" },
+            { name: "Bigo Live", icon: "⭐", badge: "Global" },
+            { name: "Tigo Live", icon: "🔥", badge: "Hot" },
+            { name: "Yalla", icon: "🎙️", badge: "Voice" },
+            { name: "Hago", icon: "🎮", badge: "Game" },
+            { name: "SuGO", icon: "🚀", badge: "New" },
+            { name: "TopTop", icon: "🎧", badge: "Voice" },
+            { name: "HayiChat", icon: "💬", badge: "Active" }
         ];
 
         let selectedApp = "";
@@ -173,7 +135,7 @@
                 card.onclick = () => openModal(app.name);
                 card.innerHTML = `
                     <div class="app-badge">${app.badge}</div>
-                    <div class="app-icon"><img src="${app.icon}" alt="${app.name}"></div>
+                    <div class="app-icon">${app.icon}</div>
                     <div class="app-name">${app.name}</div>
                 `;
                 container.appendChild(card);
