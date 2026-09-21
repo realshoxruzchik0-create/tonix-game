@@ -3,24 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Exness Live Sim</title>
+    <title>Exness Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { width: 100%; height: 100%; overflow: hidden; background-color: #0c0e14; color: #a1a8b8; display: flex; flex-direction: column; }
 
-        /* Header */
+        /* Sahifalar boshqaruvi */
+        .page { display: none; width: 100%; height: 100%; flex-direction: column; }
+        .page.active { display: flex; }
+
+        /* --- 1-SAHIFA: HISOBLAR (DASHBOARD) --- */
+        .dash-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #0c0e14; }
+        .dash-title { font-size: 26px; font-weight: bold; color: #ffffff; }
+        .dash-icons { display: flex; gap: 16px; font-size: 20px; color: #fff; }
+
+        .banner { margin: 0 16px 16px; background: #082415; border: 1px solid #10522b; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .banner-text h4 { color: #fff; font-size: 14px; margin-bottom: 4px; }
+        .banner-text p { color: #8fa095; font-size: 12px; }
+        .banner-icon { width: 36px; height: 36px; background: #123d24; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00e676; font-size: 18px; }
+
+        .account-card { margin: 0 16px 16px; background: #141824; border-radius: 14px; padding: 16px; }
+        .acc-type { display: flex; gap: 6px; margin-bottom: 12px; }
+        .badge { background: #1c2333; color: #8fa0b5; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+        .badge.demo { background: #132b1f; color: #00e676; }
+        
+        .acc-balance { font-size: 24px; font-weight: bold; color: #ffffff; margin-bottom: 16px; }
+
+        .quick-actions { display: flex; justify-content: space-around; }
+        .action-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .action-btn-circle { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #1c2333; color: #fff; font-size: 18px; }
+        .action-btn-circle.yellow { background: #ffe600; color: #000; font-weight: bold; }
+        .action-label { font-size: 12px; color: #a1a8b8; }
+
+        .tab-section { margin: 0 16px; display: flex; gap: 16px; border-bottom: 1px solid #1e2330; padding-bottom: 8px; margin-bottom: 12px; }
+        .tab-item { font-size: 14px; font-weight: bold; color: #5e6678; cursor: pointer; }
+        .tab-item.active { color: #ffffff; border-bottom: 2px solid #ffffff; padding-bottom: 6px; }
+
+        .pnl-summary { margin: 0 16px 12px; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
+        .pnl-green { color: #00e676; }
+
+        .position-card { margin: 0 16px; background: #141824; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .pos-info h5 { color: #fff; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        .pos-info p { color: #e53935; font-size: 11px; margin-top: 4px; }
+        .pos-pnl { text-align: right; }
+        .pos-pnl .pnl-val { color: #00e676; font-weight: bold; font-size: 14px; }
+        .pos-pnl .price-sub { color: #5e6678; font-size: 11px; margin-top: 4px; }
+
+        /* Pastki Menyu (Bottom Navigation) */
+        .bottom-nav { background: #121621; border-top: 1px solid #1e2330; display: flex; justify-content: space-around; padding: 8px 0; position: fixed; bottom: 0; width: 100%; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #5e6678; font-size: 10px; cursor: pointer; }
+        .nav-item.active { color: #ffffff; }
+        .nav-icon { font-size: 18px; }
+
+        /* --- 2-SAHIFA: TRADING GRAFIK (CHART) --- */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #121621; border-bottom: 1px solid #1e2330; }
         .pair-badge { display: flex; align-items: center; gap: 6px; }
+        .back-btn { font-size: 18px; color: #fff; margin-right: 8px; cursor: pointer; }
         .pair-title { font-size: 16px; font-weight: bold; color: #ffffff; }
         .sim-tag { background: #113822; color: #00e676; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 3px; border: 1px solid #1b5e35; }
         
         .balance-container { text-align: right; }
         .balance-label { font-size: 10px; color: #5e6678; text-transform: uppercase; font-weight: bold; }
-        .balance-val { font-size: 15px; font-weight: bold; color: #00e676; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
-        .refresh-btn { cursor: pointer; font-size: 12px; color: #5e6678; }
+        .balance-val { font-size: 15px; font-weight: bold; color: #00e676; }
 
-        /* Sub Header */
         .sub-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #0c0e14; font-size: 12px; font-weight: bold; }
         .timeframes span { margin-right: 12px; color: #5e6678; cursor: pointer; }
         .timeframes span.active { color: #2979ff; background: #18253f; padding: 2px 6px; border-radius: 3px; }
@@ -29,15 +75,12 @@
         .bid-val { color: #f44336; }
         .ask-val { color: #00e676; }
 
-        /* Chart */
         #chart-wrapper { flex: 1; width: 100%; position: relative; background: #0c0e14; }
         canvas { width: 100%; height: 100%; display: block; }
 
-        /* Overlay PnL */
         .pnl-overlay { position: absolute; top: 12px; left: 12px; z-index: 10; background: rgba(18, 22, 33, 0.85); border: 1px solid #1e2330; border-radius: 4px; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #00e676; }
 
-        /* Control Panel */
-        .controls { background: #121621; border-top: 1px solid #1e2330; padding: 10px 14px; }
+        .controls { background: #121621; border-top: 1px solid #1e2330; padding: 10px 14px; margin-bottom: 50px; }
         .inputs-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .input-item { flex: 1; background: #1a202c; border: 1px solid #2d3748; border-radius: 4px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; }
         .input-label { font-size: 11px; color: #718096; }
@@ -52,52 +95,147 @@
 </head>
 <body>
 
-    <div class="header">
-        <div class="pair-badge">
-            <span class="pair-title">EUR/USD</span>
-            <span class="sim-tag">LIVE SIM</span>
+    <!-- ==================== 1-SAHIFA: HISOBLAR ==================== -->
+    <div id="page-dashboard" class="page active">
+        <div class="dash-header">
+            <div class="dash-title">Hisoblar</div>
+            <div class="dash-icons">
+                <span>⏰</span>
+                <span>🔔</span>
+                <span>⋮</span>
+            </div>
         </div>
-        <div class="balance-container">
-            <div class="balance-label">DEMO BALANS</div>
-            <div class="balance-val">$<span id="balance">10,000.00</span> <span class="refresh-btn" onclick="resetBalance()">↺</span></div>
+
+        <div class="banner">
+            <div class="banner-text">
+                <h4>Hisobingizni tasdiqlang</h4>
+                <p>Hozirda sizda cheklangan ruxsat bor</p>
+            </div>
+            <div class="banner-icon">✓</div>
+        </div>
+
+        <div class="account-card">
+            <div class="acc-type">
+                <span class="badge demo">Demo</span>
+                <span class="badge">MT5</span>
+                <span class="badge">Standart</span>
+            </div>
+            <div class="acc-balance" id="dash-balance">16.14 USD</div>
+            
+            <div class="quick-actions">
+                <!-- SARIQ TUGMA: SAVDO QILISH -->
+                <div class="action-item" onclick="openTradingPage()">
+                    <div class="action-btn-circle yellow">📊</div>
+                    <span class="action-label">Savdo qilish</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-btn-circle">⬇️</div>
+                    <span class="action-label">Depozit</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-btn-circle">↗️</div>
+                    <span class="action-label">Yechib olish</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-section">
+            <div class="tab-item active">Ochish <span>1</span></div>
+            <div class="tab-item">Kutilayotgan</div>
+            <div class="tab-item">Yopiq</div>
+        </div>
+
+        <div class="pnl-summary">
+            <span>Jami P/L</span>
+            <span class="pnl-green">+5.44 USD</span>
+        </div>
+
+        <div class="position-card" onclick="openTradingPage()">
+            <div class="pos-info">
+                <h5><span style="color:#f7931a;">₿</span> BTC</h5>
+                <p>Sell da 0.01 lot 84742.77</p>
+            </div>
+            <div class="pos-pnl">
+                <div class="pnl-val">+5.44 USD</div>
+                <div class="price-sub">84198.35</div>
+            </div>
         </div>
     </div>
 
-    <div class="sub-header">
-        <div class="timeframes">
-            <span class="active">M1</span>
-            <span>M5</span>
-            <span>M15</span>
+    <!-- ==================== 2-SAHIFA: TRADING GRAFIK ==================== -->
+    <div id="page-trading" class="page">
+        <div class="header">
+            <div class="pair-badge">
+                <span class="back-btn" onclick="openDashboardPage()">⬅</span>
+                <span class="pair-title">EUR/USD</span>
+                <span class="sim-tag">LIVE SIM</span>
+            </div>
+            <div class="balance-container">
+                <div class="balance-label">DEMO BALANS</div>
+                <div class="balance-val">$<span id="balance">10,000.00</span></div>
+            </div>
         </div>
-        <div class="bid-ask-box">
-            <div>SELL (BID) <span class="bid-val" id="sub-bid">1.08694</span></div>
-            <div>BUY (ASK) <span class="ask-val" id="sub-ask">1.08696</span></div>
+
+        <div class="sub-header">
+            <div class="timeframes">
+                <span class="active">M1</span>
+                <span>M5</span>
+                <span>M15</span>
+            </div>
+            <div class="bid-ask-box">
+                <div>SELL (BID) <span class="bid-val" id="sub-bid">1.08694</span></div>
+                <div>BUY (ASK) <span class="ask-val" id="sub-ask">1.08696</span></div>
+            </div>
+        </div>
+
+        <div id="chart-wrapper">
+            <div class="pnl-overlay" id="floating-pnl">Floating PnL: +$0.00</div>
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="inputs-row">
+                <div class="input-item">
+                    <span class="input-label">Lot:</span>
+                    <input type="number" id="lot-size" class="input-val" value="0.10" step="0.01" min="0.01">
+                </div>
+                <div class="input-item">
+                    <span class="input-label">TP (pips):</span>
+                    <input type="text" class="input-val" value="Off" disabled style="color:#718096;">
+                </div>
+                <div class="input-item">
+                    <span class="input-label">SL (pips):</span>
+                    <input type="text" class="input-val" value="Off" disabled style="color:#718096;">
+                </div>
+            </div>
+            <div class="action-btns">
+                <button class="btn btn-sell" onclick="executeTrade('SELL')">SELL</button>
+                <button class="btn btn-buy" onclick="executeTrade('BUY')">BUY</button>
+            </div>
         </div>
     </div>
 
-    <div id="chart-wrapper">
-        <div class="pnl-overlay" id="floating-pnl">Floating PnL: +$0.00</div>
-        <canvas id="canvas"></canvas>
-    </div>
-
-    <div class="controls">
-        <div class="inputs-row">
-            <div class="input-item">
-                <span class="input-label">Lot:</span>
-                <input type="number" id="lot-size" class="input-val" value="0.10" step="0.01" min="0.01">
-            </div>
-            <div class="input-item">
-                <span class="input-label">TP (pips):</span>
-                <input type="text" class="input-val" value="Off" disabled style="color:#718096;">
-            </div>
-            <div class="input-item">
-                <span class="input-label">SL (pips):</span>
-                <input type="text" class="input-val" value="Off" disabled style="color:#718096;">
-            </div>
+    <!-- PASTKI MENYU (HAR DOIM KO'RINIB TURADI) -->
+    <div class="bottom-nav">
+        <div class="nav-item active" id="nav-acc" onclick="openDashboardPage()">
+            <div class="nav-icon">🔲</div>
+            <span>Hisoblar</span>
         </div>
-        <div class="action-btns">
-            <button class="btn btn-sell" onclick="executeTrade('SELL')">SELL</button>
-            <button class="btn btn-buy" onclick="executeTrade('BUY')">BUY</button>
+        <div class="nav-item" id="nav-trade" onclick="openTradingPage()">
+            <div class="nav-icon">📊</div>
+            <span>Savdo qilish</span>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">🌐</div>
+            <span>Tahlillar</span>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">📈</div>
+            <span>Samaradorlik</span>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">👤</div>
+            <span>Profil</span>
         </div>
     </div>
 
@@ -107,6 +245,23 @@
             window.Telegram.WebApp.expand();
         }
 
+        // Sahifalar o'rtasida o'tish mantiqi
+        function openTradingPage() {
+            document.getElementById('page-dashboard').classList.remove('active');
+            document.getElementById('page-trading').classList.add('active');
+            document.getElementById('nav-acc').classList.remove('active');
+            document.getElementById('nav-trade').classList.add('active');
+            resizeCanvas();
+        }
+
+        function openDashboardPage() {
+            document.getElementById('page-trading').classList.remove('active');
+            document.getElementById('page-dashboard').classList.add('active');
+            document.getElementById('nav-trade').classList.remove('active');
+            document.getElementById('nav-acc').classList.add('active');
+        }
+
+        // --- GRAPHIC ENGINE ---
         let balance = 10000.00;
         let currentPrice = 1.08694;
         let spread = 0.00002;
@@ -117,13 +272,13 @@
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+            if (canvas.parentElement) {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+            }
         }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
-        // Shamchalar ma'lumotlari
         let candles = [];
         for (let i = 0; i < 35; i++) {
             let open = currentPrice;
@@ -134,10 +289,10 @@
             currentPrice = close;
         }
 
-        // Qiyinlashtirilgan matematik algoritm bilan harakatlanish
         setInterval(() => {
-            let lastCandle = candles[candles.length - 1];
+            if (!document.getElementById('page-trading').classList.contains('active')) return;
 
+            let lastCandle = candles[candles.length - 1];
             if (Math.random() < 0.15) trend = (Math.random() - 0.5) * 0.00008;
             let noise = (Math.random() - 0.5) * 0.00005;
             
@@ -147,21 +302,13 @@
 
             currentPrice = lastCandle.close;
 
-            // Har 5 soniyada yangi shamcha hosil qilish
             if (Math.random() < 0.1) {
                 candles.shift();
-                candles.push({
-                    open: currentPrice,
-                    high: currentPrice,
-                    low: currentPrice,
-                    close: currentPrice
-                });
+                candles.push({ open: currentPrice, high: currentPrice, low: currentPrice, close: currentPrice });
             }
 
-            let bid = currentPrice.toFixed(5);
-            let ask = (currentPrice + spread).toFixed(5);
-            document.getElementById('sub-bid').innerText = bid;
-            document.getElementById('sub-ask').innerText = ask;
+            document.getElementById('sub-bid').innerText = currentPrice.toFixed(5);
+            document.getElementById('sub-ask').innerText = (currentPrice + spread).toFixed(5);
 
             updateFloatingPnL();
             drawChart();
@@ -169,8 +316,6 @@
 
         function drawChart() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // To'r (Grid)
             ctx.strokeStyle = '#161a24';
             ctx.lineWidth = 1;
             for (let x = 0; x < canvas.width; x += 50) {
@@ -180,34 +325,24 @@
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
             }
 
-            // Min va Max narxlarni topish
             let minP = Math.min(...candles.map(c => c.low));
             let maxP = Math.max(...candles.map(c => c.high));
             let range = (maxP - minP) || 0.0001;
-
             let candleWidth = canvas.width / candles.length;
 
-            // Shamchalarni chizish
             candles.forEach((c, index) => {
                 let x = index * candleWidth + candleWidth / 2;
-                
                 let openY = canvas.height - ((c.open - minP) / range) * (canvas.height - 40) - 20;
                 let closeY = canvas.height - ((c.close - minP) / range) * (canvas.height - 40) - 20;
                 let highY = canvas.height - ((c.high - minP) / range) * (canvas.height - 40) - 20;
                 let lowY = canvas.height - ((c.low - minP) / range) * (canvas.height - 40) - 20;
 
-                let isGreen = c.close >= c.open;
-                let color = isGreen ? '#00c853' : '#e53935';
+                let color = c.close >= c.open ? '#00c853' : '#e53935';
 
-                // Wick (Tayoqchasi)
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(x, highY);
-                ctx.lineTo(x, lowY);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x, highY); ctx.lineTo(x, lowY); ctx.stroke();
 
-                // Body (Tana)
                 ctx.fillStyle = color;
                 let bodyHeight = Math.max(Math.abs(closeY - openY), 2);
                 let bodyY = Math.min(openY, closeY);
@@ -228,14 +363,11 @@
             balance -= margin;
             updateBalanceUI();
 
-            let entryPrice = type === 'BUY' ? currentPrice + spread : currentPrice;
-
             activeOrders.push({
                 id: Date.now(),
                 type: type,
                 lot: lotInput,
-                margin: margin,
-                entryPrice: entryPrice
+                entryPrice: type === 'BUY' ? currentPrice + spread : currentPrice
             });
         }
 
@@ -249,25 +381,18 @@
             let totalPnL = 0;
             activeOrders.forEach(order => {
                 let diff = order.type === 'BUY' ? (currentPrice - order.entryPrice) : (order.entryPrice - currentPrice);
-                let pnl = (diff * 100000) * order.lot;
-                totalPnL += pnl;
+                totalPnL += (diff * 100000) * order.lot;
             });
 
             let pnlElement = document.getElementById('floating-pnl');
-            let sign = totalPnL >= 0 ? '+' : '';
-            pnlElement.innerText = `Floating PnL: ${sign}$${totalPnL.toFixed(2)}`;
+            pnlElement.innerText = `Floating PnL: ${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}`;
             pnlElement.style.color = totalPnL >= 0 ? '#00e676' : '#e53935';
         }
 
         function updateBalanceUI() {
-            document.getElementById('balance').innerText = balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function resetBalance() {
-            balance = 10000.00;
-            activeOrders = [];
-            updateBalanceUI();
-            updateFloatingPnL();
+            let str = balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('balance').innerText = str;
+            document.getElementById('dash-balance').innerText = str + " USD";
         }
     </script>
 </body>
