@@ -12,7 +12,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 15px;
-            padding-bottom: 95px;
+            padding-bottom: 110px;
         }
 
         /* Balans qismi */
@@ -85,48 +85,54 @@
             background: #334155;
         }
 
-        /* Pastgi navigatsiya paneli (Ikonkalar bilan) */
+        /* Rasmga o'xshash zamonaviy pastgi navigatsiya paneli */
         .nav-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
             background: #0f172a;
-            border-top: 1px solid #1e293b;
+            border-radius: 30px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
+            padding: 8px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            border: 1px solid #1e293b;
         }
 
         .nav-item {
             color: #94a3b8;
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
             cursor: pointer;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
-            flex: 1;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 25px;
+            transition: 0.2s;
         }
 
+        /* Aktiv (tanlangan) tugma ko'rinishi */
         .nav-item.active {
-            color: #3b82f6;
+            background: #2563eb;
+            color: #ffffff;
             font-weight: bold;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        /* "Ijaraga" o'xshash maxsus sariq/tilla tusdagi tugma */
+        .nav-item.special {
+            background: #1e293b;
+            color: #facc15;
+            border: 1px solid rgba(250, 204, 21, 0.3);
         }
 
         .nav-item svg {
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
-        }
-
-        .active-pill {
-            background: #1e3a8a;
-            padding: 6px 14px;
-            border-radius: 14px;
         }
     </style>
 </head>
@@ -143,7 +149,7 @@
         </div>
     </div>
 
-    <!-- 4 ta tanlangan bo'lim -->
+    <!-- 4 ta tanlangan o'yin -->
     <div class="grid-container">
         <div class="game-card" onclick="selectGame('greedy')">greedy</div>
         <div class="game-card" onclick="selectGame('555')">555</div>
@@ -151,25 +157,23 @@
         <div class="game-card" onclick="selectGame('win.baraban')">win.baraban</div>
     </div>
 
-    <!-- Pastgi menyu (Ikonkalar bilan) -->
+    <!-- Pastgi menyu (Rasm uslubida) -->
     <div class="nav-bar">
-        <div class="nav-item active">
-            <div class="active-pill" style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                <span>Bosh sahifa</span>
-            </div>
+        <div class="nav-item active" onclick="switchTab(this)">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Bosh sahifa</span>
         </div>
-        <div class="nav-item" onclick="alert('Tarix bo\'limi')">
+        <div class="nav-item" onclick="switchTab(this)">
             <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
             <span>Tarix</span>
         </div>
-        <div class="nav-item" onclick="alert('Sozlamalar bo\'limi')">
+        <div class="nav-item" onclick="switchTab(this)">
             <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97 0-.32-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.97 0 .32.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z"/></svg>
             <span>Sozlamalar</span>
         </div>
-        <div class="nav-item" onclick="alert('Qo\'shimcha bo\'lim')">
-            <svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4m6 12h4v-4h-4v4m-6 0h4v-4H4v4m0-6h4v-4H4v4m6 0h4v-4h-4v4m6-10v4h4V4h-4m-6 4h4V4h-4v4m6 6h4v-4h-4v4m0 6h4v-4h-4v4z"/></svg>
-            <span>Boshqa</span>
+        <div class="nav-item special" onclick="switchTab(this)">
+            <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-4c-.83 0-1.5-.67-1.5-1.5S19.67 8 20.5 8s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            <span>Ijaraga</span>
         </div>
     </div>
 
@@ -180,6 +184,16 @@
         function selectGame(gameName) {
             alert(gameName + " o'yini tanlandi!");
             tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function switchTab(element) {
+            // Hamma itemlardan active classni olib tashlaymiz
+            document.querySelectorAll('.nav-bar .nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Bosilganiga active qo'shamiz
+            element.classList.add('active');
+            tg.HapticFeedback.selectionChanged();
         }
     </script>
 </body>
