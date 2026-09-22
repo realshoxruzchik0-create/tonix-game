@@ -12,10 +12,10 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 15px;
-            padding-bottom: 90px;
+            padding-bottom: 95px;
         }
 
-        /* Balans qismi (rasmdagidek) */
+        /* Balans qismi */
         .balance-card {
             background: linear-gradient(135deg, #1e3a8a, #2563eb);
             border-radius: 20px;
@@ -48,7 +48,7 @@
             border-radius: 12px;
             padding: 10px 5px;
             color: #fff;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
             text-align: center;
             cursor: pointer;
@@ -69,7 +69,7 @@
         .game-card {
             background: #1e293b;
             border-radius: 16px;
-            padding: 30px 15px;
+            padding: 35px 15px;
             text-align: center;
             border: 1px solid #334155;
             font-size: 18px;
@@ -85,7 +85,7 @@
             background: #334155;
         }
 
-        /* Pastgi navigatsiya paneli */
+        /* Pastgi navigatsiya paneli (Ikonkalar bilan) */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -95,20 +95,38 @@
             border-top: 1px solid #1e293b;
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
+            align-items: center;
+            padding: 10px 0;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
         }
 
         .nav-item {
             color: #94a3b8;
-            font-size: 13px;
+            font-size: 11px;
             text-align: center;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
         }
 
         .nav-item.active {
             color: #3b82f6;
             font-weight: bold;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .active-pill {
+            background: #1e3a8a;
+            padding: 6px 14px;
+            border-radius: 14px;
         }
     </style>
 </head>
@@ -119,13 +137,13 @@
         <div class="balance-title">Balans</div>
         <div class="balance-amount" id="balance">0 so'm</div>
         <div class="balance-actions">
-            <button class="action-btn" onclick="alert('Hisobni to\'ldirish bo\'limi')">Hisobni to'ldirish</button>
-            <button class="action-btn" onclick="alert('Bonus kodlar bo\'limi')">Bonus kodlar</button>
-            <button class="action-btn" onclick="alert('Qo\'llab-quvvatlash xizmati')">Qo'llab-quvvatlash</button>
+            <button class="action-btn" onclick="alert('Hisobni to\'ldirish')">Hisobni to'ldirish</button>
+            <button class="action-btn" onclick="alert('Bonus kodlar')">Bonus kodlar</button>
+            <button class="action-btn" onclick="alert('Qo\'llab-quvvatlash')">Qo'llab-quvvatlash</button>
         </div>
     </div>
 
-    <!-- 4 ta tanlangan bo'lim (kartochka) -->
+    <!-- 4 ta tanlangan bo'lim -->
     <div class="grid-container">
         <div class="game-card" onclick="selectGame('greedy')">greedy</div>
         <div class="game-card" onclick="selectGame('555')">555</div>
@@ -133,11 +151,26 @@
         <div class="game-card" onclick="selectGame('win.baraban')">win.baraban</div>
     </div>
 
-    <!-- Pastgi menyu -->
+    <!-- Pastgi menyu (Ikonkalar bilan) -->
     <div class="nav-bar">
-        <div class="nav-item active">Bosh sahifa</div>
-        <div class="nav-item" onclick="alert('Tarix bo\'limi')">Tarix</div>
-        <div class="nav-item" onclick="alert('Sozlamalar bo\'limi')">Sozlamalar</div>
+        <div class="nav-item active">
+            <div class="active-pill" style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Bosh sahifa</span>
+            </div>
+        </div>
+        <div class="nav-item" onclick="alert('Tarix bo\'limi')">
+            <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3m-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            <span>Tarix</span>
+        </div>
+        <div class="nav-item" onclick="alert('Sozlamalar bo\'limi')">
+            <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97 0-.32-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.97 0 .32.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z"/></svg>
+            <span>Sozlamalar</span>
+        </div>
+        <div class="nav-item" onclick="alert('Qo\'shimcha bo\'lim')">
+            <svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4m6 12h4v-4h-4v4m-6 0h4v-4H4v4m0-6h4v-4H4v4m6 0h4v-4h-4v4m6-10v4h4V4h-4m-6 4h4V4h-4v4m6 6h4v-4h-4v4m0 6h4v-4h-4v4z"/></svg>
+            <span>Boshqa</span>
+        </div>
     </div>
 
     <script>
