@@ -1,85 +1,62 @@
-import asyncio
-import json
+import os
 import logging
 import sys
-from aiogram import Bot, Dispatcher, F
+from aiohttp import web
+from aiogram import Bot, Dispatcher, html
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-# Bot tokeningizni shu yerga yozasiz
-TOKEN = "SIZNING_BOT_TOKENINGIZ"
-# Zakazlar kelib tushadigan o'zingizning Telegram ID'ingiz
-ADMIN_ID = 123456789 
+# Token va Port sozlamalari
+TOKEN = os.getenv("BOT_TOKEN", "SIZNING_BOT_TOKENINGIZ")
+PORT = int(os.environ.get("PORT", 8080))
 
-bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-# /start buyrug'i bosilganda Web App ochiladigan tugmani chiqaramiz
 @dp.message(CommandStart())
-async def cmd_start(message: Message):
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="💎 Tanga Sotib Olish", 
-                    web_app=WebAppInfo(url="SIZNING_WEBSITE_SILKANGIZ_SIRDAS") # Hostingdagi index.html manzili
-                )
-            ]
-        ]
-    )
+async def command_start_handler(message: Message) -> None:
+    # Render'ga joylaganingizdan keyin chiqadigan havolangiz (masalan: https://uzwinbetbot.onrender.com)
+    # Yoki buni Render'dagi EnvironmentVariables ga WEB_APP_URL qilib kiritishingiz ham mumkin
+    web_app_url = os.getenv("WEB_APP_URL", "https://SIZ_PROYEKT_NOMINGIZ.onrender.com")
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🦎 UzWinBetBot-ni Ochish", web_app=WebAppInfo(url=web_app_url))]
+    ])
+    
     await message.answer(
-        "Salom! Ommabop ovozli chat va efir ilovalari uchun tangalarni avtomatlashtirilgan tarzda xarid qiling 👇",
+        f"Salom, {html.bold(message.from_user.full_name)}! 🎲\n\n"
+        "<b>UzWinBetBot</b> rasmiy ilovasiga xush kelibsiz. "
+        "Kirish uchun pastdagi tugmani bosing:",
         reply_markup=keyboard
     )
 
-# Mini App ichidan "Sotib olish" tugmasi bosilganda ma'lumotlar shu yerga keladi
-@dp.message(F.web_app_data)
-async def web_app_receive(message: Message):
-    try:
-        # Web App'dan kelgan JSON ma'lumotni o'qiymiz
-        data = json.loads(message.web_app_data.data)
-        
-        platform = data.get("platform")
-        userid = data.get("userid")
-        package = data.get("package")
-        price = data.get("price")
-        
-        user_name = message.from_user.full_name
-        # Xatolik to'g'rilangan joyi:
-        username = f"@{message.from_user.username}" if message.from_user.username else "Mavjud emas"
-        user_tg_id = message.from_user.id
+# Foydalanuvchi saytga kirganda index.html ni ko'rsatish
+async def index_handler(request):
+    return web.FileResponse('./index.html')
 
-        # Foydalanuvchiga buyurtma qabul qilingani haqida xabar beramiz
-        await message.answer(
-            f"✅ **Buyurtmangiz qabul qilindi!**\n\n"
-            f"📱 Ilova: {platform}\n"
-            f"🆔 User ID: {userid}\n"
-            f"📦 Paket: {package}\n"
-            f"💵 Narxi: {price}\n\n"
-            f"Tez orada administratorlar tangani ID raqamingizga tashlab berishadi!"
-        )
-
-        # Administratorga yangi zakaz haqida xabar yuboramiz
-        admin_text = (
-            f"🚨 **YANGI BUYURTMA!**\n\n"
-            f"📱 Ilova: {platform}\n"
-            f"🆔 User ID: <code>{userid}</code>\n"
-            f"📦 Paket: {package}\n"
-            f"💵 Narxi: {price}\n\n"
-            f"👤 Xaridor: {user_name} ({username})\n"
-            f"🔗 Telegram ID: <code>{user_tg_id}</code>"
-        )
-        
-        # Probel (indentatsiya) to'g'rilandi:
-        await bot.send_message(chat_id=ADMIN_ID, text=admin_text, parse_mode="HTML")
-
-    except Exception as e:
-        await message.answer("❌ Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.")
-        print(f"Xato: {e}")
+async def health_check(request):
+    return web.Response(text="Bot ishlayapti!")
 
 async def main():
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    
+    # Aiohttp veb-serverini yaratamiz (Render portni talab qilgani uchun)
+    app = web.Application()
+    app.router.add_get('/', index_handler)
+    app.router.add_get('/health', health_check)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', PORT)
+    await site.start()
+
+    logging.info(f"Veb-server {PORT}-portda ishga tushdi va bot polling boshlanmoqda...")
+    
+    # Botni ishga tushiramiz
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    import asyncio
     asyncio.run(main())
