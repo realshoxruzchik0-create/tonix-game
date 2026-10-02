@@ -205,7 +205,7 @@
                         cell.appendChild(piece);
                     }
 
-                    // Yurish mumkin bo'lgan joylarni belgilash
+                    // Yurish mumkin bo'lgan nuqtalarni bosish
                     if (selectedPiece && selectedPiece.moves) {
                         let move = selectedPiece.moves.find(m => m.r === r && m.col === c);
                         if (move) {
@@ -214,6 +214,7 @@
                         }
                     }
 
+                    // Oq toshlarni bosib tanlash (faqat o'yinchi navbatida)
                     if (pieceData && pieceData.player === 'white' && turn === 'white' && !gameOver) {
                         cell.onclick = () => selectPiece(r, c);
                     }
@@ -258,7 +259,7 @@
         }
 
         function makeMove(move) {
-            if (gameOver) return;
+            if (gameOver || turn !== 'white') return;
             let r = selectedPiece.r;
             let c = selectedPiece.col;
             let piece = board[r][c];
@@ -268,34 +269,26 @@
 
             // Dambka bo'lishi
             if (piece.player === 'white' && move.r === 0) piece.king = true;
-            if (piece.player === 'black' && move.r === 7) piece.king = true;
 
             if (move.type === 'jump') {
                 board[move.targetR][move.targetC] = null;
-                if (piece.player === 'white') {
-                    blackCount--;
-                } else {
-                    whiteCount--;
-                }
+                blackCount--;
             }
 
             selectedPiece = null;
             updateScore();
             renderBoard();
 
-            if (whiteCount === 0 || blackCount === 0) {
+            if (blackCount === 0) {
                 gameOver = true;
-                document.getElementById('status').innerText = whiteCount === 0 ? "😔 Bot g'alaba qozondi!" : "🎉 Tabriklaymiz, Siz g'alaba qozondingiz!";
+                document.getElementById('status').innerText = "🎉 Tabriklaymiz, Siz g'alaba qozondingiz!";
                 return;
             }
 
-            turn = turn === 'white' ? 'black' : 'white';
-            if (turn === 'black') {
-                document.getElementById('status').innerText = "🤖 Bot yurmoqda...";
-                setTimeout(botMove, 700);
-            } else {
-                document.getElementById('status').innerText = "Sizning navbatingiz (Oq toshlar)";
-            }
+            // Navbat botga o'tadi
+            turn = 'black';
+            document.getElementById('status').innerText = "🤖 Bot yurmoqda...";
+            setTimeout(botMove, 700);
         }
 
         function botMove() {
@@ -313,7 +306,6 @@
             }
 
             if (blackPieces.length > 0) {
-                // Avval yeb o'tadigan yurishni qidiramiz
                 let jumpMoves = [];
                 blackPieces.forEach(p => {
                     p.moves.forEach(m => {
@@ -353,7 +345,9 @@
                 return;
             }
 
+            // Navbat yana o'yinchiga (sizga) qaytadi
             turn = 'white';
+            selectedPiece = null;
             document.getElementById('status').innerText = "Sizning navbatingiz (Oq toshlar)";
         }
 
