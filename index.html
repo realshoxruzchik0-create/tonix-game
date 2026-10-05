@@ -4,90 +4,278 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UZUZ.BET</title>
-    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary-green: #65a30d;
+            --green-light: #84cc16;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
         }
         body {
-            background-color: #0f172a;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 90px;
+        }
+
+        /* Yuqori qism */
+        .header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            padding: 14px 16px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
         }
-        .container {
-            width: 100%;
-            max-width: 400px;
+        .logo {
+            font-size: 22px;
+            font-weight: 900;
+            font-style: italic;
+            color: var(--primary-green);
+            letter-spacing: -0.5px;
+        }
+        .header-actions {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            align-items: center;
+            gap: 10px;
         }
-        header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 2px solid #1e293b;
-        }
-        header h1 {
-            color: #38bdf8;
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-        header p {
-            color: #94a3b8;
-            font-size: 14px;
-        }
-        .balance-card {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border: 1px solid #334155;
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        .balance-card h3 {
-            color: #94a3b8;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .balance-card .amount {
-            font-size: 32px;
+        .balance-box {
+            background: #ecfccb;
+            color: #3f6212;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-weight: bold;
-            color: #22c55e;
-            margin-top: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .icon-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* O'yin zonasi */
+        .section-title {
+            padding: 16px 16px 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-muted);
         }
         .games-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
+            padding: 0 16px;
         }
         .game-card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            padding: 20px;
-            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 18px;
+            border-radius: 14px;
             text-align: center;
             cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             transition: 0.2s;
         }
         .game-card:active {
-            transform: scale(0.95);
-            background-color: #334155;
+            transform: scale(0.96);
+            background: #f1f5f9;
         }
-        .game-card .icon {
-            font-size: 30px;
-            margin-bottom: 10px;
+        .game-card .icon { font-size: 28px; margin-bottom: 8px; }
+        .game-card h4 { font-size: 15px; margin: 0; color: var(--text-main); }
+
+        /* Match bloki */
+        .match-card {
+            background: var(--card-bg);
+            margin: 16px;
+            border-radius: 14px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .game-card h4 {
-            font-size: 16px;
-            color: #f8fafc;
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 12px;
         }
-        .btn-action {
-            background: linear-gradient(135deg, #0ea5
+        .odds-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .odd-btn {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .odd-btn span { display: block; font-size: 11px; color: var(--text-muted); }
+        .odd-btn b { font-size: 14px; color: var(--primary-green); }
+
+        /* Pastki menyu paneli (Rasmdagidek aniq ko'rinish) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 100;
+            height: 60px;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            flex: 1;
+            gap: 2px;
+        }
+        .nav-item.active { color: var(--primary-green); font-weight: 600; }
+        
+        /* Markaziy yumaloq UZ tugmasi */
+        .center-btn-wrapper {
+            position: relative;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .center-logo-btn {
+            position: absolute;
+            top: -28px;
+            width: 52px;
+            height: 52px;
+            background: var(--green-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(132, 204, 22, 0.4);
+            cursor: pointer;
+            border: 3px solid var(--bg-color);
+        }
+        .center-label {
+            margin-top: 22px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Yuqori qism -->
+    <div class="header">
+        <div class="logo">UZUZ.BET</div>
+        <div class="header-actions">
+            <div class="balance-box" id="balanceBtn">
+                <span>+</span> <span id="balance">1,000,000</span> 🪙
+            </div>
+            <button class="icon-btn" onclick="alert('Qidiruv bo\'sh')">🔍</button>
+        </div>
+    </div>
+
+    <!-- O'yin zonasi -->
+    <div class="section-title">O'yin zonasi</div>
+    <div class="games-grid">
+        <div class="game-card" onclick="makeBet('Coin Flip', 2.0)">
+            <div class="icon">🪙</div>
+            <h4>Tanga tashlash</h4>
+        </div>
+        <div class="game-card" onclick="makeBet('Dice', 3.5)">
+            <div class="icon">🎲</div>
+            <h4>Zar o'yini</h4>
+        </div>
+    </div>
+
+    <!-- Match bloki -->
+    <div class="match-card">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">O'rtoqlik matchlari</div>
+        <div class="match-teams">
+            <span>Uzbekistan 🇺🇿</span>
+            <span style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-size: 13px; border: 1px solid var(--border-color);">0 : 0</span>
+            <span>Brazil 🇧🇷</span>
+        </div>
+        <div class="odds-container">
+            <div class="odd-btn" onclick="makeBet('Uzbekistan', 2.10)"><span>1</span><b>2.10</b></div>
+            <div class="odd-btn" onclick="makeBet('Durang', 3.40)"><span>X</span><b>3.40</b></div>
+            <div class="odd-btn" onclick="makeBet('Brazil', 3.15)"><span>2</span><b>3.15</b></div>
+        </div>
+    </div>
+
+    <!-- Pastki menyu paneli (Rasmdagidek tartibda) -->
+    <div class="bottom-nav">
+        <a class="nav-item active" onclick="alert('Mashxur bo\'limi')">
+            <span style="font-size: 15px;">🔥</span> Mashxur
+        </a>
+        <a class="nav-item" onclick="alert('Saralanganlar bo\'sh')">
+            <span style="font-size: 15px;">⭐</span> Saralanganlar
+        </a>
+        
+        <!-- Markaziy yumaloq UZ tugmasi -->
+        <div class="center-btn-wrapper">
+            <div class="center-logo-btn" onclick="alert('UZUZ.BET - Hazil stavka platformasi! 🎲')">UZ</div>
+            <span class="center-label">Kupon</span>
+        </div>
+
+        <a class="nav-item" onclick="alert('Tarix bo\'sh')">
+            <span style="font-size: 15px;">📜</span> Tarix
+        </a>
+        <a class="nav-item" onclick="alert('Menyu ochildi')">
+            <span style="font-size: 15px;">📂</span> Menyu
+        </a>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let balance = 1000000;
+
+        function makeBet(name, odd) {
+            if (balance < 10000) {
+                tg.showAlert("Balansingiz yetarli emas!");
+                return;
+            }
+            balance -= 10000;
+            document.getElementById('balance').innerText = balance.toLocaleString();
+            tg.showAlert(`${name} ga 10,000 stavka qilindi! Koeffitsiyent: ${odd}. (Hazil o'yin) 😄`);
+        }
+
+        document.getElementById('balanceBtn').addEventListener('click', () => {
+            tg.showAlert("Bu feyk balans, pul chiqarib bo'lmaydi! 😂");
+        });
+    </script>
+</body>
+</html>
