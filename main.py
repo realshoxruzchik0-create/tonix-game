@@ -22,3 +22,22 @@ async def start_cmd(message: types.Message):
             ]
         ]
     )
+    
+    # Siz xohlagan matn va custom emoji (HTML formatida)
+    text = (
+        "Salom UZUZ.BET qumor oʻyiniga hush kelibsiz "
+        "<tg-emoji id=\"5370941588165893740\">✅</tg-emoji>"
+    )
+    
+    await message.answer(
+        text,
+        reply_markup=keyboard,
+        parse_mode="HTML"
+    )
+
+async def main():
+    print("Bot ishga tushdi...")
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
